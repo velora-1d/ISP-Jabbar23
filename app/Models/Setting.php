@@ -15,17 +15,17 @@ class Setting extends Model
     /**
      * Get a setting value by key.
      */
-    public static function get(string $key, mixed $default = null): mixed
+    public static function getValue(string $key, mixed $default = null): mixed
     {
-        $setting = static::where('key', '=', $key, 'and')->first(['*']);
-        
+        $setting = static::where('key', '=', $key)->first();
+
         if (!$setting) {
             return $default;
         }
 
         // Try to decode JSON value
         $decoded = json_decode((string) $setting->value, true);
-        
+
         if (json_last_error() === JSON_ERROR_NONE && is_array($decoded)) {
             return $decoded;
         }
@@ -40,7 +40,7 @@ class Setting extends Model
     /**
      * Set a setting value by key.
      */
-    public static function set(string $key, mixed $value, ?string $group = null): void
+    public static function setValue(string $key, mixed $value, ?string $group = null): void
     {
         // Convert value to string for storage
         if (is_bool($value)) {
