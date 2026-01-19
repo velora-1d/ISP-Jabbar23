@@ -182,6 +182,7 @@ class PurchaseOrderController extends Controller
             return back()->with('error', 'Hanya PO draft atau cancelled yang dapat dihapus.');
         }
 
+        /** @var PurchaseOrder $purchaseOrder */
         $purchaseOrder->delete();
 
         return redirect()->route('purchase-orders.index')

@@ -85,6 +85,7 @@ class CampaignController extends Controller
 
     public function destroy(Campaign $campaign): RedirectResponse
     {
+        /** @var Campaign $campaign */
         $campaign->delete();
 
         return redirect()->route('campaigns.index')

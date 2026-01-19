@@ -21,7 +21,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <label class="block text-sm font-medium text-gray-300 mb-2">Nama Campaign *</label>
-                    <input type="text" name="name" value="{{ old('name', $campaign->name) }}" required class="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent @error('name') border-red-500 @enderror">
+                    <input type="text" name="name" value="{{ old('name', $campaign->name) }}" required class="w-full bg-gray-700/50 border rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent {{ $errors->has('name') ? 'border-red-500' : 'border-gray-600' }}">
                     @error('name')
                     <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
                     @enderror
@@ -44,7 +44,7 @@
 
             <div>
                 <label class="block text-sm font-medium text-gray-300 mb-2">Template Pesan *</label>
-                <textarea name="message_template" rows="6" required class="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-violet-500 font-mono text-sm @error('message_template') border-red-500 @enderror">{{ old('message_template', $campaign->message_template) }}</textarea>
+                <textarea name="message_template" rows="6" required class="w-full bg-gray-700/50 border rounded-xl px-4 py-3 text-white focus:ring-2 focus:ring-violet-500 font-mono text-sm {{ $errors->has('message_template') ? 'border-red-500' : 'border-gray-600' }}">{{ old('message_template', $campaign->message_template) }}</textarea>
                 <p class="text-gray-500 text-sm mt-1">Gunakan placeholder: {name}, {invoice_number}, {amount}</p>
                 @error('message_template')
                 <p class="text-red-400 text-sm mt-1">{{ $message }}</p>
