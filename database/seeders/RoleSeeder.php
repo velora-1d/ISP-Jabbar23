@@ -23,22 +23,64 @@ class RoleSeeder extends Seeder
             // CRM (Leads & Customers)
             'view leads', 'create leads', 'edit leads', 'delete leads',
             'view customers', 'create customers', 'edit customers', 'delete customers',
+            'view contracts', 'create contracts', 'edit contracts', 'delete contracts',
+            'view partners', 'create partners', 'edit partners', 'delete partners',
 
             // Finance (Invoices & Payments)
             'view financial reports',
             'view invoices', 'create invoices', 'edit invoices', 'delete invoices',
             'view payments', 'create payments', 'verify payments',
+            'view recurring billing', 'create recurring billing', 'edit recurring billing',
+            'view proforma', 'create proforma', 'edit proforma',
+            'view credit notes', 'create credit notes', 'edit credit notes',
+            'manage payment gateways',
+
+            // Network
+            'view network monitoring',
+            'view olts', 'create olts', 'edit olts', 'delete olts',
+            'view odps', 'create odps', 'edit odps', 'delete odps',
+            'view routers', 'create routers', 'edit routers', 'delete routers',
+            'view ipam', 'manage ipam',
+            'view bandwidth', 'manage bandwidth',
+            'view topology',
+
+            // Support
+            'view tickets', 'create tickets', 'edit tickets', 'delete tickets',
+            'view messages', 'send messages',
+            'view knowledge base', 'manage knowledge base',
+            'view sla', 'manage sla',
+
+            // Field Operations
+            'view technicians', 'manage technicians',
+            'view work orders', 'create work orders', 'edit work orders', 'update work order status',
+            'view schedule', 'manage schedule',
+            'view gps tracking',
+            'view installation reports', 'create installation reports',
 
             // Inventory
             'view inventory', 'create items', 'adjust stock', 'view stock movements',
+            'view assets', 'create assets', 'edit assets', 'delete assets',
+            'view vendors', 'create vendors', 'edit vendors', 'delete vendors',
+            'view purchase orders', 'create purchase orders', 'edit purchase orders', 'approve purchase orders',
 
-            // Field Ops (Work Orders)
-            'view work orders', 'create work orders', 'edit work orders', 'update work order status',
-            'view schedule',
+            // HRD
+            'view employees', 'create employees', 'edit employees', 'delete employees',
+            'view attendance', 'manage attendance',
+            'view payroll', 'manage payroll',
+            'view leave', 'manage leave',
 
-            // HR & Users
+            // Marketing
+            'view campaigns', 'create campaigns', 'edit campaigns', 'delete campaigns',
+            'view promotions', 'create promotions', 'edit promotions', 'delete promotions',
+            'view referrals', 'manage referrals',
+
+            // Settings & Admin
+            'view packages', 'create packages', 'edit packages', 'delete packages',
+            'view settings', 'manage settings',
             'view users', 'create users', 'edit users', 'manage roles',
-            'view technicians',
+            'view audit logs',
+            'manage backup',
+            'manage api',
         ];
 
         foreach ($permissions as $permission) {
@@ -47,105 +89,129 @@ class RoleSeeder extends Seeder
 
         // 2. Define Roles & Assign Permissions
 
-        // A. SUPER ADMIN (God Mode)
+        // A. SUPER ADMIN (God Mode) - All permissions
         $superAdmin = Role::firstOrCreate(['name' => 'super-admin']);
-        // Super admin gets all permissions via Gate::before rule usually, 
-        // but we can also give all permissions explicitely if validation needs it.
         $superAdmin->givePermissionTo(Permission::all());
 
-        // B. ADMIN (Operational Manager)
+        // B. ADMIN (Operational Manager) - Almost all except system-level
         $admin = Role::firstOrCreate(['name' => 'admin']);
-        $admin->givePermissionTo([
-            'view dashboard', 'view stats',
-            'view leads', 'create leads', 'edit leads', 'delete leads',
-            'view customers', 'create customers', 'edit customers',
-            'view invoices', 'create invoices', 'edit invoices',
-            'view payments', 'create payments', 'verify payments',
-            'view inventory', 'create items', 'adjust stock', 'view stock movements',
-            'view work orders', 'create work orders', 'edit work orders', 'update work order status',
-            'view schedule',
-            'view technicians',
-            'view users', // Can view staff but generally not manage root roles
-        ]);
+        $admin->givePermissionTo(Permission::whereNotIn('name', [
+            'manage backup', 'manage api', 'view audit logs', 'manage settings'
+        ])->get());
 
-        // C. FINANCE (Bendahara)
-        $finance = Role::firstOrCreate(['name' => 'finance']);
-        $finance->givePermissionTo([
-            'view dashboard',
-            'view financial reports',
-            'view invoices', 'create invoices', 'edit invoices', 'delete invoices',
-            'view payments', 'create payments', 'verify payments',
-            'view customers', // View only for billing context
-        ]);
-
-        // D. TECHNICIAN (Teknisi Lapangan)
-        $technician = Role::firstOrCreate(['name' => 'technician']);
-        $technician->givePermissionTo([
-            'view work orders', 'update work order status', 
-            'view schedule',
-            'view inventory', // Check stock only
-            'view stock movements', // See own history
-        ]);
-
-        // E. SALES (Sales Marketing)
+        // C. SALES (Sales & CS)
         $sales = Role::firstOrCreate(['name' => 'sales']);
         $sales->givePermissionTo([
-            'view dashboard',
+            'view dashboard', 'view stats',
+            // CRM
             'view leads', 'create leads', 'edit leads',
-            'view customers', 'create customers',
-            'view invoices', // View price/packages for quotation
+            'view customers', 'create customers', 'edit customers',
+            'view contracts', 'create contracts', 'edit contracts',
+            'view partners', 'create partners', 'edit partners',
+            // Support
+            'view tickets', 'create tickets', 'edit tickets',
+            'view messages', 'send messages',
+            'view knowledge base',
+            // Marketing
+            'view campaigns', 'create campaigns', 'edit campaigns',
+            'view promotions', 'create promotions', 'edit promotions',
+            'view referrals', 'manage referrals',
+            // Packages (view only)
+            'view packages',
+        ]);
+
+        // D. FINANCE (Keuangan)
+        $finance = Role::firstOrCreate(['name' => 'finance']);
+        $finance->givePermissionTo([
+            'view dashboard', 'view stats',
+            // Billing
+            'view invoices', 'create invoices', 'edit invoices', 'delete invoices',
+            'view payments', 'create payments', 'verify payments',
+            'view recurring billing', 'create recurring billing', 'edit recurring billing',
+            'view proforma', 'create proforma', 'edit proforma',
+            'view credit notes', 'create credit notes', 'edit credit notes',
+            'view financial reports',
+            'manage payment gateways',
+            // View customers for billing context
+            'view customers',
+            // Payroll
+            'view payroll', 'manage payroll',
+            // Purchase Orders (approval)
+            'view purchase orders', 'approve purchase orders',
+            // Packages
+            'view packages',
+        ]);
+
+        // E. NOC (Network Operations Center + Field Ops)
+        $noc = Role::firstOrCreate(['name' => 'noc']);
+        $noc->givePermissionTo([
+            'view dashboard', 'view stats',
+            // Network (all)
+            'view network monitoring',
+            'view olts', 'create olts', 'edit olts', 'delete olts',
+            'view odps', 'create odps', 'edit odps', 'delete odps',
+            'view routers', 'create routers', 'edit routers', 'delete routers',
+            'view ipam', 'manage ipam',
+            'view bandwidth', 'manage bandwidth',
+            'view topology',
+            // Field Ops
+            'view technicians', 'manage technicians',
+            'view work orders', 'create work orders', 'edit work orders', 'update work order status',
+            'view schedule', 'manage schedule',
+            'view gps tracking',
+            'view installation reports', 'create installation reports',
+            // Support
+            'view tickets', 'create tickets', 'edit tickets',
+            'view knowledge base', 'manage knowledge base',
+            'view sla', 'manage sla',
+            // View customers for context
+            'view customers',
+        ]);
+
+        // F. WAREHOUSE (Admin Gudang)
+        $warehouse = Role::firstOrCreate(['name' => 'warehouse']);
+        $warehouse->givePermissionTo([
+            'view dashboard',
+            // Inventory (all)
+            'view inventory', 'create items', 'adjust stock', 'view stock movements',
+            'view assets', 'create assets', 'edit assets', 'delete assets',
+            'view vendors', 'create vendors', 'edit vendors', 'delete vendors',
+            'view purchase orders', 'create purchase orders', 'edit purchase orders',
+        ]);
+
+        // G. HRD (Human Resources)
+        $hrd = Role::firstOrCreate(['name' => 'hrd']);
+        $hrd->givePermissionTo([
+            'view dashboard',
+            // HRD (all)
+            'view employees', 'create employees', 'edit employees', 'delete employees',
+            'view attendance', 'manage attendance',
+            'view payroll', 'manage payroll',
+            'view leave', 'manage leave',
+            // View users for employee context
+            'view users',
         ]);
 
         // 3. Create Demo Users
-        // Admin
-        $userAdmin = User::firstOrCreate(
-            ['email' => 'admin@isp.local'],
-            [
-                'name' => 'Operational Manager',
-                'password' => bcrypt('password'),
-            ]
-        );
-        $userAdmin->assignRole('admin');
+        $demoUsers = [
+            ['email' => 'super@isp.local', 'name' => 'Super Admin', 'role' => 'super-admin'],
+            ['email' => 'admin@isp.local', 'name' => 'Admin Manager', 'role' => 'admin'],
+            ['email' => 'sales@isp.local', 'name' => 'Sales Staff', 'role' => 'sales'],
+            ['email' => 'finance@isp.local', 'name' => 'Finance Staff', 'role' => 'finance'],
+            ['email' => 'noc@isp.local', 'name' => 'NOC Admin', 'role' => 'noc'],
+            ['email' => 'warehouse@isp.local', 'name' => 'Warehouse Staff', 'role' => 'warehouse'],
+            ['email' => 'hrd@isp.local', 'name' => 'HRD Manager', 'role' => 'hrd'],
+        ];
 
-        // Finance
-        $userFinance = User::firstOrCreate(
-            ['email' => 'finance@isp.local'],
-            [
-                'name' => 'Finance Staff',
-                'password' => bcrypt('password'),
-            ]
-        );
-        $userFinance->assignRole('finance');
-
-        // Technician 1
-        $userTech1 = User::firstOrCreate(
-            ['email' => 'tech1@isp.local'],
-            [
-                'name' => 'Ahmad Teknisi',
-                'password' => bcrypt('password'),
-            ]
-        );
-        $userTech1->assignRole('technician');
-
-        // Sales
-        $userSales = User::firstOrCreate(
-            ['email' => 'sales@isp.local'],
-            [
-                'name' => 'Siti Sales',
-                'password' => bcrypt('password'),
-            ]
-        );
-        $userSales->assignRole('sales');
-        
-        // Ensure current user (v@v.com or similar if exists) is super-admin
-        // Super Admin (Dedicated)
-        $userSuper = User::firstOrCreate(
-            ['email' => 'super@isp.local'],
-            [
-                'name' => 'Real Super Admin',
-                'password' => bcrypt('password'),
-            ]
-        );
-        $userSuper->assignRole('super-admin');
+        foreach ($demoUsers as $userData) {
+            $user = User::firstOrCreate(
+                ['email' => $userData['email']],
+                [
+                    'name' => $userData['name'],
+                    'password' => bcrypt('password'),
+                ]
+            );
+            $user->syncRoles([$userData['role']]);
+        }
     }
 }
