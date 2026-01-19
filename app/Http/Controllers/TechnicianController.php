@@ -17,7 +17,7 @@ class TechnicianController extends Controller
      */
     public function index(): View
     {
-        $technicians = User::role('Teknisi Lapangan')
+        $technicians = User::role('noc')
             ->with(['currentTasks.package', 'currentTasks'])
             ->withCount(['currentTasks', 'completedCustomers', 'assignedCustomers'])
             ->orderBy('name')
@@ -88,7 +88,7 @@ class TechnicianController extends Controller
         }
 
         $user = User::create($validated);
-        $user->assignRole('Teknisi Lapangan');
+        $user->assignRole('noc');
 
         return redirect()->route('technicians.index')
             ->with('success', 'Teknisi berhasil ditambahkan!');
@@ -172,7 +172,7 @@ class TechnicianController extends Controller
             Storage::disk('public')->delete($technician->photo);
         }
 
-        $technician->removeRole('Teknisi Lapangan');
+        $technician->removeRole('noc');
         $technician->delete();
 
         return redirect()->route('technicians.index')
