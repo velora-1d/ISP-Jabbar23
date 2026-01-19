@@ -12,38 +12,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('partners', function (Blueprint $table) {
-            if (!Schema::hasColumn('partners', 'code')) {
-                $table->string('code')->unique()->after('name')->nullable();
-            }
-            if (!Schema::hasColumn('partners', 'address')) {
-                $table->text('address')->nullable()->after('phone');
-            }
-            if (!Schema::hasColumn('partners', 'status')) {
-                $table->enum('status', ['active', 'inactive'])->default('active')->after('commission_rate');
-            }
-            if (!Schema::hasColumn('partners', 'notes')) {
-                $table->text('notes')->nullable()->after('status');
-            }
-            if (!Schema::hasColumn('partners', 'updated_at')) {
-                $table->timestamp('updated_at')->nullable();
-            }
-        });
-
-        // Generate codes for existing partners
-        $partners = DB::table('partners')->get();
-        foreach ($partners as $partner) {
-            if (empty($partner->code)) {
-                DB::table('partners')->where('id', $partner->id)->update([
-                    'code' => 'PRT-' . str_pad($partner->id, 4, '0', STR_PAD_LEFT)
-                ]);
-            }
+        if (!Schema::hasTable('partners')) {
+            Schema::create('partners', function (Blueprint $table) {
+                $table->id();
+                $table->string('name');
+                $table->string('code')->unique()->nullable();
+                $table->string('email')->nullable();
+                $table->string('phone')->nullable();
+                $table->text('address')->nullable();
+                $table->decimal('commission_rate', 5, 2)->default(0);
+                $table->enum('status', ['active', 'inactive'])->default('active');
+                $table->text('notes')->nullable();
+                $table->decimal('balance', 12, 2)->default(0);
+                $table->string('erp_supplier_id')->nullable();
+                $table->timestamps();
+            });
         }
-
-        // Now make code not nullable if it was added
-        Schema::table('partners', function (Blueprint $table) {
-            $table->string('code')->nullable(false)->change();
-        });
     }
 
     /**
