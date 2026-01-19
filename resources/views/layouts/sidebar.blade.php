@@ -112,10 +112,10 @@
             <x-menu-item route="messages.index" label="Customer Messages" color-from="orange-500" color-to="amber-600">
                <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg></x-slot:icon>
             </x-menu-item>
-            <x-menu-item route="knowledge-base.index" label="Knowledge Base" :soon="true" color-from="amber-500" color-to="yellow-600">
+            <x-menu-item route="knowledge-base.index" label="Knowledge Base" color-from="amber-500" color-to="yellow-600">
                <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg></x-slot:icon>
             </x-menu-item>
-            <x-menu-item route="sla.index" label="SLA Management" :soon="true" color-from="yellow-500" color-to="lime-600">
+            <x-menu-item route="sla.index" label="SLA Management" color-from="yellow-500" color-to="lime-600">
                <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg></x-slot:icon>
             </x-menu-item>
          </div>
@@ -139,7 +139,7 @@
             <x-menu-item route="scheduling.index" label="Scheduling" color-from="green-500" color-to="emerald-600">
                <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></x-slot:icon>
             </x-menu-item>
-            <x-menu-item route="tracking.index" label="GPS Tracking" :soon="true" color-from="teal-500" color-to="cyan-600">
+            <x-menu-item route="tracking.index" label="GPS Tracking" color-from="teal-500" color-to="cyan-600">
                <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg></x-slot:icon>
             </x-menu-item>
             <x-menu-item route="installation-reports.index" label="Installation Reports" color-from="cyan-500" color-to="blue-600">
@@ -229,13 +229,13 @@
             </button>
          </li>
          <div x-show="open === 'marketing'" x-collapse>
-            <x-menu-item route="campaigns.index" label="Campaigns" :soon="true" color-from="violet-500" color-to="purple-600">
+            <x-menu-item route="campaigns.index" label="Campaigns" color-from="violet-500" color-to="purple-600">
                <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg></x-slot:icon>
             </x-menu-item>
             <x-menu-item route="promotions.index" label="Promotions" color-from="fuchsia-500" color-to="pink-600">
                <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/></svg></x-slot:icon>
             </x-menu-item>
-            <x-menu-item route="referrals.index" label="Referral Program" :soon="true" color-from="pink-500" color-to="rose-600">
+            <x-menu-item route="referrals.index" label="Referral Program" color-from="pink-500" color-to="rose-600">
                <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg></x-slot:icon>
             </x-menu-item>
          </div>
@@ -262,10 +262,10 @@
             <x-menu-item route="audit-logs.index" label="Audit Logs" color-from="slate-500" color-to="gray-600">
                <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></x-slot:icon>
             </x-menu-item>
-            <x-menu-item route="backup.index" label="Backup & Restore" :soon="true" color-from="green-500" color-to="emerald-600">
+            <x-menu-item route="backup.index" label="Backup & Restore" color-from="green-500" color-to="emerald-600">
                <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"/></svg></x-slot:icon>
             </x-menu-item>
-            <x-menu-item route="api-management.index" label="API Management" :soon="true" color-from="indigo-500" color-to="blue-600">
+            <x-menu-item route="api-management.index" label="API Management" color-from="indigo-500" color-to="blue-600">
                <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/></svg></x-slot:icon>
             </x-menu-item>
          </div>

@@ -226,6 +226,50 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('promotions/{promotion}/toggle-active', [\App\Http\Controllers\PromotionController::class, 'toggleActive'])->name('promotions.toggle-active');
         Route::resource('promotions', \App\Http\Controllers\PromotionController::class);
     });
+
+    // Knowledge Base
+    Route::middleware(['role:super-admin|admin|sales|noc|technician'])->group(function () {
+        Route::resource('knowledge-base', \App\Http\Controllers\KnowledgeBaseController::class);
+    });
+
+    // SLA Management
+    Route::middleware(['role:super-admin|admin|noc'])->group(function () {
+        Route::resource('sla', \App\Http\Controllers\SlaController::class)->except(['show']);
+    });
+
+    // Campaigns
+    Route::middleware(['role:super-admin|admin|sales'])->group(function () {
+        Route::post('campaigns/{campaign}/launch', [\App\Http\Controllers\CampaignController::class, 'launch'])->name('campaigns.launch');
+        Route::post('campaigns/{campaign}/cancel', [\App\Http\Controllers\CampaignController::class, 'cancel'])->name('campaigns.cancel');
+        Route::resource('campaigns', \App\Http\Controllers\CampaignController::class);
+    });
+
+    // Referrals
+    Route::middleware(['role:super-admin|admin|sales'])->group(function () {
+        Route::post('referrals/{referral}/qualify', [\App\Http\Controllers\ReferralController::class, 'markQualified'])->name('referrals.qualify');
+        Route::post('referrals/{referral}/pay', [\App\Http\Controllers\ReferralController::class, 'payReward'])->name('referrals.pay');
+        Route::resource('referrals', \App\Http\Controllers\ReferralController::class)->except(['edit', 'update', 'show']);
+    });
+
+    // GPS Tracking
+    Route::middleware(['role:super-admin|admin|noc'])->group(function () {
+        Route::get('tracking', [\App\Http\Controllers\TrackingController::class, 'index'])->name('tracking.index');
+    });
+
+    // Backup (Super Admin Only)
+    Route::middleware(['role:super-admin'])->group(function () {
+        Route::get('backup', [\App\Http\Controllers\BackupController::class, 'index'])->name('backup.index');
+        Route::post('backup', [\App\Http\Controllers\BackupController::class, 'create'])->name('backup.create');
+        Route::get('backup/{filename}/download', [\App\Http\Controllers\BackupController::class, 'download'])->name('backup.download');
+        Route::delete('backup/{filename}', [\App\Http\Controllers\BackupController::class, 'destroy'])->name('backup.destroy');
+    });
+
+    // API Management (Super Admin Only)
+    Route::middleware(['role:super-admin'])->group(function () {
+        Route::patch('api-management/{apiKey}/toggle', [\App\Http\Controllers\ApiManagementController::class, 'toggleActive'])->name('api-management.toggle');
+        Route::post('api-management/{apiKey}/regenerate', [\App\Http\Controllers\ApiManagementController::class, 'regenerate'])->name('api-management.regenerate');
+        Route::resource('api-management', \App\Http\Controllers\ApiManagementController::class)->except(['edit', 'update', 'show']);
+    });
 });
 
 // ============================================
