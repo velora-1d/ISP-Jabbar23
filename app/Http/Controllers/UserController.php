@@ -20,10 +20,13 @@ class UserController extends Controller
      */
     public function index()
     {
-        // Ambil semua user kecuali yang punya role Reseller atau technician (karena mereka ada menu sendiri)
-        $users = User::with('roles')->whereDoesntHave('roles', function ($q) {
-            $q->whereIn('name', ['reseller', 'technician']);
-        })->get();
+        // Ambil semua karyawan internal (termasuk teknisi/noc)
+        // Kita whitelist role yang dianggap sebagai pegawai internal
+        $internalRoles = ['super-admin', 'admin', 'sales', 'finance', 'noc', 'warehouse', 'hrd'];
+
+        $users = User::with('roles')->whereHas('roles', function ($q) use ($internalRoles) {
+            $q->whereIn('name', $internalRoles);
+        })->orderBy('name')->get();
 
         return view('users.index', compact('users'));
     }
@@ -33,8 +36,9 @@ class UserController extends Controller
      */
     public function create()
     {
-        // Ambil semua role kecuali reseller dan technician
-        $roles = \Spatie\Permission\Models\Role::whereNotIn('name', ['reseller', 'technician'])->get();
+        // Ambil semua role internal
+        $internalRoles = ['super-admin', 'admin', 'sales', 'finance', 'noc', 'warehouse', 'hrd'];
+        $roles = \Spatie\Permission\Models\Role::whereIn('name', $internalRoles)->get();
         return view('users.create', compact('roles'));
     }
 
