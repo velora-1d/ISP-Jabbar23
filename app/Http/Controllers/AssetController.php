@@ -102,8 +102,7 @@ class AssetController extends Controller
 
     public function destroy(Asset $asset): RedirectResponse
     {
-        /** @var Asset $asset */
-        $asset->delete();
+        Asset::destroy($asset->getKey());
 
         return redirect()->route('assets.index')
             ->with('success', 'Asset berhasil dihapus!');
