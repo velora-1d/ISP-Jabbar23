@@ -108,7 +108,7 @@ class ReportController extends Controller
 
         $pendingInvoices = Invoice::query()
             ->whereIn('status', ['unpaid', 'partial'])
-            ->sum('total');
+            ->sum('amount');
 
         $paidCount = Invoice::query()
             ->where('status', '=', 'paid')
