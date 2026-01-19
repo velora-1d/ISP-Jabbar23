@@ -2,7 +2,8 @@
 
 ## Complete 46-Menu Implementation for International-Standard ISP Management System
 
-> **Document Version:** 1.0  
+> ## Document Version: 1.0
+>
 > **Created:** 2026-01-18  
 > **Status:** Planning Phase
 
@@ -13,8 +14,8 @@
 | Metric                       | Value  |
 | ---------------------------- | ------ |
 | Total Menus Planned          | **46** |
-| Currently Implemented        | **33** |
-| To Be Developed              | **13** |
+| Currently Implemented        | **40** |
+| To Be Developed              | **6**  |
 | Total Roles                  | **8**  |
 | Estimated Development Phases | **4**  |
 
@@ -109,7 +110,7 @@
 | 29  | Inventory         | `/inventory`       | `archive`          | SA, Warehouse          | ✅ Done | -        |
 | 30  | Assets            | `/assets`          | `desktop-computer` | SA, Warehouse          | ✅ Done | -        |
 | 31  | Suppliers/Vendors | `/vendors`         | `truck`            | SA, Warehouse          | ✅ Done | -        |
-| 32  | Purchase Orders   | `/purchase-orders` | `shopping-cart`    | SA, Warehouse, Finance | ❌ Todo | P2       |
+| 32  | Purchase Orders   | `/purchase-orders` | `shopping-cart`    | SA, Warehouse, Finance | ✅ Done | -        |
 
 ---
 
@@ -120,7 +121,7 @@
 | 33  | Employees        | `/employees`  | `users`        | SA, HRD          | ✅ Done (as Karyawan) | -        |
 | 34  | Attendance       | `/attendance` | `finger-print` | SA, HRD          | ✅ Done               | -        |
 | 35  | Payroll          | `/payroll`    | `cash`         | SA, HRD, Finance | ✅ Done               | -        |
-| 36  | Leave Management | `/leave`      | `calendar`     | SA, HRD          | ❌ Todo               | P3       |
+| 36  | Leave Management | `/leave`      | `calendar`     | SA, HRD          | ✅ Done               | -        |
 
 ---
 

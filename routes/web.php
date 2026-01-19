@@ -172,6 +172,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('payroll', \App\Http\Controllers\PayrollController::class);
         Route::patch('payroll/{payroll}/approve', [\App\Http\Controllers\PayrollController::class, 'approve'])->name('payroll.approve');
         Route::patch('payroll/{payroll}/paid', [\App\Http\Controllers\PayrollController::class, 'markPaid'])->name('payroll.markPaid');
+
+        // Leave Management
+        Route::resource('leave', \App\Http\Controllers\LeaveController::class);
+        Route::patch('leave/{leave}/approve', [\App\Http\Controllers\LeaveController::class, 'approve'])->name('leave.approve');
+        Route::patch('leave/{leave}/reject', [\App\Http\Controllers\LeaveController::class, 'reject'])->name('leave.reject');
+    });
+
+    // Inventory Routes
+    Route::middleware(['role:super-admin|admin|finance'])->group(function () {
+        // Purchase Orders
+        Route::resource('purchase-orders', \App\Http\Controllers\PurchaseOrderController::class);
+        Route::patch('purchase-orders/{purchase_order}/approve', [\App\Http\Controllers\PurchaseOrderController::class, 'approve'])->name('purchase-orders.approve');
+        Route::patch('purchase-orders/{purchase_order}/cancel', [\App\Http\Controllers\PurchaseOrderController::class, 'cancel'])->name('purchase-orders.cancel');
     });
 
     // Payment Manual & Gateway
@@ -180,6 +193,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('payment/{invoice}/create', [PaymentController::class, 'createTransaction'])
         ->name('payment.create');
+
+    // Reports Routes
+    Route::middleware(['role:super-admin|admin|finance'])->prefix('reports')->name('reports.')->group(function () {
+        Route::get('revenue', [ReportController::class, 'revenue'])->name('revenue');
+        Route::get('customers', [ReportController::class, 'customers'])->name('customers');
+        Route::get('network', [ReportController::class, 'network'])->name('network');
+        Route::get('commissions', [ReportController::class, 'commissions'])->name('commissions');
+    });
+
+    // Audit Logs (Super Admin Only)
+    Route::middleware(['role:super-admin'])->group(function () {
+        Route::get('audit-logs', [\App\Http\Controllers\AuditLogController::class, 'index'])->name('audit-logs.index');
+        Route::get('audit-logs/{auditLog}', [\App\Http\Controllers\AuditLogController::class, 'show'])->name('audit-logs.show');
+        Route::delete('audit-logs', [\App\Http\Controllers\AuditLogController::class, 'destroy'])->name('audit-logs.clear');
+    });
 });
 
 // ============================================

@@ -166,7 +166,7 @@
             <x-menu-item route="vendors.index" label="Vendors" color-from="orange-500" color-to="red-600">
                <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/></svg></x-slot:icon>
             </x-menu-item>
-            <x-menu-item route="purchase-orders.index" label="Purchase Orders" :soon="true" color-from="red-500" color-to="rose-600">
+            <x-menu-item route="purchase-orders.index" label="Purchase Orders" color-from="red-500" color-to="rose-600">
                <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg></x-slot:icon>
             </x-menu-item>
          </div>
@@ -190,8 +190,32 @@
             <x-menu-item route="payroll.index" label="Payroll" color-from="fuchsia-500" color-to="purple-600">
                <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg></x-slot:icon>
             </x-menu-item>
-            <x-menu-item route="leave.index" label="Leave Management" :soon="true" color-from="purple-500" color-to="indigo-600">
+            <x-menu-item route="leave.index" label="Leave Management" color-from="purple-500" color-to="indigo-600">
                <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></x-slot:icon>
+            </x-menu-item>
+         </div>
+         @endhasanyrole
+
+         {{-- Reports --}}
+         @hasanyrole('super-admin|admin|finance')
+         <li class="px-2 pt-4 pb-1">
+            <button @click="open = open === 'reports' ? '' : 'reports'; localStorage.setItem('sidebarOpen', open)" class="w-full flex items-center justify-between text-gray-500 hover:text-gray-300 transition">
+               <span class="text-xs font-semibold uppercase tracking-wider">Reports</span>
+               <svg class="w-4 h-4 transition-transform" :class="open === 'reports' ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+            </button>
+         </li>
+         <div x-show="open === 'reports'" x-collapse>
+            <x-menu-item route="reports.revenue" label="Revenue Report" color-from="emerald-500" color-to="teal-600">
+               <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3-.895 3-2-1.343-2-3-2zM12 6v2m0 8v2m-6-6h2m8 0h2"/></svg></x-slot:icon>
+            </x-menu-item>
+            <x-menu-item route="reports.customers" label="Customer Report" color-from="blue-500" color-to="indigo-600">
+               <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg></x-slot:icon>
+            </x-menu-item>
+            <x-menu-item route="reports.network" label="Network Report" color-from="cyan-500" color-to="blue-600">
+               <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12a2 2 0 00-2 2v4a2 2 0 002 2h14a2 2 0 002-2v-4a2 2 0 00-2-2"/></svg></x-slot:icon>
+            </x-menu-item>
+            <x-menu-item route="reports.commissions" label="Commission Report" color-from="amber-500" color-to="orange-600">
+               <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg></x-slot:icon>
             </x-menu-item>
          </div>
          @endhasanyrole
@@ -235,7 +259,7 @@
             <x-menu-item route="settings.payment-gateways" label="Payment Gateways" :soon="true" color-from="blue-500" color-to="indigo-600">
                <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg></x-slot:icon>
             </x-menu-item>
-            <x-menu-item route="audit-logs.index" label="Audit Logs" :soon="true" color-from="slate-500" color-to="gray-600">
+            <x-menu-item route="audit-logs.index" label="Audit Logs" color-from="slate-500" color-to="gray-600">
                <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg></x-slot:icon>
             </x-menu-item>
             <x-menu-item route="backup.index" label="Backup & Restore" :soon="true" color-from="green-500" color-to="emerald-600">
