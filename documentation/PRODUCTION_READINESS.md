@@ -74,18 +74,21 @@ Jika ingin melangkah ke Production, berikut hal-hal yang harus disiapkan:
 
 Kami menyarankan peluncuran bertahap:
 
-- **TAHAP 1: Go-Live Administrasi (Minggu ini)**
-    - Gunakan aplikasi untuk mencatat pelanggan dan tagihan secara manual.
-    - Admin input data.
-    - Lupakan dulu integrasi Mikrotik/WA. Fokus ke kerapihan data.
+### TAHAP 1: Go-Live Administrasi (Minggu ini)
 
-- **TAHAP 2: Integrasi Notifikasi (Minggu Depan)**
-    - Hubungkan API WhatsApp.
-    - User mulai menerima tagihan via WA.
+    *   Gunakan aplikasi untuk mencatat pelanggan dan tagihan secara manual.
+    *   Admin input data.
+    *   Lupakan dulu integrasi Mikrotik/WA. Fokus ke kerapihan data.
 
-- **TAHAP 3: Full Automation (Bulan Depan)**
-    - Hubungkan API MikroTik.
-    - Fitur Isolir Otomatis dijalankan.
+### TAHAP 2: Integrasi Notifikasi (Minggu Depan)
+
+    *   Hubungkan API WhatsApp.
+    *   User mulai menerima tagihan via WA.
+
+### TAHAP 3: Full Automation (Bulan Depan)
+
+    *   Hubungkan API MikroTik.
+    *   Fitur Isolir Otomatis dijalankan.
 
 ---
 
