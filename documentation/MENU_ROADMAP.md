@@ -87,7 +87,7 @@
 | 20  | Tickets           | `/tickets`        | `ticket`    | SA, Sales, NOC, Tech | ✅ Done | -        |
 | 21  | Knowledge Base    | `/knowledge-base` | `book-open` | SA, Sales, NOC, Tech | ❌ Todo | P3       |
 | 22  | SLA Management    | `/sla`            | `clock`     | SA, NOC              | ❌ Todo | P3       |
-| 23  | Customer Messages | `/messages`       | `chat`      | SA, Sales            | ❌ Todo | P2       |
+| 23  | Customer Messages | `/messages`       | `chat`      | SA, Sales            | ✅ Done | -        |
 
 ---
 
@@ -99,7 +99,7 @@
 | 25  | Work Orders          | `/work-orders`          | `clipboard-list`  | SA, NOC, Tech | ✅ Done | -        |
 | 26  | Scheduling           | `/scheduling`           | `calendar`        | SA, NOC, Tech | ✅ Done | -        |
 | 27  | GPS Tracking         | `/tracking`             | `location-marker` | SA, NOC       | ❌ Todo | P3       |
-| 28  | Installation Reports | `/reports/installation` | `document-report` | SA, NOC, Tech | ❌ Todo | P2       |
+| 28  | Installation Reports | `/installation-reports` | `document-report` | SA, NOC, Tech | ✅ Done | -        |
 
 ---
 
@@ -132,7 +132,7 @@
 | 37  | User Management     | `/users`          | `user-circle`  | SA    | ✅ Done            | -        |
 | 38  | Roles & Permissions | `/roles`          | `shield-check` | SA    | ✅ Done (in Users) | -        |
 | 39  | Settings            | `/settings`       | `cog`          | SA    | ✅ Done            | -        |
-| 40  | Audit Logs          | `/audit-logs`     | `eye`          | SA    | ❌ Todo            | P1       |
+| 40  | Audit Logs          | `/audit-logs`     | `eye`          | SA    | ✅ Done            | -        |
 | 41  | Backup & Restore    | `/backup`         | `database`     | SA    | ❌ Todo            | P3       |
 | 42  | API Management      | `/api-management` | `code`         | SA    | ❌ Todo            | P3       |
 
@@ -144,7 +144,7 @@
 | --- | ------------------- | ------------- | -------------- | ------------------ | ------- | -------- |
 | 43  | Partners/Resellers  | `/partners`   | `user-group`   | SA, Sales          | ✅ Done | -        |
 | 44  | Campaigns           | `/campaigns`  | `speakerphone` | SA, Sales          | ❌ Todo | P3       |
-| 45  | Promotions/Vouchers | `/promotions` | `tag`          | SA, Sales, Finance | ❌ Todo | P2       |
+| 45  | Promotions/Vouchers | `/promotions` | `tag`          | SA, Sales, Finance | ✅ Done | -        |
 | 46  | Referral Program    | `/referrals`  | `share`        | SA, Sales          | ❌ Todo | P3       |
 
 ---

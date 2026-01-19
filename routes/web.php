@@ -208,6 +208,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('audit-logs/{auditLog}', [\App\Http\Controllers\AuditLogController::class, 'show'])->name('audit-logs.show');
         Route::delete('audit-logs', [\App\Http\Controllers\AuditLogController::class, 'destroy'])->name('audit-logs.clear');
     });
+
+    // Customer Messages
+    Route::middleware(['role:super-admin|admin|sales'])->group(function () {
+        Route::resource('messages', \App\Http\Controllers\MessageController::class)->except(['edit', 'update', 'destroy']);
+        Route::get('messages/conversation/{customer}', [\App\Http\Controllers\MessageController::class, 'show'])->name('messages.conversation');
+        Route::post('messages/quick', [\App\Http\Controllers\MessageController::class, 'sendQuick'])->name('messages.quick');
+    });
+
+    // Installation Reports
+    Route::middleware(['role:super-admin|admin|noc|technician'])->group(function () {
+        Route::resource('installation-reports', \App\Http\Controllers\InstallationReportController::class);
+    });
+
+    // Promotions
+    Route::middleware(['role:super-admin|admin|sales|finance'])->group(function () {
+        Route::patch('promotions/{promotion}/toggle-active', [\App\Http\Controllers\PromotionController::class, 'toggleActive'])->name('promotions.toggle-active');
+        Route::resource('promotions', \App\Http\Controllers\PromotionController::class);
+    });
 });
 
 // ============================================
