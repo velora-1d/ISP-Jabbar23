@@ -205,7 +205,7 @@ class ReportController extends Controller
             'total_allocated' => Customer::query()
                 ->where('customers.status', '=', 'active')
                 ->join('packages', 'customers.package_id', '=', 'packages.id')
-                ->sum('packages.bandwidth'),
+                ->sum('packages.speed_down'),
         ];
 
         return view('reports.network', compact('odpStats', 'oltStats', 'routerStats', 'bandwidthUsage'));
