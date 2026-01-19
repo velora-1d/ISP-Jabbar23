@@ -41,8 +41,8 @@
                     </svg>
                 </div>
                 <div>
-                    <p class="text-sm text-gray-400">Sudah Dibayar</p>
-                    <p class="text-2xl font-bold text-emerald-400">Rp {{ number_format($paidCommissions, 0, ',', '.') }}</p>
+                    <p class="text-sm text-gray-400">Total Partner</p>
+                    <p class="text-2xl font-bold text-emerald-400">{{ count($commissionData) }}</p>
                 </div>
             </div>
         </div>
@@ -50,12 +50,12 @@
             <div class="flex items-center gap-4">
                 <div class="p-3 rounded-xl bg-gradient-to-br from-yellow-500 to-amber-600">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
                     </svg>
                 </div>
                 <div>
-                    <p class="text-sm text-gray-400">Pending</p>
-                    <p class="text-2xl font-bold text-yellow-400">Rp {{ number_format($pendingCommissions, 0, ',', '.') }}</p>
+                    <p class="text-sm text-gray-400">Aktif Partner</p>
+                    <p class="text-2xl font-bold text-yellow-400">{{ $topPerformers->count() }}</p>
                 </div>
             </div>
         </div>
@@ -64,7 +64,7 @@
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Top Performers -->
         <div class="bg-gray-800/50 backdrop-blur-xl rounded-2xl border border-gray-700/50 p-6">
-            <h3 class="text-lg font-semibold text-white mb-4">Top Performers</h3>
+            <h3 class="text-lg font-semibold text-white mb-4">Top Performers (by Customers)</h3>
             <div class="space-y-3">
                 @forelse($topPerformers as $index => $performer)
                 <div class="flex items-center justify-between p-3 bg-gray-700/30 rounded-xl">
@@ -72,11 +72,10 @@
                         <div class="w-8 h-8 rounded-lg bg-gradient-to-br {{ $index == 0 ? 'from-yellow-500 to-amber-600' : ($index == 1 ? 'from-gray-300 to-gray-400' : ($index == 2 ? 'from-orange-600 to-amber-700' : 'from-gray-500 to-gray-600')) }} flex items-center justify-center">
                             <span class="text-white font-bold text-sm">{{ $index + 1 }}</span>
                         </div>
-                        <span class="text-white font-medium">{{ $performer->partner->name ?? 'Unknown' }}</span>
+                        <span class="text-white font-medium">{{ $performer->name ?? 'Unknown' }}</span>
                     </div>
                     <div class="text-right">
-                        <p class="text-amber-400 font-bold">Rp {{ number_format($performer->total, 0, ',', '.') }}</p>
-                        <p class="text-xs text-gray-400">{{ $performer->count }} transaksi</p>
+                        <p class="text-amber-400 font-bold">{{ $performer->customers_count ?? 0 }} customer</p>
                     </div>
                 </div>
                 @empty
@@ -88,29 +87,32 @@
         <!-- Commission List -->
         <div class="lg:col-span-2 bg-gray-800/50 backdrop-blur-xl rounded-2xl border border-gray-700/50 overflow-hidden">
             <div class="p-6 border-b border-gray-700">
-                <h3 class="text-lg font-semibold text-white">Riwayat Komisi</h3>
+                <h3 class="text-lg font-semibold text-white">Komisi per Partner (Periode Ini)</h3>
             </div>
             <div class="max-h-96 overflow-y-auto">
                 <table class="w-full">
                     <thead class="bg-gray-900/50 sticky top-0">
                         <tr>
                             <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Partner</th>
-                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Tanggal</th>
-                            <th class="px-6 py-3 text-right text-xs font-semibold text-gray-400 uppercase">Amount</th>
-                            <th class="px-6 py-3 text-left text-xs font-semibold text-gray-400 uppercase">Status</th>
+                            <th class="px-6 py-3 text-right text-xs font-semibold text-gray-400 uppercase">Rate</th>
+                            <th class="px-6 py-3 text-right text-xs font-semibold text-gray-400 uppercase">Customer Payments</th>
+                            <th class="px-6 py-3 text-right text-xs font-semibold text-gray-400 uppercase">Komisi</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-700/50">
-                        @forelse($salesCommissions as $commission)
+                        @forelse($commissionData as $data)
                         <tr class="hover:bg-gray-700/30">
-                            <td class="px-6 py-3 text-white">{{ $commission->partner->name ?? 'Unknown' }}</td>
-                            <td class="px-6 py-3 text-gray-300">{{ $commission->created_at->format('d M Y') }}</td>
-                            <td class="px-6 py-3 text-right text-amber-400 font-bold">Rp {{ number_format($commission->amount, 0, ',', '.') }}</td>
                             <td class="px-6 py-3">
-                                <span class="px-2 py-1 rounded-full text-xs font-medium {{ $commission->status === 'paid' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-yellow-500/20 text-yellow-400' }}">
-                                    {{ ucfirst($commission->status) }}
-                                </span>
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center">
+                                        <span class="text-white font-bold text-sm">{{ strtoupper(substr($data['partner']->name ?? 'P', 0, 1)) }}</span>
+                                    </div>
+                                    <span class="text-white font-medium">{{ $data['partner']->name ?? 'Unknown' }}</span>
+                                </div>
                             </td>
+                            <td class="px-6 py-3 text-right text-gray-300">{{ $data['partner']->commission_rate ?? 0 }}%</td>
+                            <td class="px-6 py-3 text-right text-gray-300">Rp {{ number_format($data['customer_payments'], 0, ',', '.') }}</td>
+                            <td class="px-6 py-3 text-right text-amber-400 font-bold">Rp {{ number_format($data['amount'], 0, ',', '.') }}</td>
                         </tr>
                         @empty
                         <tr>
