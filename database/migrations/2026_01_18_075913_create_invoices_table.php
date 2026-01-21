@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -19,7 +18,7 @@ return new class extends Migration
             $table->date('period_start'); // 2026-01-01
             $table->date('period_end');   // 2026-01-31
             $table->date('due_date');     // 2026-01-10
-            $table->enum('status', ['unpaid', 'paid', 'overdue', 'cancelled'])->default('unpaid');
+            $table->enum('status', ['unpaid', 'partial', 'paid', 'overdue', 'cancelled'])->default('unpaid');
             $table->date('payment_date')->nullable();
             $table->string('payment_method')->nullable();
             $table->timestamps();

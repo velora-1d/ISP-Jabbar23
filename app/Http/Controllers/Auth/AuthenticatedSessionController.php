@@ -38,9 +38,15 @@ class AuthenticatedSessionController extends Controller
         }
 
         if ($user->hasRole('Reseller')) {
-             // Future implementation: return redirect()->route('reseller.dashboard');
-             return redirect()->intended(route('dashboard', absolute: false));
+            // Future implementation: return redirect()->route('reseller.dashboard');
+            return redirect()->intended(route('dashboard', absolute: false));
         }
+
+        \App\Models\AuditLog::log(
+            'login',
+            "User {$user->email} logged in",
+            $user
+        );
 
         return redirect()->intended(route('dashboard', absolute: false));
     }
@@ -50,6 +56,14 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+        if (Auth::guard('web')->check()) {
+            \App\Models\AuditLog::log(
+                'logout',
+                "User " . Auth::user()->email . " logged out",
+                Auth::user()
+            );
+        }
+
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();

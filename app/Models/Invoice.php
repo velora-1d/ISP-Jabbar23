@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -23,6 +24,7 @@ use Illuminate\Support\Carbon;
  */
 class Invoice extends Model
 {
+    use HasFactory;
     protected $fillable = [
         'invoice_number',
         'customer_id',
@@ -121,7 +123,7 @@ class Invoice extends Model
         if ($this->status !== 'paid') {
             return 'Belum Bayar';
         }
-        
+
         $daysLate = $this->days_late;
         if ($daysLate <= 0) {
             return 'Tepat Waktu';

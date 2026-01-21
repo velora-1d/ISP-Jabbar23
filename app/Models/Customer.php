@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -9,6 +10,7 @@ use Illuminate\Support\Facades\Auth;
 
 class Customer extends Model
 {
+    use HasFactory;
     // Status constants for ISP workflow
     public const STATUS_REGISTERED = 'registered';
     public const STATUS_SURVEY = 'survey';
@@ -165,7 +167,7 @@ class Customer extends Model
      */
     public function getStatusColorAttribute(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             'active' => 'emerald',
             'registered', 'survey' => 'blue',
             'approved', 'scheduled' => 'cyan',
@@ -218,7 +220,7 @@ class Customer extends Model
     public function getPaymentScoreAttribute(): ?float
     {
         $paidInvoices = $this->invoices()->paid()->get();
-        
+
         if ($paidInvoices->isEmpty()) {
             return null;
         }
@@ -233,11 +235,11 @@ class Customer extends Model
     public function getPaymentLabelAttribute(): string
     {
         $score = $this->payment_score;
-        
+
         if ($score === null) {
             return 'Belum Ada Data';
         }
-        
+
         if ($score >= 90) {
             return 'Sangat Rajin';
         } elseif ($score >= 70) {
@@ -255,11 +257,15 @@ class Customer extends Model
     public function getPaymentLabelColorAttribute(): string
     {
         $score = $this->payment_score;
-        
-        if ($score === null) return 'gray';
-        if ($score >= 90) return 'emerald';
-        if ($score >= 70) return 'blue';
-        if ($score >= 50) return 'amber';
+
+        if ($score === null)
+            return 'gray';
+        if ($score >= 90)
+            return 'emerald';
+        if ($score >= 70)
+            return 'blue';
+        if ($score >= 50)
+            return 'amber';
         return 'red';
     }
 
@@ -269,7 +275,7 @@ class Customer extends Model
     public function getPaymentStatsAttribute(): array
     {
         $invoices = $this->invoices()->paid()->get();
-        
+
         return [
             'total_paid' => $invoices->count(),
             'on_time' => $invoices->filter(fn($i) => $i->is_on_time === true)->count(),

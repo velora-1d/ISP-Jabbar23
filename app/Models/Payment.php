@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Payment extends Model
 {
+    use HasFactory;
     public const STATUS_PENDING = 'pending';
     public const STATUS_VERIFIED = 'verified';
     public const STATUS_CONFIRMED = 'confirmed';
@@ -96,7 +98,7 @@ class Payment extends Model
 
     public function getStatusColorAttribute(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             'pending' => 'yellow',
             'verified' => 'blue',
             'confirmed' => 'green',
@@ -124,6 +126,6 @@ class Payment extends Model
     public function scopeThisMonth($query)
     {
         return $query->whereMonth('paid_at', now()->month)
-                     ->whereYear('paid_at', now()->year);
+            ->whereYear('paid_at', now()->year);
     }
 }

@@ -20,13 +20,13 @@ class PaymentController extends Controller
     public function index(Request $request)
     {
         $query = Payment::with(['invoice', 'customer', 'processedBy']);
-        
+
         if ($request->has('status') && $request->status != '') {
             $query->where('status', $request->status);
         }
 
         $payments = $query->latest()->paginate(15);
-        
+
         // Calculate stats
         $stats = [
             'total' => Payment::where('status', '=', 'confirmed', 'and')->sum('amount'),
@@ -34,7 +34,7 @@ class PaymentController extends Controller
             'this_month' => Payment::where('status', '=', 'confirmed', 'and')->whereMonth('paid_at', now()->month)->whereYear('paid_at', now()->year)->sum('amount'),
             'pending' => Payment::where('status', '=', 'pending', 'and')->count(['*']),
         ];
-        
+
         return view('payments.index', compact('payments', 'stats'));
     }
 
@@ -53,22 +53,22 @@ class PaymentController extends Controller
         DB::transaction(function () use ($validated, $invoice) {
             // Check current paid amount excluding this one
             $previouslyPaid = $invoice->payments()->whereIn('status', ['confirmed', 'verified'])->sum('amount');
-            
+
             $payment = Payment::create([
                 'invoice_id' => $invoice->id,
                 'customer_id' => $invoice->customer_id,
                 'amount' => $validated['amount'],
                 'payment_method' => $validated['payment_method'],
-                'reference_number' => $validated['reference_number'],
+                'reference_number' => $validated['reference_number'] ?? null,
                 'paid_at' => now(),
                 'processed_by' => Auth::id(),
                 'status' => 'confirmed', // Assuming manual entry by admin is auto-confirmed
-                'notes' => $validated['notes'],
+                'notes' => $validated['notes'] ?? null,
             ]);
 
             // Calculate total including new payment
             $totalPaid = $previouslyPaid + $validated['amount'];
-            
+
             if ($totalPaid >= $invoice->amount) {
                 $invoice->update([
                     'status' => 'paid',
@@ -116,10 +116,10 @@ class PaymentController extends Controller
 
         try {
             $snapToken = $midtrans->getSnapToken($params);
-            
+
             // Simpan record payment pending (Optional, tapi bagus buat track)
             // Payment::create([... 'status' => 'pending', 'reference_number' => $transactionId ...]);
-            
+
             return response()->json(['snap_token' => $snapToken]);
         } catch (\Exception $e) {
             return response()->json(['error' => $e->getMessage()], 500);
@@ -142,11 +142,20 @@ class PaymentController extends Controller
         $orderId = $notif->order_id;
         $fraud = $notif->fraud_status;
 
+        // Security: Verify Signature Key
+        // SHA512(order_id + status_code + gross_amount + ServerKey)
+        $input = $orderId . $notif->status_code . $notif->gross_amount . config('midtrans.server_key');
+        $signature = openssl_digest($input, 'sha512');
+
+        if ($signature != $notif->signature_key) {
+            return response('Invalid Signature', 403);
+        }
+
         // Extract Invoice Number from Order ID (Format: INV-XXXX-TIMESTAMP)
         // Split by last dash to separate timestamp
         $lastDashPos = strrpos($orderId, '-');
         $invoiceNumber = substr($orderId, 0, $lastDashPos);
-        
+
         $invoice = Invoice::where('invoice_number', '=', $invoiceNumber, 'and')->first();
         if (!$invoice) {
             return response('Invoice Not Found', 404);
@@ -175,40 +184,35 @@ class PaymentController extends Controller
         return response('OK');
     }
 
-    private function recordPayment($invoice, $notif, $status) 
+    private function recordPayment($invoice, $notif, $status)
     {
         // Check duplication
-        if ($invoice->payments()->where('reference_number', $notif->order_id)->exists()) {
+        $exist = Payment::where('order_id', $notif->order_id)->exists();
+        if ($exist)
             return;
-        }
 
-        DB::transaction(function() use ($invoice, $notif, $status) {
+        DB::transaction(function () use ($invoice, $notif, $status) {
             Payment::create([
                 'invoice_id' => $invoice->id,
-                'customer_id' => $invoice->customer_id,
                 'amount' => $notif->gross_amount,
-                'payment_method' => 'midtrans_' . $notif->payment_type,
-                'reference_number' => $notif->order_id,
-                'paid_at' => now(),
                 'status' => $status,
-                'notes' => 'Midtrans Automated Payment',
+                'order_id' => $notif->order_id,
+                'payment_type' => $notif->payment_type,
+                'transaction_time' => $notif->transaction_time,
+                'raw_response' => json_encode($notif)
             ]);
 
-            // Update Invoice Status
-            $totalPaid = $invoice->payments()->whereIn('status', ['confirmed', 'verified'])->sum('amount');
-            if ($totalPaid + $notif->gross_amount >= $invoice->amount) { // + current amount unnecessary if create inside tx? Wait, sum() excludes current if not committed? No, create is called.
-                // Re-query total
-                $totalPaid = $invoice->payments()->whereIn('status', ['confirmed', 'verified'])->sum('amount');
-            }
+            // Update Invoice Status if Paid
+            if ($status == 'verified') {
+                $invoice->update(['status' => 'paid']);
 
-            if ($totalPaid >= $invoice->amount) {
-                $invoice->update([
-                    'status' => 'paid', 
-                    'payment_date' => now(),
-                    'payment_method' => 'midtrans'
-                ]);
-            } else {
-                $invoice->update(['status' => 'partial']);
+                \App\Models\AuditLog::log(
+                    'payment_received',
+                    "Payment received via {$notif->payment_type} for Invoice {$invoice->invoice_number}",
+                    $invoice,
+                    [],
+                    ['amount' => $notif->gross_amount, 'status' => 'paid']
+                );
             }
         });
     }

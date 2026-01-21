@@ -45,10 +45,10 @@ class CustomerController extends Controller
             'pending' => Customer::whereIn('status', ['registered', 'survey', 'approved', 'scheduled', 'installing'])->count(),
             'suspended' => Customer::where('status', 'suspended')->count(),
         ];
-        
+
         $statuses = Customer::STATUSES;
         $packages = Package::orderBy('name')->get();
-        
+
         // Filter Options
         $kelurahans = Customer::distinct()->whereNotNull('kelurahan')->where('kelurahan', '!=', '')->pluck('kelurahan')->sort();
         $kecamatans = Customer::distinct()->whereNotNull('kecamatan')->where('kecamatan', '!=', '')->pluck('kecamatan')->sort();
@@ -56,13 +56,13 @@ class CustomerController extends Controller
         $provinsis = Customer::distinct()->whereNotNull('provinsi')->where('provinsi', '!=', '')->pluck('provinsi')->sort();
 
         return view('customers.index', compact(
-            'customers', 
-            'stats', 
-            'statuses', 
-            'packages', 
-            'kelurahans', 
-            'kecamatans', 
-            'kabupatens', 
+            'customers',
+            'stats',
+            'statuses',
+            'packages',
+            'kelurahans',
+            'kecamatans',
+            'kabupatens',
             'provinsis'
         ));
     }
@@ -84,7 +84,7 @@ class CustomerController extends Controller
     public function store(Request $request): RedirectResponse
     {
         $validStatuses = implode(',', array_keys(Customer::STATUSES));
-        
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
@@ -140,7 +140,7 @@ class CustomerController extends Controller
     public function update(Request $request, Customer $customer): RedirectResponse
     {
         $validStatuses = implode(',', array_keys(Customer::STATUSES));
-        
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'phone' => 'nullable|string|max:20',
@@ -175,7 +175,7 @@ class CustomerController extends Controller
     public function updateStatus(Request $request, Customer $customer): RedirectResponse
     {
         $validStatuses = implode(',', array_keys(Customer::STATUSES));
-        
+
         $validated = $request->validate([
             'status' => "required|in:{$validStatuses}",
             'notes' => 'nullable|string'
@@ -198,6 +198,14 @@ class CustomerController extends Controller
             }
         }
 
+        \App\Models\AuditLog::log(
+            'update_status',
+            "Customer status updated to {$validated['status']}",
+            $customer,
+            ['status' => $customer->getOriginal('status')],
+            ['status' => $validated['status']]
+        );
+
         return back()->with('success', 'Status progres berhasil diupdate!');
     }
 
@@ -218,7 +226,7 @@ class CustomerController extends Controller
     public function paymentHistory(Request $request, Customer $customer): View
     {
         $query = $customer->invoices()->orderByDesc('period_start');
-        
+
         // Filter by year if provided
         if ($request->filled('year')) {
             $query->whereYear('period_start', $request->year);
@@ -233,7 +241,7 @@ class CustomerController extends Controller
         }
 
         $invoices = $query->paginate(12)->withQueryString();
-        
+
         // Get unique years for filter dropdown
         $years = $customer->invoices()
             ->selectRaw('YEAR(period_start) as year')
