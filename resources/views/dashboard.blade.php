@@ -30,47 +30,117 @@
 
                 <!-- Dashboard Filter -->
                 <div class="mb-6 bg-gray-800/50 backdrop-blur-sm rounded-2xl border border-gray-700/50 p-4">
-                    <form method="GET" action="{{ route('dashboard') }}" class="flex items-center gap-3 flex-wrap">
-                        <span class="text-sm text-gray-400 font-medium">
-                            <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                    d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
-                            </svg>
-                            Filter:
-                        </span>
-
-                        <!-- Month Filter -->
-                        <select name="month"
-                            class="bg-gray-900/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all cursor-pointer hover:border-gray-500"
-                            onchange="this.form.submit()">
-                            <option value="">Semua Bulan</option>
-                            @foreach(['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'] as $index => $bulan)
-                                <option value="{{ $index + 1 }}" {{ request('month') == ($index + 1) ? 'selected' : '' }}>
-                                    {{ $bulan }}</option>
-                            @endforeach
-                        </select>
-
-                        <!-- Year Filter -->
-                        <select name="year"
-                            class="bg-gray-900/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all cursor-pointer hover:border-gray-500"
-                            onchange="this.form.submit()">
-                            @for($y = date('Y'); $y >= 2020; $y--)
-                                <option value="{{ $y }}" {{ request('year', date('Y')) == $y ? 'selected' : '' }}>{{ $y }}
-                                </option>
-                            @endfor
-                        </select>
-
-                        <!-- Reset Button -->
-                        @if(request('month') || (request('year') && request('year') != date('Y')))
-                            <a href="{{ route('dashboard') }}"
-                                class="px-3 py-2 text-sm bg-gray-700/50 hover:bg-gray-600 text-gray-300 rounded-lg transition-colors inline-flex items-center gap-1">
-                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <form method="GET" action="{{ route('dashboard') }}" id="dashboardFilterForm">
+                        <!-- Row 1: Quick Presets -->
+                        <div class="flex items-center gap-2 mb-3 flex-wrap">
+                            <span class="text-sm text-gray-400 font-medium mr-2">
+                                <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M6 18L18 6M6 6l12 12" />
+                                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                                 </svg>
-                                Reset
-                            </a>
-                        @endif
+                                Periode:
+                            </span>
+                            @php
+                                $presets = [
+                                    'today' => 'Hari Ini',
+                                    'week' => 'Minggu Ini',
+                                    'last7' => '7 Hari',
+                                    'last30' => '30 Hari',
+                                    'last_month' => 'Bulan Lalu',
+                                ];
+                            @endphp
+                            @foreach($presets as $key => $label)
+                                <button type="submit" name="preset" value="{{ $key }}"
+                                    class="px-3 py-1.5 text-xs rounded-lg transition-all {{ request('preset') == $key ? 'bg-cyan-600 text-white' : 'bg-gray-700/50 text-gray-300 hover:bg-gray-600' }}">
+                                    {{ $label }}
+                                </button>
+                            @endforeach
+                        </div>
+
+                        <!-- Row 2: Detailed Filters -->
+                        <div class="flex items-center gap-3 flex-wrap">
+                            <span class="text-sm text-gray-400 font-medium">
+                                <svg class="w-4 h-4 inline-block mr-1" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z" />
+                                </svg>
+                                Filter:
+                            </span>
+
+                            <!-- Month Filter -->
+                            <select name="month"
+                                class="bg-gray-900/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all cursor-pointer hover:border-gray-500"
+                                onchange="this.form.submit()">
+                                <option value="">Bulan</option>
+                                @foreach(['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'] as $index => $bulan)
+                                    <option value="{{ $index + 1 }}" {{ request('month') == ($index + 1) ? 'selected' : '' }}>
+                                        {{ $bulan }}</option>
+                                @endforeach
+                            </select>
+
+                            <!-- Year Filter -->
+                            <select name="year"
+                                class="bg-gray-900/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all cursor-pointer hover:border-gray-500"
+                                onchange="this.form.submit()">
+                                @for($y = date('Y'); $y >= 2020; $y--)
+                                    <option value="{{ $y }}" {{ request('year', date('Y')) == $y ? 'selected' : '' }}>{{ $y }}
+                                    </option>
+                                @endfor
+                            </select>
+
+                            <!-- Divider -->
+                            <span class="text-gray-600">|</span>
+
+                            <!-- Payment Method Filter -->
+                            <select name="payment_method"
+                                class="bg-gray-900/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all cursor-pointer hover:border-gray-500"
+                                onchange="this.form.submit()">
+                                <option value="">Semua Pembayaran</option>
+                                <option value="cash" {{ request('payment_method') == 'cash' ? 'selected' : '' }}>💵 Cash
+                                </option>
+                                <option value="transfer" {{ request('payment_method') == 'transfer' ? 'selected' : '' }}>🏦
+                                    Transfer</option>
+                                <option value="gateway" {{ request('payment_method') == 'gateway' ? 'selected' : '' }}>💳
+                                    Gateway</option>
+                            </select>
+
+                            <!-- Package Filter -->
+                            <select name="package_id"
+                                class="bg-gray-900/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all cursor-pointer hover:border-gray-500"
+                                onchange="this.form.submit()">
+                                <option value="">Semua Paket</option>
+                                @foreach($packages ?? [] as $package)
+                                    <option value="{{ $package->id }}" {{ request('package_id') == $package->id ? 'selected' : '' }}>{{ $package->name }}</option>
+                                @endforeach
+                            </select>
+
+                            <!-- Customer Status Filter -->
+                            <select name="customer_status"
+                                class="bg-gray-900/50 border border-gray-600 rounded-lg px-3 py-2 text-sm text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all cursor-pointer hover:border-gray-500"
+                                onchange="this.form.submit()">
+                                <option value="">Semua Status</option>
+                                <option value="active" {{ request('customer_status') == 'active' ? 'selected' : '' }}>🟢 Aktif
+                                </option>
+                                <option value="suspended" {{ request('customer_status') == 'suspended' ? 'selected' : '' }}>🔴
+                                    Suspend</option>
+                                <option value="pending" {{ request('customer_status') == 'pending' ? 'selected' : '' }}>🟡
+                                    Pending</option>
+                            </select>
+
+                            <!-- Reset Button -->
+                            @if(request()->hasAny(['preset', 'month', 'payment_method', 'package_id', 'customer_status']) || (request('year') && request('year') != date('Y')))
+                                <a href="{{ route('dashboard') }}"
+                                    class="px-3 py-2 text-sm bg-red-600/30 hover:bg-red-600/50 text-red-300 rounded-lg transition-colors inline-flex items-center gap-1 border border-red-500/30">
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                    Reset
+                                </a>
+                            @endif
+                        </div>
                     </form>
                 </div>
 
@@ -674,7 +744,7 @@
                                 });
                             }
                         @endif
-                                    });
+                                            });
             </script>
         @endpush
     @endif

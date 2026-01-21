@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Customer;
 use App\Models\Invoice;
+use App\Models\Package;
 use App\Models\Partner;
 use App\Models\Payment;
 use App\Models\SyncMapping;
@@ -133,6 +134,9 @@ class DashboardController extends Controller
 
         $years = $this->getAvailableYears();
 
+        // Get packages for filter dropdown
+        $packages = Package::orderBy('name')->get(['id', 'name']);
+
         return [
             'totalPartners' => $totalPartners,
             'totalCustomers' => $totalCustomers,
@@ -140,6 +144,7 @@ class DashboardController extends Controller
             'suspendedCustomers' => $suspendedCustomers,
             'latestPartners' => $latestPartners,
             'years' => $years,
+            'packages' => $packages,
             'newPartnersThisMonth' => $newPartnersThisMonth,
             'newCustomersThisMonth' => $newCustomersThisMonth,
         ];
