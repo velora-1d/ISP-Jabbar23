@@ -95,10 +95,14 @@
         </div>
 
         <!-- Filters -->
+        <!-- Filters -->
         <x-filter-bar :resetUrl="route('invoices.index')">
-            <x-filter-global searchPlaceholder="No. Invoice atau Nama Customer..." />
+            <x-slot name="global">
+                <x-filter-global searchPlaceholder="No. Invoice atau Nama Customer..." />
+            </x-slot>
 
-            <x-filter-select name="status" label="Status" :options="[
+            <x-slot name="filters">
+                <x-filter-select name="status" label="Status" :options="[
             'unpaid' => 'Unpaid',
             'paid' => 'Paid',
             'partial' => 'Partial',
@@ -106,8 +110,9 @@
             'cancelled' => 'Cancelled',
         ]" />
 
-            <x-filter-select name="customer_id" label="Customer" :options="$customers->pluck('name', 'id')->toArray()"
-                placeholder="Semua Customer" />
+                <x-filter-select name="customer_id" label="Customer" :options="$customers->pluck('name', 'id')->toArray()"
+                    placeholder="Semua Customer" />
+            </x-slot>
         </x-filter-bar>
 
         <!-- Table -->
