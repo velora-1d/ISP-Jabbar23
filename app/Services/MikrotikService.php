@@ -118,4 +118,30 @@ class MikrotikService
             Log::error("MikroTik Kick Error: " . $e->getMessage());
         }
     }
+
+    /**
+     * Get all PPPoE Secrets
+     */
+    public function getSecrets()
+    {
+        if (!$this->client) {
+            throw new \Exception("Not connected to any router.");
+        }
+
+        $query = new Query('/ppp/secret/print');
+        return $this->client->query($query)->read();
+    }
+
+    /**
+     * Get all PPP Profiles
+     */
+    public function getProfiles()
+    {
+        if (!$this->client) {
+            throw new \Exception("Not connected to any router.");
+        }
+
+        $query = new Query('/ppp/profile/print');
+        return $this->client->query($query)->read();
+    }
 }

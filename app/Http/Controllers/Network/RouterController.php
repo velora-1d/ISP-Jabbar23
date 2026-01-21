@@ -132,4 +132,77 @@ class RouterController extends Controller
             return response()->json(['success' => false, 'message' => $e->getMessage()], 400);
         }
     }
+
+    public function importCustomers(Router $router, \App\Services\MikrotikService $mikrotik)
+    {
+        try {
+            $mikrotik->connect($router);
+
+            // 1. Fetch Data
+            $profiles = $mikrotik->getProfiles();
+            $secrets = $mikrotik->getSecrets();
+
+            $importedCount = 0;
+            $skippedCount = 0;
+
+            // 2. Sync Profiles to Packages
+            // Map profile name to package ID
+            $packageMap = [];
+            foreach ($profiles as $profile) {
+                $name = $profile['name'];
+                $rateLimit = $profile['rate-limit'] ?? null;
+                $price = 0; // Default price, admin must update later
+
+                // Find or create package
+                $package = \App\Models\Package::firstOrCreate(
+                    ['name' => $name],
+                    [
+                        'price' => $price,
+                        'speed' => $rateLimit ?? 'Unknown',
+                        'description' => 'Imported from Mikrotik Profile: ' . $name
+                    ]
+                );
+                $packageMap[$name] = $package->id;
+            }
+
+            // 3. Process Secrets
+            foreach ($secrets as $secret) {
+                $username = $secret['name'];
+                $password = $secret['password'] ?? '';
+                $profileName = $secret['profile'] ?? 'default';
+                $isDisabled = ($secret['disabled'] ?? 'false') === 'true';
+                $localAddress = $secret['remote-address'] ?? null; // Usually implementation uses remote-address for customer IP
+
+                // Check if customer exists
+                if (\App\Models\Customer::where('pppoe_username', $username)->exists()) {
+                    $skippedCount++;
+                    continue;
+                }
+
+                $packageId = $packageMap[$profileName] ?? \App\Models\Package::first()->id;
+
+                // Create Customer
+                \App\Models\Customer::create([
+                    'customer_id' => 'CUST-' . strtoupper(uniqid()),
+                    'name' => $username, // Use username as name initially
+                    'address' => 'Imported from Mikrotik',
+                    'router_id' => $router->id,
+                    'package_id' => $packageId,
+                    'pppoe_username' => $username,
+                    'pppoe_password' => $password,
+                    'mikrotik_ip' => filter_var($localAddress, FILTER_VALIDATE_IP) ? $localAddress : null,
+                    'status' => $isDisabled ? 'suspended' : 'active',
+                    'installation_date' => now(),
+                    'billing_date' => now(),
+                ]);
+
+                $importedCount++;
+            }
+
+            return back()->with('success', "Import Successful! Imported: $importedCount, Skipped: $skippedCount");
+
+        } catch (\Exception $e) {
+            return back()->with('error', 'Import Failed: ' . $e->getMessage());
+        }
+    }
 }

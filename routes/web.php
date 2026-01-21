@@ -31,19 +31,19 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified'])->group(function () {
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    
+
     // User & Role Management
     Route::resource('users', UserController::class);
-    
+
     // Package Management
     Route::resource('packages', PackageController::class);
-    
+
     // Lead/CRM Management
     Route::post('leads/{lead}/convert', [LeadController::class, 'convert'])->name('leads.convert');
     Route::resource('leads', LeadController::class);
     Route::resource('contracts', ContractController::class);
     Route::resource('partners', PartnerController::class);
-    
+
     // Payment Management
     Route::post('payments/{payment}/verify', [PaymentController::class, 'verify'])->name('payments.verify');
     Route::post('payments/{payment}/confirm', [PaymentController::class, 'confirm'])->name('payments.confirm');
@@ -59,25 +59,25 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('work-orders/{workOrder}/add-item', [WorkOrderController::class, 'addItem'])->name('work-orders.add-item');
     Route::delete('work-order-items/{item}', [WorkOrderController::class, 'removeItem'])->name('work-order-items.destroy');
     Route::resource('work-orders', WorkOrderController::class);
-    
+
     // Technician Management
     Route::resource('technicians', TechnicianController::class);
     Route::patch('technicians/{technician}/toggle-active', [TechnicianController::class, 'toggleActive'])
         ->name('technicians.toggleActive');
-    
+
     // Vendor/Supplier Management
     Route::resource('vendors', \App\Http\Controllers\VendorController::class);
-    
+
     // Asset Management
     Route::resource('assets', \App\Http\Controllers\AssetController::class);
-    
+
     // Customer Management
     Route::patch('customers/{customer}/status', [CustomerController::class, 'updateStatus'])
         ->name('customers.updateStatus');
     Route::resource('customers', CustomerController::class);
     Route::get('customers/{customer}/payment-history', [CustomerController::class, 'paymentHistory'])
         ->name('customers.paymentHistory');
-    
+
     // Invoice Routes (specific routes before resource)
     Route::patch('invoices/{invoice}/pay', [InvoiceController::class, 'markAsPaid'])
         ->name('invoices.markAsPaid');
@@ -89,17 +89,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('invoices.payByToken');
     Route::post('invoices/generate', [InvoiceController::class, 'generate'])->name('invoices.generate');
     Route::resource('invoices', InvoiceController::class);
-    
+
     // Reports
     Route::get('reports', [ReportController::class, 'index'])->name('reports.index');
-    
+
     // Tickets / Helpdesk
     Route::resource('tickets', TicketController::class);
-    
+
     // Settings
     Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
     Route::patch('settings', [SettingController::class, 'update'])->name('settings.update');
-    
+
     // Payment Gateways
     Route::get('settings/payment-gateways', [\App\Http\Controllers\PaymentGatewayController::class, 'index'])->name('settings.payment-gateways');
     Route::post('settings/payment-gateways', [\App\Http\Controllers\PaymentGatewayController::class, 'update'])->name('settings.payment-gateways.update');
@@ -115,7 +115,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('recurring', [RecurringBillingController::class, 'index'])->name('recurring');
         Route::get('recurring/{customer}', [RecurringBillingController::class, 'show'])->name('recurring.show');
         Route::patch('recurring/{customer}/billing-date', [RecurringBillingController::class, 'updateBillingDate'])->name('recurring.update-billing-date');
-        
+
         // Proforma Invoices
         Route::get('proforma', [\App\Http\Controllers\ProformaInvoiceController::class, 'index'])->name('proforma');
         Route::get('proforma/create', [\App\Http\Controllers\ProformaInvoiceController::class, 'create'])->name('proforma.create');
@@ -123,7 +123,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('proforma/{proforma}', [\App\Http\Controllers\ProformaInvoiceController::class, 'show'])->name('proforma.show');
         Route::post('proforma/{proforma}/convert', [\App\Http\Controllers\ProformaInvoiceController::class, 'convert'])->name('proforma.convert');
         Route::post('proforma/{proforma}/cancel', [\App\Http\Controllers\ProformaInvoiceController::class, 'cancel'])->name('proforma.cancel');
-        
+
         // Credit Notes
         Route::get('credit-notes', [\App\Http\Controllers\CreditNoteController::class, 'index'])->name('credit-notes');
         Route::get('credit-notes/create', [\App\Http\Controllers\CreditNoteController::class, 'create'])->name('credit-notes.create');
@@ -139,12 +139,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::resource('olts', \App\Http\Controllers\Network\OltController::class);
         Route::get('monitoring', [\App\Http\Controllers\Network\NetworkMonitoringController::class, 'index'])->name('monitoring.index');
         Route::post('monitoring/ping', [\App\Http\Controllers\Network\NetworkMonitoringController::class, 'ping'])->name('monitoring.ping');
-        
+
         // Routers / Mikrotik
         Route::resource('routers', \App\Http\Controllers\Network\RouterController::class);
         Route::post('routers/{router}/sync', [\App\Http\Controllers\Network\RouterController::class, 'sync'])->name('routers.sync');
         Route::post('routers/{router}/test', [\App\Http\Controllers\Network\RouterController::class, 'testConnection'])->name('routers.test');
-        
+        Route::post('routers/{router}/import', [\App\Http\Controllers\Network\RouterController::class, 'importCustomers'])->name('routers.import');
+
         // IP Address Management (IPAM)
         Route::get('ipam', [\App\Http\Controllers\Network\IpamController::class, 'index'])->name('ipam.index');
         Route::get('ipam/pools/create', [\App\Http\Controllers\Network\IpamController::class, 'createPool'])->name('ipam.pools.create');
@@ -152,15 +153,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('ipam/pools/{pool}', [\App\Http\Controllers\Network\IpamController::class, 'destroyPool'])->name('ipam.pools.destroy');
         Route::post('ipam/allocate', [\App\Http\Controllers\Network\IpamController::class, 'allocate'])->name('ipam.allocate');
         Route::post('ipam/release/{address}', [\App\Http\Controllers\Network\IpamController::class, 'release'])->name('ipam.release');
-        
+
         // Bandwidth Management
         Route::resource('bandwidth', \App\Http\Controllers\Network\BandwidthController::class);
-        
+
         // Network Topology
         Route::get('topology', [\App\Http\Controllers\Network\TopologyController::class, 'index'])->name('topology.index');
         Route::get('topology/data', [\App\Http\Controllers\Network\TopologyController::class, 'data'])->name('topology.data');
     }); // End of Network Group
-    
+
     // HRD & Internal Routes
     Route::middleware(['role:super-admin|admin'])->group(function () {
         // Attendance
@@ -189,7 +190,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     // Payment Manual & Gateway
     Route::resource('payments', PaymentController::class);
-    
+
 
     Route::post('payment/{invoice}/create', [PaymentController::class, 'createTransaction'])
         ->name('payment.create');
@@ -287,4 +288,4 @@ Route::middleware('auth')->group(function () {
 Route::post('payment/webhook', [PaymentController::class, 'handleWebhook'])
     ->name('payment.webhook');
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
