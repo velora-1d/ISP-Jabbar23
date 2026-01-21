@@ -3,34 +3,36 @@
 namespace App\Http\Controllers;
 
 use App\Models\KnowledgeBaseArticle;
+use App\Traits\HasFilters;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class KnowledgeBaseController extends Controller
 {
+    use HasFilters;
+
     public function __construct()
     {
-        $this->middleware('role:super-admin|admin|sales|noc|technician');
+        $this->middleware('role:super-admin|admin|sales-cs|noc|technician');
     }
 
     public function index(Request $request)
     {
         $query = KnowledgeBaseArticle::with('author')
-            ->where('is_published', true)
-            ->orderBy('created_at', 'desc');
+            ->where('is_published', true);
 
+        // Apply global filters
+        $this->applyGlobalFilters($query, $request, [
+            'dateColumn' => 'published_at',
+            'searchColumns' => ['title', 'content']
+        ]);
+
+        // Apply category filter
         if ($request->filled('category')) {
             $query->where('category', $request->category);
         }
 
-        if ($request->filled('search')) {
-            $query->where(function ($q) use ($request) {
-                $q->where('title', 'like', '%' . $request->search . '%')
-                  ->orWhere('content', 'like', '%' . $request->search . '%');
-            });
-        }
-
-        $articles = $query->paginate(12);
+        $articles = $query->latest()->paginate(12)->withQueryString();
 
         $categories = [
             'getting-started' => 'Memulai',
@@ -65,7 +67,7 @@ class KnowledgeBaseController extends Controller
         $validated['author_id'] = auth()->id();
         $validated['slug'] = Str::slug($validated['title']);
         $validated['is_published'] = $request->has('is_published');
-        
+
         if ($validated['is_published']) {
             $validated['published_at'] = now();
         }
@@ -80,7 +82,7 @@ class KnowledgeBaseController extends Controller
     {
         $knowledgeBase->increment('views');
         $knowledgeBase->load('author');
-        
+
         $relatedArticles = KnowledgeBaseArticle::where('category', $knowledgeBase->category)
             ->where('id', '!=', $knowledgeBase->id)
             ->where('is_published', true)
@@ -105,7 +107,7 @@ class KnowledgeBaseController extends Controller
         ]);
 
         $validated['is_published'] = $request->has('is_published');
-        
+
         if ($validated['is_published'] && !$knowledgeBase->published_at) {
             $validated['published_at'] = now();
         }

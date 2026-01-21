@@ -5,47 +5,73 @@ namespace App\Http\Controllers;
 use App\Models\Message;
 use App\Models\Customer;
 use App\Services\FonnteService;
+use App\Traits\HasFilters;
 use Illuminate\Http\Request;
 
 class MessageController extends Controller
 {
+    use HasFilters;
+
     protected $fonnteService;
 
     public function __construct(FonnteService $fonnteService)
     {
-        $this->middleware('role:super-admin|admin|sales');
+        $this->middleware('role:super-admin|admin|sales-cs');
         $this->fonnteService = $fonnteService;
     }
 
     public function index(Request $request)
     {
-        $query = Message::with(['customer', 'user'])
-            ->orderBy('created_at', 'desc');
+        $query = Message::with(['customer', 'user']);
 
-        if ($request->filled('customer_id')) {
-            $query->where('customer_id', $request->customer_id);
-        }
+        // Apply global filters
+        $this->applyGlobalFilters($query, $request, [
+            'dateColumn' => 'created_at',
+            'searchColumns' => ['content', 'customer.name']
+        ]);
 
+        // Apply customer filter
+        $this->applyRelationFilter($query, $request, 'customer_id');
+
+        // Apply channel filter
         if ($request->filled('channel')) {
             $query->where('channel', $request->channel);
         }
 
+        // Apply direction filter
         if ($request->filled('direction')) {
             $query->where('direction', $request->direction);
         }
 
-        $messages = $query->paginate(25);
+        $messages = $query->latest()->paginate(25)->withQueryString();
+
+        // Stats
+        $statsQuery = Message::query();
+        if ($request->filled('year')) {
+            $statsQuery->whereYear('created_at', $request->year);
+        }
 
         $stats = [
-            'total' => Message::count('*'),
-            'today' => Message::whereDate('created_at', '=', today())->count('*'),
-            'inbound' => Message::where('direction', '=', 'inbound')->whereDate('created_at', '=', today())->count('*'),
-            'outbound' => Message::where('direction', '=', 'outbound')->whereDate('created_at', '=', today())->count('*'),
+            'total' => (clone $statsQuery)->count(),
+            'today' => Message::whereDate('created_at', today())->count(),
+            'inbound' => Message::where('direction', 'inbound')->whereDate('created_at', today())->count(),
+            'outbound' => Message::where('direction', 'outbound')->whereDate('created_at', today())->count(),
         ];
 
+        // Filter options
         $customers = Customer::where('status', 'active')->orderBy('name')->get(['id', 'name']);
+        $channels = [
+            'whatsapp' => 'WhatsApp',
+            'sms' => 'SMS',
+            'email' => 'Email',
+            'web' => 'Web',
+        ];
+        $directions = [
+            'inbound' => 'Inbound',
+            'outbound' => 'Outbound',
+        ];
 
-        return view('support.messages.index', compact('messages', 'stats', 'customers'));
+        return view('support.messages.index', compact('messages', 'stats', 'customers', 'channels', 'directions'));
     }
 
     public function create()

@@ -3,25 +3,54 @@
 namespace App\Http\Controllers;
 
 use App\Models\SlaPolicy;
+use App\Traits\HasFilters;
 use Illuminate\Http\Request;
 
 class SlaController extends Controller
 {
+    use HasFilters;
+
     public function __construct()
     {
         $this->middleware('role:super-admin|admin|noc');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $policies = SlaPolicy::orderBy('priority', 'desc')->get();
-        
+        $query = SlaPolicy::query();
+
+        // Apply global filters
+        $this->applyGlobalFilters($query, $request, [
+            'dateColumn' => 'created_at',
+            'searchColumns' => ['name', 'description']
+        ]);
+
+        // Apply priority filter
+        if ($request->filled('priority')) {
+            $query->where('priority', $request->priority);
+        }
+
+        // Apply active filter
+        if ($request->filled('is_active')) {
+            $query->where('is_active', $request->is_active === '1');
+        }
+
+        $policies = $query->orderBy('priority', 'desc')->paginate(15)->withQueryString();
+
         $stats = [
             'total' => SlaPolicy::count(),
             'active' => SlaPolicy::where('is_active', true)->count(),
         ];
 
-        return view('support.sla.index', compact('policies', 'stats'));
+        // Filter options
+        $priorities = [
+            'low' => 'Low',
+            'medium' => 'Medium',
+            'high' => 'High',
+            'critical' => 'Critical',
+        ];
+
+        return view('support.sla.index', compact('policies', 'stats', 'priorities'));
     }
 
     public function create()
