@@ -55,7 +55,7 @@ class InvoiceController extends Controller
         ];
 
         // Get customers for filter dropdown
-        $customers = Customer::select(['id', 'name', 'cid'])->orderBy('name')->get();
+        $customers = Customer::select(['id', 'name', 'customer_id'])->orderBy('name')->get();
 
         return view('invoices.index', compact('invoices', 'stats', 'customers'));
     }
