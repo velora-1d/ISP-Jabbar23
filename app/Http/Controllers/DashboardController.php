@@ -59,7 +59,7 @@ class DashboardController extends Controller
             return $this->getAdminDashboardData();
         }
 
-        if ($user->hasRole('sales')) {
+        if ($user->hasRole('sales-cs')) {
             return $this->getSalesDashboardData($user);
         }
 
