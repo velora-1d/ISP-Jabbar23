@@ -42,21 +42,33 @@
             animation: pulse-slow 4s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
 
-        /* Typing Animation */
-        @keyframes typing {
-
-            0%,
-            100% {
+        /* Typing Animation for JABBAR23 */
+        @keyframes typing-jabbar {
+            0% {
                 width: 0;
             }
 
-            30%,
-            70% {
+            50%,
+            100% {
                 width: 100%;
             }
         }
 
-        @keyframes blink {
+        /* Typing Animation for ISP text */
+        @keyframes typing-isp {
+
+            0%,
+            40% {
+                width: 0;
+            }
+
+            90%,
+            100% {
+                width: 100%;
+            }
+        }
+
+        @keyframes blink-cursor {
 
             0%,
             100% {
@@ -68,11 +80,21 @@
             }
         }
 
-        .typing-text {
+        .typing-jabbar {
+            display: inline-block;
             overflow: hidden;
             white-space: nowrap;
             border-right: 3px solid #22D3EE;
-            animation: typing 4s steps(20) infinite, blink 0.8s step-end infinite;
+            animation: typing-jabbar 2.5s steps(8) forwards, blink-cursor 0.7s step-end infinite;
+        }
+
+        .typing-isp {
+            display: inline-block;
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 2px solid #8B5CF6;
+            width: 0;
+            animation: typing-isp 4s steps(25) forwards, blink-cursor 0.7s step-end infinite;
         }
     </style>
 </head>
@@ -118,25 +140,20 @@
                     <div class="ml-4">
                         <h1
                             class="text-4xl font-black bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
-                            JABBAR23
+                            <span class="typing-jabbar">JABBAR23</span>
                         </h1>
-                        <p class="text-sm font-bold text-gray-500 tracking-[0.3em] uppercase">
-                            Internet Service Provider
+                        <p class="text-sm font-bold text-gray-500 tracking-[0.2em] uppercase">
+                            <span class="typing-isp">Internet Service Provider</span>
                         </p>
                     </div>
                 </div>
 
-                <!-- Typing Animation Text -->
+                <!-- Welcome Text -->
                 <div class="mb-8">
-                    <h2 class="text-3xl font-bold text-white mb-4">
+                    <h2 class="text-3xl font-bold text-white mb-2">
                         Selamat Datang di
-                        <span class="block text-cyan-400">Panel Admin ISP</span>
                     </h2>
-                    <div class="h-8 flex items-center">
-                        <span class="typing-text text-xl text-gray-400 font-mono">
-                            perhirif
-                        </span>
-                    </div>
+                    <p class="text-xl text-cyan-400 font-semibold">Panel Admin ISP</p>
                 </div>
 
                 <!-- Features Preview -->
