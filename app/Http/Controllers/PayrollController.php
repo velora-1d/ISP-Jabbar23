@@ -5,34 +5,58 @@ namespace App\Http\Controllers;
 use App\Models\Payroll;
 use App\Models\User;
 use App\Models\Attendance;
+use App\Traits\HasFilters;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 class PayrollController extends Controller
 {
+    use HasFilters;
+
     public function __construct()
     {
-        $this->middleware('role:super-admin|admin');
+        $this->middleware('role:super-admin|admin|hrd|finance');
     }
 
     public function index(Request $request)
     {
         $period = $request->get('period', Carbon::now()->format('Y-m'));
 
-        $payrolls = Payroll::with('user')
-            ->where(['period' => $period])
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
+        $query = Payroll::with('user')->where('period', $period);
+
+        // Apply status filter
+        $this->applyStatusFilter($query, $request);
+
+        // Apply employee filter
+        $this->applyRelationFilter($query, $request, 'user_id');
+
+        // Apply search
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('user', fn($q) => $q->where('name', 'like', "%{$search}%"));
+        }
+
+        $payrolls = $query->latest()->paginate(15)->withQueryString();
 
         $stats = [
-            'total' => Payroll::where(['period' => $period])->count(['*']),
-            'draft' => Payroll::where(['period' => $period, 'status' => 'draft'])->count(['*']),
-            'approved' => Payroll::where(['period' => $period, 'status' => 'approved'])->count(['*']),
-            'paid' => Payroll::where(['period' => $period, 'status' => 'paid'])->count(['*']),
-            'total_amount' => Payroll::where(['period' => $period])->sum('net_salary'),
+            'total' => Payroll::where('period', $period)->count(),
+            'draft' => Payroll::where(['period' => $period, 'status' => 'draft'])->count(),
+            'approved' => Payroll::where(['period' => $period, 'status' => 'approved'])->count(),
+            'paid' => Payroll::where(['period' => $period, 'status' => 'paid'])->count(),
+            'total_amount' => Payroll::where('period', $period)->sum('net_salary'),
         ];
 
-        return view('hrd.payroll.index', compact('payrolls', 'stats', 'period'));
+        // Get employees for filter
+        $employees = User::where('is_active', true)->orderBy('name')->get();
+
+        // Filter options
+        $statuses = [
+            'draft' => 'Draft',
+            'approved' => 'Approved',
+            'paid' => 'Paid',
+        ];
+
+        return view('hrd.payroll.index', compact('payrolls', 'stats', 'period', 'employees', 'statuses'));
     }
 
     public function create()
@@ -75,8 +99,8 @@ class PayrollController extends Controller
         $validated['late_days'] = $attendanceStats->late_days ?? 0;
 
         // Calculate net salary
-        $gross = ($validated['basic_salary'] ?? 0) + ($validated['allowances'] ?? 0) + 
-                 ($validated['overtime'] ?? 0) + ($validated['bonus'] ?? 0);
+        $gross = ($validated['basic_salary'] ?? 0) + ($validated['allowances'] ?? 0) +
+            ($validated['overtime'] ?? 0) + ($validated['bonus'] ?? 0);
         $totalDeductions = ($validated['deductions'] ?? 0) + ($validated['tax'] ?? 0);
         $validated['net_salary'] = $gross - $totalDeductions;
         $validated['status'] = 'draft';
@@ -107,8 +131,8 @@ class PayrollController extends Controller
         ]);
 
         // Recalculate net salary
-        $gross = ($validated['basic_salary'] ?? 0) + ($validated['allowances'] ?? 0) + 
-                 ($validated['overtime'] ?? 0) + ($validated['bonus'] ?? 0);
+        $gross = ($validated['basic_salary'] ?? 0) + ($validated['allowances'] ?? 0) +
+            ($validated['overtime'] ?? 0) + ($validated['bonus'] ?? 0);
         $totalDeductions = ($validated['deductions'] ?? 0) + ($validated['tax'] ?? 0);
         $validated['net_salary'] = $gross - $totalDeductions;
 

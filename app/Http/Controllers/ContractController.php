@@ -4,27 +4,50 @@ namespace App\Http\Controllers;
 
 use App\Models\Contract;
 use App\Models\Customer;
+use App\Traits\HasFilters;
 use Illuminate\Http\Request;
 
 class ContractController extends Controller
 {
+    use HasFilters;
+
     public function index(Request $request)
     {
         $query = Contract::with('customer');
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
+        // Apply global filters (year, month, search)
+        $this->applyGlobalFilters($query, $request, [
+            'dateColumn' => 'created_at',
+            'searchColumns' => ['contract_number', 'customer.name']
+        ]);
+
+        // Apply status filter
+        $this->applyStatusFilter($query, $request);
+
+        $contracts = $query->latest()->paginate(15)->withQueryString();
+
+        // Stats
+        $statsQuery = Contract::query();
+        if ($request->filled('year')) {
+            $statsQuery->whereYear('created_at', $request->year);
         }
 
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->whereHas('customer', function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%");
-            })->orWhere('contract_number', 'like', "%{$search}%");
-        }
+        $stats = [
+            'total' => (clone $statsQuery)->count(),
+            'active' => (clone $statsQuery)->where('status', 'active')->count(),
+            'expired' => (clone $statsQuery)->where('status', 'expired')->count(),
+            'terminated' => (clone $statsQuery)->where('status', 'terminated')->count(),
+        ];
 
-        $contracts = $query->latest()->paginate(15);
-        return view('contracts.index', compact('contracts'));
+        // Filter options
+        $statuses = [
+            'draft' => 'Draft',
+            'active' => 'Active',
+            'expired' => 'Expired',
+            'terminated' => 'Terminated',
+        ];
+
+        return view('contracts.index', compact('contracts', 'stats', 'statuses'));
     }
 
     public function create()

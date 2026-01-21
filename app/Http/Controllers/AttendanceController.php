@@ -4,14 +4,17 @@ namespace App\Http\Controllers;
 
 use App\Models\Attendance;
 use App\Models\User;
+use App\Traits\HasFilters;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 class AttendanceController extends Controller
 {
+    use HasFilters;
+
     public function __construct()
     {
-        $this->middleware('role:super-admin|admin');
+        $this->middleware('role:super-admin|admin|hrd');
     }
 
     public function index(Request $request)
@@ -19,19 +22,44 @@ class AttendanceController extends Controller
         $date = $request->get('date', Carbon::today()->format('Y-m-d'));
         $month = $request->get('month', Carbon::today()->format('Y-m'));
 
-        $attendances = Attendance::with('user')
-            ->whereDate('date', $date)
-            ->orderBy('clock_in')
-            ->get();
+        $query = Attendance::with('user');
+
+        // Apply date filter
+        if ($request->filled('date')) {
+            $query->whereDate('date', $date);
+        } else {
+            $query->whereDate('date', $date);
+        }
+
+        // Apply status filter
+        $this->applyStatusFilter($query, $request);
+
+        // Apply employee filter
+        $this->applyRelationFilter($query, $request, 'user_id');
+
+        $attendances = $query->orderBy('clock_in')->paginate(20)->withQueryString();
 
         $stats = [
-            'total_employees' => User::where(['is_active' => true])->count(['*']),
-            'present' => Attendance::whereDate('date', $date)->where(['status' => 'present'])->count(['*']),
-            'late' => Attendance::whereDate('date', $date)->where(['status' => 'late'])->count(['*']),
-            'absent' => Attendance::whereDate('date', $date)->where(['status' => 'absent'])->count(['*']),
+            'total_employees' => User::where('is_active', true)->count(),
+            'present' => Attendance::whereDate('date', $date)->where('status', 'present')->count(),
+            'late' => Attendance::whereDate('date', $date)->where('status', 'late')->count(),
+            'absent' => Attendance::whereDate('date', $date)->where('status', 'absent')->count(),
         ];
 
-        return view('hrd.attendance.index', compact('attendances', 'stats', 'date', 'month'));
+        // Get employees for filter
+        $employees = User::where('is_active', true)->orderBy('name')->get();
+
+        // Filter options
+        $statuses = [
+            'present' => 'Present',
+            'late' => 'Late',
+            'absent' => 'Absent',
+            'sick' => 'Sick',
+            'leave' => 'Leave',
+            'holiday' => 'Holiday',
+        ];
+
+        return view('hrd.attendance.index', compact('attendances', 'stats', 'date', 'month', 'employees', 'statuses'));
     }
 
     public function create()
