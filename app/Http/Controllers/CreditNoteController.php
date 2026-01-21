@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\CreditNote;
 use App\Models\Customer;
 use App\Models\Invoice;
+use App\Traits\HasFilters;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class CreditNoteController extends Controller
 {
+    use HasFilters;
+
     public function __construct()
     {
         $this->middleware('permission:view invoices')->only(['index', 'show']);
@@ -22,26 +25,53 @@ class CreditNoteController extends Controller
     {
         $query = CreditNote::with('customer');
 
-        if ($request->filled('status')) {
-            $query->where('status', '=', $request->status, 'and');
+        // Apply global filters
+        $this->applyGlobalFilters($query, $request, [
+            'dateColumn' => 'issue_date',
+            'searchColumns' => ['credit_number', 'customer.name']
+        ]);
+
+        // Apply status filter
+        $this->applyStatusFilter($query, $request);
+
+        // Apply reason filter
+        if ($request->filled('reason')) {
+            $query->where('reason', $request->reason);
         }
 
-        $creditNotes = $query->latest()->paginate(15, ['*']);
+        $creditNotes = $query->latest()->paginate(15)->withQueryString();
 
-        // Stats
-        $pendingCount = CreditNote::where('status', '=', 'pending', 'and')->count(['*']);
-        $pendingValue = CreditNote::where('status', '=', 'pending', 'and')->sum('amount');
-        $appliedCount = CreditNote::where('status', '=', 'applied', 'and')->count(['*']);
-        $appliedValue = CreditNote::where('status', '=', 'applied', 'and')->sum('amount');
+        // Stats respecting filters
+        $statsQuery = CreditNote::query();
+        if ($request->filled('year')) {
+            $statsQuery->whereYear('issue_date', $request->year);
+        }
+        if ($request->filled('month')) {
+            $statsQuery->whereMonth('issue_date', $request->month);
+        }
 
         $stats = [
-            'pending_count' => $pendingCount,
-            'pending_value' => $pendingValue,
-            'applied_count' => $appliedCount,
-            'applied_value' => $appliedValue,
+            'pending_count' => (clone $statsQuery)->where('status', 'pending')->count(),
+            'pending_value' => (clone $statsQuery)->where('status', 'pending')->sum('amount'),
+            'applied_count' => (clone $statsQuery)->where('status', 'applied')->count(),
+            'applied_value' => (clone $statsQuery)->where('status', 'applied')->sum('amount'),
         ];
 
-        return view('billing.credit-notes.index', compact('creditNotes', 'stats'));
+        // Filter options
+        $statuses = [
+            'pending' => 'Pending',
+            'applied' => 'Applied',
+            'cancelled' => 'Cancelled',
+        ];
+        $reasons = [
+            'overpayment' => 'Overpayment',
+            'refund' => 'Refund',
+            'discount' => 'Discount',
+            'adjustment' => 'Adjustment',
+            'other' => 'Other',
+        ];
+
+        return view('billing.credit-notes.index', compact('creditNotes', 'stats', 'statuses', 'reasons'));
     }
 
     public function create()
@@ -78,7 +108,7 @@ class CreditNoteController extends Controller
     public function show(CreditNote $creditNote)
     {
         $creditNote->load(['customer', 'appliedInvoice']);
-        
+
         // Get unpaid invoices for this customer
         $unpaidInvoices = Invoice::where('customer_id', '=', $creditNote->customer_id, 'and')
             ->where('status', '=', 'unpaid', 'and')

@@ -6,6 +6,7 @@ use App\Models\PurchaseOrder;
 use App\Models\PurchaseOrderItem;
 use App\Models\Vendor;
 use App\Models\InventoryItem;
+use App\Traits\HasFilters;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -13,27 +14,61 @@ use Illuminate\Support\Facades\Auth;
 
 class PurchaseOrderController extends Controller
 {
+    use HasFilters;
+
     public function __construct()
     {
         $this->middleware('role:super-admin|admin|finance');
     }
 
-    public function index(): View
+    public function index(Request $request): View
     {
-        $purchaseOrders = PurchaseOrder::query()
-            ->with(['vendor', 'creator'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
+        $query = PurchaseOrder::with(['vendor', 'creator']);
+
+        // Apply global filters
+        $this->applyGlobalFilters($query, $request, [
+            'dateColumn' => 'order_date',
+            'searchColumns' => ['po_number', 'vendor.name']
+        ]);
+
+        // Apply status filter
+        $this->applyStatusFilter($query, $request);
+
+        // Apply vendor filter
+        $this->applyRelationFilter($query, $request, 'vendor_id');
+
+        $purchaseOrders = $query->latest()->paginate(15)->withQueryString();
+
+        // Stats respecting year/month
+        $statsQuery = PurchaseOrder::query();
+        if ($request->filled('year')) {
+            $statsQuery->whereYear('order_date', $request->year);
+        }
+        if ($request->filled('month')) {
+            $statsQuery->whereMonth('order_date', $request->month);
+        }
 
         $stats = [
-            'total' => PurchaseOrder::query()->count('*'),
-            'draft' => PurchaseOrder::query()->where('status', '=', 'draft')->count('*'),
-            'pending' => PurchaseOrder::query()->where('status', '=', 'pending')->count('*'),
-            'received' => PurchaseOrder::query()->where('status', '=', 'received')->count('*'),
-            'total_value' => PurchaseOrder::query()->whereIn('status', ['approved', 'ordered', 'partial', 'received'])->sum('total'),
+            'total' => (clone $statsQuery)->count(),
+            'draft' => (clone $statsQuery)->where('status', 'draft')->count(),
+            'pending' => (clone $statsQuery)->where('status', 'pending')->count(),
+            'received' => (clone $statsQuery)->where('status', 'received')->count(),
+            'total_value' => (clone $statsQuery)->whereIn('status', ['approved', 'ordered', 'partial', 'received'])->sum('total'),
         ];
 
-        return view('inventory.purchase-orders.index', compact('purchaseOrders', 'stats'));
+        // Filter options
+        $vendors = Vendor::where('status', 'active')->orderBy('name')->get();
+        $statuses = [
+            'draft' => 'Draft',
+            'pending' => 'Pending',
+            'approved' => 'Approved',
+            'ordered' => 'Ordered',
+            'partial' => 'Partial',
+            'received' => 'Received',
+            'cancelled' => 'Cancelled',
+        ];
+
+        return view('inventory.purchase-orders.index', compact('purchaseOrders', 'stats', 'vendors', 'statuses'));
     }
 
     public function create(): View

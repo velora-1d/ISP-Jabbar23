@@ -3,19 +3,38 @@
 namespace App\Http\Controllers;
 
 use App\Models\Vendor;
+use App\Traits\HasFilters;
 use Illuminate\Http\Request;
 
 class VendorController extends Controller
 {
+    use HasFilters;
+
     public function __construct()
     {
-        $this->middleware('role:super-admin|admin');
+        $this->middleware('role:super-admin|admin|finance');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $vendors = Vendor::orderBy('created_at', 'desc')->paginate(15);
-        
+        $query = Vendor::query();
+
+        // Apply global filters
+        $this->applyGlobalFilters($query, $request, [
+            'dateColumn' => 'created_at',
+            'searchColumns' => ['name', 'code', 'contact_person', 'email', 'phone']
+        ]);
+
+        // Apply status filter
+        $this->applyStatusFilter($query, $request);
+
+        // Apply type filter
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        $vendors = $query->latest()->paginate(15)->withQueryString();
+
         $stats = [
             'total' => Vendor::count(),
             'active' => Vendor::where('status', 'active')->count(),
@@ -23,7 +42,20 @@ class VendorController extends Controller
             'service' => Vendor::where('type', 'service')->count(),
         ];
 
-        return view('vendors.index', compact('vendors', 'stats'));
+        // Filter options
+        $statuses = [
+            'active' => 'Active',
+            'inactive' => 'Inactive',
+        ];
+
+        $types = [
+            'equipment' => 'Equipment',
+            'consumable' => 'Consumable',
+            'service' => 'Service',
+            'other' => 'Other',
+        ];
+
+        return view('vendors.index', compact('vendors', 'stats', 'statuses', 'types'));
     }
 
     public function create()

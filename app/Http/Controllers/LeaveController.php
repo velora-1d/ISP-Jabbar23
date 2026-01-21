@@ -4,21 +4,41 @@ namespace App\Http\Controllers;
 
 use App\Models\Leave;
 use App\Models\User;
+use App\Traits\HasFilters;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 class LeaveController extends Controller
 {
+    use HasFilters;
+
     public function __construct()
     {
-        $this->middleware('role:super-admin|admin');
+        $this->middleware('role:super-admin|admin|hrd');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $leaves = Leave::with(['user', 'approver'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
+        $query = Leave::with(['user', 'approver']);
+
+        // Apply global filters
+        $this->applyGlobalFilters($query, $request, [
+            'dateColumn' => 'start_date',
+            'searchColumns' => ['user.name', 'reason']
+        ]);
+
+        // Apply status filter
+        $this->applyStatusFilter($query, $request);
+
+        // Apply type filter
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        // Apply employee filter
+        $this->applyRelationFilter($query, $request, 'user_id');
+
+        $leaves = $query->latest()->paginate(15)->withQueryString();
 
         $stats = [
             'total' => Leave::count(),
@@ -27,7 +47,25 @@ class LeaveController extends Controller
             'rejected' => Leave::where('status', 'rejected')->count(),
         ];
 
-        return view('hrd.leave.index', compact('leaves', 'stats'));
+        // Filter options
+        $employees = User::where('is_active', true)->orderBy('name')->get();
+        $statuses = [
+            'pending' => 'Pending',
+            'approved' => 'Approved',
+            'rejected' => 'Rejected',
+            'cancelled' => 'Cancelled',
+        ];
+        $types = [
+            'annual' => 'Annual',
+            'sick' => 'Sick',
+            'personal' => 'Personal',
+            'maternity' => 'Maternity',
+            'paternity' => 'Paternity',
+            'unpaid' => 'Unpaid',
+            'other' => 'Other',
+        ];
+
+        return view('hrd.leave.index', compact('leaves', 'stats', 'employees', 'statuses', 'types'));
     }
 
     public function create()

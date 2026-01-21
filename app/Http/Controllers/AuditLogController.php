@@ -3,10 +3,13 @@
 namespace App\Http\Controllers;
 
 use App\Models\AuditLog;
+use App\Traits\HasFilters;
 use Illuminate\Http\Request;
 
 class AuditLogController extends Controller
 {
+    use HasFilters;
+
     public function __construct()
     {
         $this->middleware('role:super-admin');
@@ -14,37 +17,28 @@ class AuditLogController extends Controller
 
     public function index(Request $request)
     {
-        $query = AuditLog::with('user')->orderBy('created_at', 'desc');
+        $query = AuditLog::with('user');
 
-        // Filter by action
+        // Apply global filters
+        $this->applyGlobalFilters($query, $request, [
+            'dateColumn' => 'created_at',
+            'searchColumns' => ['description', 'action']
+        ]);
+
+        // Apply action filter
         if ($request->filled('action')) {
             $query->where('action', $request->action);
         }
 
-        // Filter by user
-        if ($request->filled('user_id')) {
-            $query->where('user_id', $request->user_id);
-        }
+        // Apply user filter
+        $this->applyRelationFilter($query, $request, 'user_id');
 
         // Filter by model type
         if ($request->filled('model_type')) {
             $query->where('model_type', 'like', '%' . $request->model_type . '%');
         }
 
-        // Filter by date range
-        if ($request->filled('start_date')) {
-            $query->whereDate('created_at', '>=', $request->start_date);
-        }
-        if ($request->filled('end_date')) {
-            $query->whereDate('created_at', '<=', $request->end_date);
-        }
-
-        // Search description
-        if ($request->filled('search')) {
-            $query->where('description', 'like', '%' . $request->search . '%');
-        }
-
-        $logs = $query->paginate(25);
+        $logs = $query->latest()->paginate(25)->withQueryString();
 
         // Get unique actions for filter
         $actions = AuditLog::distinct()->pluck('action');
@@ -74,7 +68,7 @@ class AuditLogController extends Controller
     {
         // Clear old logs (older than specified days, default 90)
         $days = $request->get('days', 90);
-        
+
         $deleted = AuditLog::where('created_at', '<', now()->subDays($days))->delete();
 
         AuditLog::log('delete', "Cleared {$deleted} audit logs older than {$days} days");

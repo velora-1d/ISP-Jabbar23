@@ -3,27 +3,42 @@
 namespace App\Http\Controllers;
 
 use App\Models\Partner;
+use App\Traits\HasFilters;
 use Illuminate\Http\Request;
 
 class PartnerController extends Controller
 {
+    use HasFilters;
+
     public function index(Request $request)
     {
         $query = Partner::query();
 
-        if ($request->filled('search')) {
-            $search = $request->search;
-            $query->where('name', 'like', "%{$search}%", 'and')
-                  ->orWhere('code', 'like', "%{$search}%", 'and')
-                  ->orWhere('email', 'like', "%{$search}%", 'and');
-        }
+        // Apply global filters
+        $this->applyGlobalFilters($query, $request, [
+            'dateColumn' => 'created_at',
+            'searchColumns' => ['name', 'code', 'email', 'phone']
+        ]);
 
-        if ($request->filled('status')) {
-            $query->where('status', '=', $request->status, 'and');
-        }
+        // Apply status filter
+        $this->applyStatusFilter($query, $request);
 
-        $partners = $query->latest()->paginate(15, ['*']);
-        return view('partners.index', compact('partners'));
+        $partners = $query->latest()->paginate(15)->withQueryString();
+
+        // Stats
+        $stats = [
+            'total' => Partner::count(),
+            'active' => Partner::where('status', 'active')->count(),
+            'inactive' => Partner::where('status', 'inactive')->count(),
+        ];
+
+        // Filter options
+        $statuses = [
+            'active' => 'Active',
+            'inactive' => 'Inactive',
+        ];
+
+        return view('partners.index', compact('partners', 'stats', 'statuses'));
     }
 
     public function create()
