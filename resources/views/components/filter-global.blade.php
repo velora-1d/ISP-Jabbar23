@@ -36,6 +36,7 @@
             value="{{ request($searchName) }}"
             placeholder="{{ $searchPlaceholder }}"
             class="w-full bg-gray-700/50 border border-gray-600 rounded-xl pl-12 pr-4 py-2.5 text-white placeholder-gray-400 focus:ring-2 focus:ring-cyan-500 focus:border-transparent transition-all"
+            x-on:input.debounce.500ms="$el.form.submit()"
         >
     </div>
 </div>
