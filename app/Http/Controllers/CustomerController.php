@@ -105,6 +105,10 @@ class CustomerController extends Controller
             'installation_date' => 'nullable|date',
             'billing_date' => 'nullable|date',
             'notes' => 'nullable|string',
+            'router_id' => 'nullable|exists:routers,id',
+            'pppoe_username' => 'nullable|string|max:100|unique:customers,pppoe_username',
+            'pppoe_password' => 'nullable|string|max:100',
+            'mikrotik_ip' => 'nullable|ipv4',
         ]);
 
         Customer::create($validated);
@@ -161,6 +165,10 @@ class CustomerController extends Controller
             'installation_date' => 'nullable|date',
             'billing_date' => 'nullable|date',
             'notes' => 'nullable|string',
+            'router_id' => 'nullable|exists:routers,id',
+            'pppoe_username' => 'nullable|string|max:100|unique:customers,pppoe_username,' . $customer->id,
+            'pppoe_password' => 'nullable|string|max:100',
+            'mikrotik_ip' => 'nullable|ipv4',
         ]);
 
         $customer->update($validated);
@@ -172,7 +180,7 @@ class CustomerController extends Controller
     /**
      * Update customer status (Technician/Admin action).
      */
-    public function updateStatus(Request $request, Customer $customer): RedirectResponse
+    public function updateStatus(Request $request, Customer $customer, \App\Services\MikrotikService $mikrotik): RedirectResponse
     {
         $validStatuses = implode(',', array_keys(Customer::STATUSES));
 
@@ -195,6 +203,28 @@ class CustomerController extends Controller
             $latestLog = $customer->statusLogs()->latest('id')->first();
             if ($latestLog) {
                 $latestLog->update(['notes' => $validated['notes']]);
+            }
+        }
+
+        // MIKROTIK AUTOMATION
+        if ($customer->router_id && $customer->pppoe_username) {
+            try {
+                if ($customer->status === Customer::STATUS_SUSPENDED || $customer->status === Customer::STATUS_TERMINATED) {
+                    // Disable Secret
+                    $mikrotik->connect($customer->router);
+                    $mikrotik->togglePppoeUser($customer->pppoe_username, false);
+                } elseif ($customer->status === Customer::STATUS_ACTIVE) {
+                    // Enable Secret
+                    $mikrotik->connect($customer->router);
+                    $mikrotik->togglePppoeUser($customer->pppoe_username, true);
+                }
+            } catch (\Exception $e) {
+                // Log error but don't block the status update entirely, maybe flash a warning
+                \App\Models\AuditLog::log(
+                    'system_error',
+                    "Failed to sync Mikrotik for {$customer->pppoe_username}: " . $e->getMessage(),
+                    $customer
+                );
             }
         }
 

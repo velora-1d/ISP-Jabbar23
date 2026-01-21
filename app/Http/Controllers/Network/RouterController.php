@@ -16,7 +16,7 @@ class RouterController extends Controller
     public function index()
     {
         $routers = Router::latest()->paginate(15);
-        
+
         $stats = [
             'total' => Router::count(),
             'online' => Router::where('status', '=', 'online')->count(['*']),
@@ -86,17 +86,28 @@ class RouterController extends Controller
             ->with('success', 'Router berhasil dihapus!');
     }
 
-    public function sync(Router $router)
+    public function sync(Router $router, \App\Services\MikrotikService $mikrotik)
     {
-        // Placeholder for Mikrotik API sync
-        // In production, this would connect via RouterOS API
         try {
-            // Simulate sync - real implementation would use RouterOS API
+            $mikrotik->connect($router);
+
+            // Fetch Identity
+            $client = new \RouterOS\Client([
+                'host' => $router->ip_address,
+                'user' => $router->username,
+                'pass' => $router->password,
+                'port' => (int) $router->port,
+            ]);
+
+            $identity = $client->query('/system/identity/print')->read();
+            $resource = $client->query('/system/resource/print')->read();
+
             $router->update([
                 'status' => 'online',
                 'last_sync_at' => now(),
-                'identity' => $router->name,
-                'version' => '7.x',
+                'identity' => $identity[0]['name'] ?? $router->name,
+                'version' => $resource[0]['version'] ?? 'Unknown',
+                'model' => $resource[0]['board-name'] ?? 'Unknown',
             ]);
 
             return back()->with('success', 'Router berhasil disinkronkan!');
@@ -106,24 +117,19 @@ class RouterController extends Controller
         }
     }
 
-    public function testConnection(Router $router)
+    public function testConnection(Router $router, \App\Services\MikrotikService $mikrotik)
     {
-        // Placeholder for connection test
-        // Real implementation would ping or connect via API
         try {
-            // Simulate test
-            $reachable = @fsockopen($router->ip_address, $router->port, $errno, $errstr, 3);
-            
-            if ($reachable) {
-                fclose($reachable);
-                $router->update(['status' => 'online']);
-                return response()->json(['success' => true, 'message' => 'Router dapat dijangkau!']);
-            }
+            $response = $mikrotik->testConnection($router);
+            $router->update(['status' => 'online']);
 
-            $router->update(['status' => 'offline']);
-            return response()->json(['success' => false, 'message' => 'Router tidak dapat dijangkau'], 400);
+            return response()->json([
+                'success' => true,
+                'message' => 'Router Connected! Identity: ' . ($response[0]['name'] ?? 'Unknown')
+            ]);
         } catch (\Exception $e) {
-            return response()->json(['success' => false, 'message' => $e->getMessage()], 500);
+            $router->update(['status' => 'offline']);
+            return response()->json(['success' => false, 'message' => $e->getMessage()], 400);
         }
     }
 }
