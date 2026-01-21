@@ -3,16 +3,16 @@
         <div class="flex justify-between items-center">
             <div>
                 <h2 class="font-bold text-2xl text-white leading-tight">
-                    {{ __('Employee Management') }}
+                    {{ __('Manajemen Karyawan') }}
                 </h2>
-                <p class="text-gray-400 text-sm mt-1">Manage your team members and their roles</p>
+                <p class="text-gray-400 text-sm mt-1">Kelola anggota tim dan jabatan mereka</p>
             </div>
             <a href="{{ route('users.create') }}"
                 class="inline-flex items-center px-5 py-2.5 text-sm font-semibold text-white bg-gradient-to-r from-blue-600 to-cyan-500 rounded-xl hover:from-blue-700 hover:to-cyan-600 focus:ring-4 focus:ring-blue-500/30 transition-all duration-200 shadow-lg shadow-blue-500/25">
                 <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
                 </svg>
-                Add Employee
+                Tambah Karyawan
             </a>
         </div>
     </x-slot>
@@ -33,7 +33,7 @@
                         </div>
                         <div class="ml-4">
                             <p class="text-2xl font-bold text-white">{{ $users->count() }}</p>
-                            <p class="text-gray-400 text-sm">Total Employees</p>
+                            <p class="text-gray-400 text-sm">Total Karyawan</p>
                         </div>
                     </div>
                 </div>
@@ -48,7 +48,7 @@
                         </div>
                         <div class="ml-4">
                             <p class="text-2xl font-bold text-white">{{ $users->count() }}</p>
-                            <p class="text-gray-400 text-sm">Active</p>
+                            <p class="text-gray-400 text-sm">Aktif</p>
                         </div>
                     </div>
                 </div>
@@ -64,7 +64,7 @@
                         </div>
                         <div class="ml-4">
                             <p class="text-2xl font-bold text-white">8</p>
-                            <p class="text-gray-400 text-sm">Roles Defined</p>
+                            <p class="text-gray-400 text-sm">Jabatan Terdefinisi</p>
                         </div>
                     </div>
                 </div>
@@ -74,9 +74,9 @@
             <div class="rounded-2xl bg-gray-800 border border-gray-700 overflow-hidden shadow-2xl">
                 <div class="p-6 border-b border-gray-700/50">
                     <div class="flex items-center justify-between">
-                        <h3 class="text-lg font-bold text-white">Team Members</h3>
+                        <h3 class="text-lg font-bold text-white">Daftar Karyawan</h3>
                         <div class="relative">
-                            <input type="text" placeholder="Search employees..."
+                            <input type="text" placeholder="Cari karyawan..."
                                 class="pl-10 pr-4 py-2 bg-gray-900/50 border border-gray-700 rounded-lg text-sm text-gray-300 placeholder-gray-500 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
                             <svg class="absolute left-3 top-2.5 w-4 h-4 text-gray-500" fill="none" stroke="currentColor"
                                 viewBox="0 0 24 24">
@@ -91,11 +91,11 @@
                     <table class="w-full text-sm text-left">
                         <thead class="text-xs text-gray-400 uppercase bg-gray-900/50">
                             <tr>
-                                <th scope="col" class="px-6 py-4">Employee</th>
-                                <th scope="col" class="px-6 py-4">Role / Jabatan</th>
-                                <th scope="col" class="px-6 py-4">Joined</th>
+                                <th scope="col" class="px-6 py-4">Karyawan</th>
+                                <th scope="col" class="px-6 py-4">Jabatan</th>
+                                <th scope="col" class="px-6 py-4">Bergabung</th>
                                 <th scope="col" class="px-6 py-4">Status</th>
-                                <th scope="col" class="px-6 py-4 text-right">Actions</th>
+                                <th scope="col" class="px-6 py-4 text-right">Aksi</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-700/50">
@@ -141,7 +141,7 @@
                                             class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium bg-emerald-500/20 text-emerald-400">
                                             <span
                                                 class="w-1.5 h-1.5 rounded-full bg-emerald-400 mr-1.5 animate-pulse"></span>
-                                            Active
+                                            Aktif
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 text-right">
@@ -158,12 +158,12 @@
                                             </a>
                                             <!-- Delete Button -->
                                             <form action="{{ route('users.destroy', $user) }}" method="POST" class="inline"
-                                                onsubmit="return confirm('Yakin ingin menghapus employee ini?')">
+                                                onsubmit="return confirm('Yakin ingin menghapus karyawan ini?')">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit"
                                                     class="p-2 rounded-lg hover:bg-red-500/20 transition-colors text-gray-400 hover:text-red-400"
-                                                    title="Delete">
+                                                    title="Hapus">
                                                     <svg class="w-5 h-5" fill="none" stroke="currentColor"
                                                         viewBox="0 0 24 24">
                                                         <path stroke-linecap="round" stroke-linejoin="round"
