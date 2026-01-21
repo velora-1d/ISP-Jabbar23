@@ -3,21 +3,27 @@
 @section('content')
     <div class="space-y-6">
         <!-- Header -->
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-                <h1 class="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">
-                    Router Management
-                </h1>
-                <p class="text-gray-400 mt-1">Kelola router dan perangkat Mikrotik</p>
-            </div>
-            <a href="{{ route('network.routers.create') }}"
-                class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-cyan-500/25">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
-                </svg>
-                Tambah Router
-            </a>
-        </div>
+        <!-- Header with Filters -->
+        <x-filter-bar :filters="$filters ?? []">
+            <x-slot name="global">
+                <x-filter-global :search-placeholder="'Search Router...'" />
+            </x-slot>
+
+            <x-slot name="filters">
+                <x-filter-select name="status" label="Status" :options="$statuses" :selected="request('status')" />
+                <x-filter-select name="type" label="Type" :options="$types" :selected="request('type')" />
+            </x-slot>
+
+            <x-slot name="actions">
+                <a href="{{ route('network.routers.create') }}"
+                    class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-600 to-blue-600 hover:from-cyan-500 hover:to-blue-500 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-cyan-500/25">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    Tambah Router
+                </a>
+            </x-slot>
+        </x-filter-bar>
 
         @if(session('success'))
             <div
