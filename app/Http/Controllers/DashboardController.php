@@ -311,7 +311,7 @@ class DashboardController extends Controller
             ->sum('amount');
 
         // Invoice stats
-        $totalUnpaid = Invoice::where('status', '=', 'unpaid')->sum('total_amount');
+        $totalUnpaid = Invoice::where('status', '=', 'unpaid')->sum('amount');
         $unpaidInvoices = Invoice::where('status', '=', 'unpaid')->count('*');
 
         $overdueInvoices = Invoice::where('status', '=', 'unpaid')
