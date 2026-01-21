@@ -4,20 +4,30 @@ namespace App\Http\Controllers;
 
 use App\Models\Promotion;
 use App\Models\Package;
+use App\Traits\HasFilters;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class PromotionController extends Controller
 {
+    use HasFilters;
+
     public function __construct()
     {
-        $this->middleware('role:super-admin|admin|sales|finance');
+        $this->middleware('role:super-admin|admin|sales-cs|finance');
     }
 
     public function index(Request $request)
     {
-        $query = Promotion::orderBy('created_at', 'desc');
+        $query = Promotion::query();
 
+        // Apply global filters
+        $this->applyGlobalFilters($query, $request, [
+            'dateColumn' => 'created_at',
+            'searchColumns' => ['name', 'code', 'description']
+        ]);
+
+        // Apply status filter (custom logic for promotion status)
         if ($request->filled('status')) {
             if ($request->status === 'active') {
                 $query->where('is_active', true)
@@ -27,10 +37,17 @@ class PromotionController extends Controller
                 $query->where('end_date', '<', now());
             } elseif ($request->status === 'inactive') {
                 $query->where('is_active', false);
+            } elseif ($request->status === 'upcoming') {
+                $query->where('is_active', true)->where('start_date', '>', now());
             }
         }
 
-        $promotions = $query->paginate(20);
+        // Apply type filter
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        $promotions = $query->latest()->paginate(20)->withQueryString();
 
         $stats = [
             'total' => Promotion::count(),
@@ -44,7 +61,21 @@ class PromotionController extends Controller
                 ->count(),
         ];
 
-        return view('marketing.promotions.index', compact('promotions', 'stats'));
+        // Filter options
+        $statuses = [
+            'active' => 'Active',
+            'inactive' => 'Inactive',
+            'expired' => 'Expired',
+            'upcoming' => 'Upcoming',
+        ];
+
+        $types = [
+            'percentage' => 'Percentage',
+            'fixed' => 'Fixed Amount',
+            'free_month' => 'Free Month',
+        ];
+
+        return view('marketing.promotions.index', compact('promotions', 'stats', 'statuses', 'types'));
     }
 
     public function create()

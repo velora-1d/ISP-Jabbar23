@@ -4,10 +4,13 @@ namespace App\Http\Controllers\Network;
 
 use App\Http\Controllers\Controller;
 use App\Models\Odp;
+use App\Traits\HasFilters;
 use Illuminate\Http\Request;
 
 class OdpController extends Controller
 {
+    use HasFilters;
+
     public function __construct()
     {
         // Simple permission check
@@ -17,15 +20,34 @@ class OdpController extends Controller
     public function index(Request $request)
     {
         $query = Odp::query();
-        
-        if ($request->search) {
-            $query->where('name', 'like', "%{$request->search}%")
-                  ->orWhere('address', 'like', "%{$request->search}%");
-        }
 
-        $odps = $query->latest()->paginate(10);
-        
-        return view('network.odps.index', compact('odps'));
+        // Apply global filters
+        $this->applyGlobalFilters($query, $request, [
+            'dateColumn' => 'created_at',
+            'searchColumns' => ['name', 'address', 'description']
+        ]);
+
+        // Apply status filter
+        $this->applyStatusFilter($query, $request);
+
+        $odps = $query->latest()->paginate(10)->withQueryString();
+
+        // Stats
+        $stats = [
+            'total' => Odp::count(),
+            'active' => Odp::where('status', 'active')->count(),
+            'maintenance' => Odp::where('status', 'maintenance')->count(),
+            'full' => Odp::where('status', 'full')->count(),
+        ];
+
+        // Filter options
+        $statuses = [
+            'active' => 'Active',
+            'maintenance' => 'Maintenance',
+            'full' => 'Full',
+        ];
+
+        return view('network.odps.index', compact('odps', 'stats', 'statuses'));
     }
 
     public function create()

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Campaign;
+use App\Traits\HasFilters;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -10,26 +11,57 @@ use Illuminate\Support\Facades\Auth;
 
 class CampaignController extends Controller
 {
+    use HasFilters;
+
     public function __construct()
     {
-        $this->middleware('role:super-admin|admin|sales');
+        $this->middleware('role:super-admin|admin|sales-cs');
     }
 
-    public function index(): View
+    public function index(Request $request): View
     {
-        $campaigns = Campaign::query()
-            ->with(['creator'])
-            ->orderBy('created_at', 'desc')
-            ->paginate(15);
+        $query = Campaign::with(['creator']);
+
+        // Apply global filters
+        $this->applyGlobalFilters($query, $request, [
+            'dateColumn' => 'created_at',
+            'searchColumns' => ['name', 'description']
+        ]);
+
+        // Apply status filter
+        $this->applyStatusFilter($query, $request);
+
+        // Apply type filter
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        $campaigns = $query->latest()->paginate(15)->withQueryString();
 
         $stats = [
-            'total' => Campaign::query()->count('*'),
-            'running' => Campaign::query()->where('status', '=', 'running')->count('*'),
-            'completed' => Campaign::query()->where('status', '=', 'completed')->count('*'),
-            'total_sent' => Campaign::query()->sum('sent_count'),
+            'total' => Campaign::count(),
+            'running' => Campaign::where('status', 'running')->count(),
+            'completed' => Campaign::where('status', 'completed')->count(),
+            'total_sent' => Campaign::sum('sent_count'),
         ];
 
-        return view('marketing.campaigns.index', compact('campaigns', 'stats'));
+        // Filter options
+        $statuses = [
+            'draft' => 'Draft',
+            'scheduled' => 'Scheduled',
+            'running' => 'Running',
+            'completed' => 'Completed',
+            'cancelled' => 'Cancelled',
+        ];
+
+        $types = [
+            'email' => 'Email',
+            'whatsapp' => 'WhatsApp',
+            'sms' => 'SMS',
+            'push' => 'Push Notification',
+        ];
+
+        return view('marketing.campaigns.index', compact('campaigns', 'stats', 'statuses', 'types'));
     }
 
     public function create(): View

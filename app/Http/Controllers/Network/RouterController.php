@@ -4,27 +4,60 @@ namespace App\Http\Controllers\Network;
 
 use App\Http\Controllers\Controller;
 use App\Models\Router;
+use App\Traits\HasFilters;
 use Illuminate\Http\Request;
 
 class RouterController extends Controller
 {
+    use HasFilters;
+
     public function __construct()
     {
-        $this->middleware('role:super-admin|admin|technician');
+        $this->middleware('role:super-admin|admin|technician|noc');
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $routers = Router::latest()->paginate(15);
+        $query = Router::query();
+
+        // Apply global filters
+        $this->applyGlobalFilters($query, $request, [
+            'dateColumn' => 'created_at',
+            'searchColumns' => ['name', 'ip_address', 'identity', 'notes']
+        ]);
+
+        // Apply status filter
+        $this->applyStatusFilter($query, $request);
+
+        // Apply type filter
+        if ($request->filled('type')) {
+            $query->where('type', $request->type);
+        }
+
+        $routers = $query->latest()->paginate(15)->withQueryString();
 
         $stats = [
             'total' => Router::count(),
-            'online' => Router::where('status', '=', 'online')->count(),
-            'offline' => Router::where('status', '=', 'offline')->count(),
-            'mikrotik' => Router::where('type', '=', 'mikrotik')->count(),
+            'online' => Router::where('status', 'online')->count(),
+            'offline' => Router::where('status', 'offline')->count(),
+            'mikrotik' => Router::where('type', 'mikrotik')->count(),
         ];
 
-        return view('network.routers.index', compact('routers', 'stats'));
+        // Filter options
+        $statuses = [
+            'online' => 'Online',
+            'offline' => 'Offline',
+            'unknown' => 'Unknown',
+        ];
+
+        $types = [
+            'mikrotik' => 'Mikrotik',
+            'cisco' => 'Cisco',
+            'ubiquiti' => 'Ubiquiti',
+            'other' => 'Other',
+        ];
+
+        return view('network.routers.index', compact('routers', 'stats', 'statuses', 'types'));
     }
 
     public function create()
