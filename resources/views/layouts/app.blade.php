@@ -23,6 +23,9 @@
   <!-- Toast Notifications -->
   <x-toast />
 
+  <!-- Page Loading Bar -->
+  <x-page-loader />
+
   <!-- Navbar Fixed Top -->
   <nav class="fixed top-0 z-50 w-full bg-gray-900/95 backdrop-blur-xl border-b border-gray-800/50">
     <div class="px-3 py-2.5 lg:px-5">
