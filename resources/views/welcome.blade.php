@@ -68,20 +68,25 @@
                 <a href="/" class="flex items-center group">
                     <div class="relative">
                         <div
-                            class="absolute -inset-1 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg blur opacity-40 group-hover:opacity-75 transition duration-300">
+                            class="absolute -inset-1.5 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-2xl blur-md opacity-50 group-hover:opacity-80 transition duration-500">
                         </div>
-                        <div class="relative p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500">
-                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd"
-                                    d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
-                                    clip-rule="evenodd"></path>
+                        <div
+                            class="relative p-2.5 rounded-xl bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600 shadow-lg shadow-blue-500/30">
+                            <!-- WiFi Icon -->
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 21l-1.5-1.5c-2.8-2.8-2.8-7.2 0-10l1.5 1.5c-2 2-2 5.2 0 7.2L12 21zm-3-3l-1.5-1.5c-1.7-1.7-1.7-4.3 0-6L9 12c-1 1-1 2.5 0 3.5L9 18zm6 0l1.5-1.5c1-1 1-2.5 0-3.5L15 12l1.5-1.5c1.7 1.7 1.7 4.3 0 6L15 18zm3-3l1.5-1.5c2-2 2-5.2 0-7.2L18 7.8c2 2 2 5.2 0 7.2L18 15zM12 13c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1z" />
                             </svg>
                         </div>
                     </div>
-                    <div class="ml-3">
+                    <div class="ml-3 flex items-baseline">
                         <span
-                            class="text-xl font-extrabold bg-gradient-to-r from-white via-blue-100 to-cyan-200 bg-clip-text text-transparent">JABBAR23</span>
-                        <span class="text-xl font-light text-cyan-400 ml-1">ISP</span>
+                            class="text-lg sm:text-xl font-black tracking-tight bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+                            JABBAR23
+                        </span>
+                        <span class="ml-1.5 text-[10px] sm:text-xs font-bold text-gray-400 tracking-[0.2em] uppercase">
+                            ISP
+                        </span>
                     </div>
                 </a>
 
@@ -561,14 +566,22 @@
                 <!-- Logo & Description -->
                 <div class="md:col-span-2">
                     <div class="flex items-center mb-4">
-                        <div class="p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500">
-                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                                <path fill-rule="evenodd"
-                                    d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
-                                    clip-rule="evenodd"></path>
+                        <div class="p-2.5 rounded-xl bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600">
+                            <!-- WiFi Icon -->
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M12 21l-1.5-1.5c-2.8-2.8-2.8-7.2 0-10l1.5 1.5c-2 2-2 5.2 0 7.2L12 21zm-3-3l-1.5-1.5c-1.7-1.7-1.7-4.3 0-6L9 12c-1 1-1 2.5 0 3.5L9 18zm6 0l1.5-1.5c1-1 1-2.5 0-3.5L15 12l1.5-1.5c1.7 1.7 1.7 4.3 0 6L15 18zm3-3l1.5-1.5c2-2 2-5.2 0-7.2L18 7.8c2 2 2 5.2 0 7.2L18 15zM12 13c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1z" />
                             </svg>
                         </div>
-                        <span class="ml-3 text-xl font-extrabold text-white">JABBAR23 ISP</span>
+                        <div class="ml-3 flex items-baseline">
+                            <span
+                                class="text-xl font-black bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+                                JABBAR23
+                            </span>
+                            <span class="ml-1.5 text-xs font-bold text-gray-400 tracking-[0.2em] uppercase">
+                                ISP
+                            </span>
+                        </div>
                     </div>
                     <p class="text-gray-500 max-w-md">
                         Penyedia layanan internet fiber optik terpercaya untuk rumah dan bisnis Anda.

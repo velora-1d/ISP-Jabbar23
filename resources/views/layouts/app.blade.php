@@ -24,44 +24,51 @@
   <x-toast />
 
   <!-- Navbar Fixed Top -->
-  <nav class="fixed top-0 z-50 w-full bg-gray-800 border-b border-gray-700">
-    <div class="px-3 py-3 lg:px-5">
+  <nav class="fixed top-0 z-50 w-full bg-gray-900/95 backdrop-blur-xl border-b border-gray-800/50">
+    <div class="px-3 py-2.5 lg:px-5">
       <div class="flex items-center justify-between">
-        <div class="flex items-center justify-start rtl:justify-end">
+        <!-- Left: Hamburger Menu (Mobile) -->
+        <div class="flex items-center">
           <button data-drawer-target="logo-sidebar" data-drawer-toggle="logo-sidebar" aria-controls="logo-sidebar"
             type="button"
-            class="inline-flex items-center p-2 text-sm text-gray-500 rounded-lg sm:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200 dark:text-gray-400 dark:hover:bg-gray-700 dark:focus:ring-gray-600">
+            class="inline-flex items-center p-2 text-gray-400 rounded-xl sm:hidden hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-700 transition-colors">
             <span class="sr-only">Open sidebar</span>
-            <svg class="w-6 h-6" aria-hidden="true" fill="currentColor" viewBox="0 0 20 20"
-              xmlns="http://www.w3.org/2000/svg">
-              <path clip-rule="evenodd" fill-rule="evenodd"
-                d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h7.5a.75.75 0 010 1.5h-7.5a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z">
-              </path>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
             </svg>
           </button>
-          <a href="{{ route('dashboard') }}" class="flex items-center ms-2 md:ms-24 group">
-            <!-- Logo Icon with glow -->
-            <div class="relative">
-              <div
-                class="absolute -inset-1 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-lg blur opacity-40 group-hover:opacity-75 transition duration-300">
-              </div>
-              <div class="relative p-2 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500">
-                <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                  <path fill-rule="evenodd"
-                    d="M11.3 1.046A1 1 0 0112 2v5h4a1 1 0 01.82 1.573l-7 10A1 1 0 018 18v-5H4a1 1 0 01-.82-1.573l7-10a1 1 0 011.12-.38z"
-                    clip-rule="evenodd"></path>
-                </svg>
-              </div>
-            </div>
-            <!-- Gradient Text -->
-            <div class="ms-3">
-              <span
-                class="text-xl font-extrabold sm:text-2xl whitespace-nowrap bg-gradient-to-r from-white via-blue-100 to-cyan-200 bg-clip-text text-transparent tracking-tight">JABBAR23</span>
-              <span
-                class="text-xl font-light sm:text-2xl whitespace-nowrap text-cyan-400 tracking-widest ml-1">ISP</span>
-            </div>
-          </a>
         </div>
+
+        <!-- Center: Logo & Branding -->
+        <a href="{{ route('dashboard') }}"
+          class="flex items-center group absolute left-1/2 -translate-x-1/2 sm:relative sm:left-auto sm:translate-x-0 sm:ml-16 md:ml-64">
+          <!-- WiFi Logo with Glow -->
+          <div class="relative">
+            <div
+              class="absolute -inset-1.5 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-2xl blur-md opacity-50 group-hover:opacity-80 transition duration-500 animate-pulse">
+            </div>
+            <div
+              class="relative p-2.5 rounded-xl bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600 shadow-lg shadow-blue-500/30">
+              <!-- WiFi Icon -->
+              <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                <path
+                  d="M12 21l-1.5-1.5c-2.8-2.8-2.8-7.2 0-10l1.5 1.5c-2 2-2 5.2 0 7.2L12 21zm-3-3l-1.5-1.5c-1.7-1.7-1.7-4.3 0-6L9 12c-1 1-1 2.5 0 3.5L9 18zm6 0l1.5-1.5c1-1 1-2.5 0-3.5L15 12l1.5-1.5c1.7 1.7 1.7 4.3 0 6L15 18zm3-3l1.5-1.5c2-2 2-5.2 0-7.2L18 7.8c2 2 2 5.2 0 7.2L18 15zM12 13c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1z" />
+              </svg>
+            </div>
+          </div>
+          <!-- Brand Text -->
+          <div class="ml-3 flex items-baseline">
+            <span
+              class="text-lg sm:text-xl font-black tracking-tight bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+              JABBAR23
+            </span>
+            <span class="ml-1.5 text-[10px] sm:text-xs font-bold text-gray-400 tracking-[0.2em] uppercase">
+              ISP
+            </span>
+          </div>
+        </a>
+
+        <!-- Right: User Menu -->
         <div class="flex items-center">
           <div class="flex items-center ms-3">
             <div>
