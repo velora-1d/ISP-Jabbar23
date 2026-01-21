@@ -105,7 +105,7 @@
     <div class="fixed inset-0 overflow-hidden pointer-events-none">
         <!-- Dark Gradient Orbs -->
         <div class="absolute top-20 left-10 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl animate-pulse-slow"></div>
-        <div class="absolute bottom-20 right-10 w-96 h-96 bg-purple-500/10 rounded-full blur-3xl animate-pulse-slow"
+        <div class="absolute bottom-20 right-10 w-96 h-96 bg-teal-500/10 rounded-full blur-3xl animate-pulse-slow"
             style="animation-delay: 2s;"></div>
         <div
             class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[500px] bg-blue-500/5 rounded-full blur-3xl">
@@ -126,10 +126,10 @@
                 <div class="flex items-center mb-8">
                     <div class="relative">
                         <div
-                            class="absolute -inset-2 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-3xl blur-lg opacity-40">
+                            class="absolute -inset-2 bg-gradient-to-r from-cyan-500 via-blue-500 to-teal-500 rounded-3xl blur-lg opacity-40">
                         </div>
                         <div
-                            class="relative p-4 rounded-2xl bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600 shadow-2xl shadow-cyan-500/20">
+                            class="relative p-4 rounded-2xl bg-gradient-to-br from-cyan-500 via-blue-600 to-teal-600 shadow-2xl shadow-cyan-500/20">
                             <!-- WiFi Icon -->
                             <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
                                 <path
@@ -139,7 +139,7 @@
                     </div>
                     <div class="ml-4">
                         <h1
-                            class="text-4xl font-black bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+                            class="text-4xl font-black bg-gradient-to-r from-cyan-400 via-blue-400 to-teal-400 bg-clip-text text-transparent">
                             <span class="typing-jabbar">JABBAR23</span>
                         </h1>
                         <p class="text-sm font-bold text-gray-500 tracking-[0.2em] uppercase">
@@ -182,8 +182,8 @@
                     </div>
                     <div class="flex items-center text-gray-400 hover:text-gray-300 transition-colors">
                         <div
-                            class="w-10 h-10 rounded-xl bg-purple-500/10 border border-purple-500/20 flex items-center justify-center mr-4">
-                            <svg class="w-5 h-5 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            class="w-10 h-10 rounded-xl bg-teal-500/10 border border-teal-500/20 flex items-center justify-center mr-4">
+                            <svg class="w-5 h-5 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                     d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z">
                                 </path>
@@ -203,9 +203,9 @@
                 <div class="lg:hidden flex items-center justify-center mb-8">
                     <div class="relative">
                         <div
-                            class="absolute -inset-1.5 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-2xl blur-md opacity-50">
+                            class="absolute -inset-1.5 bg-gradient-to-r from-cyan-500 via-blue-500 to-teal-500 rounded-2xl blur-md opacity-50">
                         </div>
-                        <div class="relative p-3 rounded-xl bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600">
+                        <div class="relative p-3 rounded-xl bg-gradient-to-br from-cyan-500 via-blue-600 to-teal-600">
                             <svg class="w-8 h-8 text-white" fill="currentColor" viewBox="0 0 24 24">
                                 <path
                                     d="M12 21l-1.5-1.5c-2.8-2.8-2.8-7.2 0-10l1.5 1.5c-2 2-2 5.2 0 7.2L12 21zm-3-3l-1.5-1.5c-1.7-1.7-1.7-4.3 0-6L9 12c-1 1-1 2.5 0 3.5L9 18zm6 0l1.5-1.5c1-1 1-2.5 0-3.5L15 12l1.5-1.5c1.7 1.7 1.7 4.3 0 6L15 18zm3-3l1.5-1.5c2-2 2-5.2 0-7.2L18 7.8c2 2 2 5.2 0 7.2L18 15zM12 13c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1z" />
@@ -214,7 +214,7 @@
                     </div>
                     <div class="ml-3">
                         <span
-                            class="text-2xl font-black bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+                            class="text-2xl font-black bg-gradient-to-r from-cyan-400 via-blue-400 to-teal-400 bg-clip-text text-transparent">
                             JABBAR23
                         </span>
                         <span class="ml-1 text-xs font-bold text-gray-500 tracking-[0.2em] uppercase">
@@ -227,7 +227,7 @@
                 <div class="relative">
                     <!-- Card Glow -->
                     <div
-                        class="absolute -inset-1 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-purple-500/10 rounded-3xl blur-xl">
+                        class="absolute -inset-1 bg-gradient-to-r from-cyan-500/10 via-blue-500/10 to-teal-500/10 rounded-3xl blur-xl">
                     </div>
 
                     <!-- Card -->
@@ -327,10 +327,10 @@
                             <!-- Submit Button -->
                             <button type="submit"
                                 class="relative w-full py-4 text-sm font-bold text-white rounded-xl overflow-hidden group transition-all duration-300 shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/30">
-                                <div class="absolute inset-0 bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600">
+                                <div class="absolute inset-0 bg-gradient-to-r from-cyan-600 via-blue-600 to-teal-600">
                                 </div>
                                 <div
-                                    class="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    class="absolute inset-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-teal-500 opacity-0 group-hover:opacity-100 transition-opacity">
                                 </div>
                                 <span class="relative flex items-center justify-center">
                                     <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">

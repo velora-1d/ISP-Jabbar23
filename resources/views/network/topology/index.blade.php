@@ -5,7 +5,7 @@
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h1 class="text-3xl font-bold bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+            <h1 class="text-3xl font-bold bg-gradient-to-r from-indigo-400 to-teal-400 bg-clip-text text-transparent">
                 Network Topology
             </h1>
             <p class="text-gray-400 mt-1">Visualisasi jaringan infrastruktur</p>
@@ -42,7 +42,7 @@
                 <span class="text-gray-300 text-sm">OLT</span>
             </div>
             <div class="flex items-center gap-2">
-                <div class="w-4 h-4 rounded-full bg-violet-500"></div>
+                <div class="w-4 h-4 rounded-full bg-cyan-500"></div>
                 <span class="text-gray-300 text-sm">ODP</span>
             </div>
         </div>

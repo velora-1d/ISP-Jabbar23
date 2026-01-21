@@ -14,11 +14,11 @@
                 <x-filter-select name="user_id" label="User" :options="$users->pluck('name', 'id')"
                     :selected="request('user_id')" />
                 <input type="text" name="model_type" value="{{ request('model_type') }}" placeholder="Model Type"
-                    class="bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-2 text-white focus:ring-2 focus:ring-violet-500">
+                    class="bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-2 text-white focus:ring-2 focus:ring-cyan-500">
                 <input type="date" name="start_date" value="{{ request('start_date') }}"
-                    class="bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-2 text-white focus:ring-2 focus:ring-violet-500">
+                    class="bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-2 text-white focus:ring-2 focus:ring-cyan-500">
                 <input type="date" name="end_date" value="{{ request('end_date') }}"
-                    class="bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-2 text-white focus:ring-2 focus:ring-violet-500">
+                    class="bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-2 text-white focus:ring-2 focus:ring-cyan-500">
             </x-slot>
 
             <x-slot name="actions">
@@ -71,7 +71,7 @@
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
                                         <div
-                                            class="w-8 h-8 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
+                                            class="w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-500 to-teal-600 flex items-center justify-center">
                                             <span
                                                 class="text-white font-bold text-xs">{{ strtoupper(substr($log->user_name ?? 'S', 0, 2)) }}</span>
                                         </div>
@@ -98,7 +98,7 @@
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <a href="{{ route('audit-logs.show', $log) }}"
-                                        class="inline-flex items-center gap-1 px-3 py-1.5 bg-violet-600/20 hover:bg-violet-600/40 text-violet-400 rounded-lg transition-colors">
+                                        class="inline-flex items-center gap-1 px-3 py-1.5 bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-400 rounded-lg transition-colors">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

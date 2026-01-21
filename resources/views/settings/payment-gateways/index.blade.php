@@ -62,7 +62,7 @@
         <div class="bg-gray-800/50 backdrop-blur-xl rounded-2xl border border-gray-700/50 overflow-hidden">
             <div class="px-6 py-4 border-b border-gray-700/50 flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div class="p-2 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600">
+                    <div class="p-2 rounded-lg bg-gradient-to-br from-indigo-500 to-teal-600">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2z"/>
                         </svg>

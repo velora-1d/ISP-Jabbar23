@@ -63,7 +63,7 @@
             </div>
             <div class="bg-gray-800/50 backdrop-blur-xl rounded-2xl border border-gray-700/50 p-6">
                 <div class="flex items-center gap-4">
-                    <div class="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600">
+                    <div class="p-3 rounded-xl bg-gradient-to-br from-teal-500 to-pink-600">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
@@ -71,7 +71,7 @@
                     </div>
                     <div>
                         <p class="text-sm text-gray-400">Bulan Ini</p>
-                        <p class="text-2xl font-bold text-purple-400">Rp
+                        <p class="text-2xl font-bold text-teal-400">Rp
                             {{ number_format($stats['this_month'], 0, ',', '.') }}
                         </p>
                     </div>

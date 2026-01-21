@@ -65,7 +65,7 @@
                                         @if($message->direction == 'inbound')
                                             <span class="text-cyan-400">↓</span>
                                         @else
-                                            <span class="text-purple-400">↑</span>
+                                            <span class="text-teal-400">↑</span>
                                         @endif
                                         <span
                                             class="px-2 py-1 rounded-lg text-xs font-medium bg-gray-700 text-gray-300 capitalize">{{ $message->channel }}</span>

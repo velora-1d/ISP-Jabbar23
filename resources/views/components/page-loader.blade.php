@@ -30,7 +30,7 @@
         <div class="absolute inset-0 bg-gray-800/50"></div>
 
         <!-- Progress Bar -->
-        <div class="absolute inset-y-0 left-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 transition-all duration-300 ease-out"
+        <div class="absolute inset-y-0 left-0 bg-gradient-to-r from-cyan-500 via-blue-500 to-teal-500 transition-all duration-300 ease-out"
             :style="{ width: progress + '%' }">
             <!-- Glow effect -->
             <div class="absolute right-0 top-0 h-full w-20 bg-gradient-to-r from-transparent to-white/30 blur-sm"></div>

@@ -4,7 +4,7 @@
 <div class="space-y-6">
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-3xl font-bold bg-gradient-to-r from-violet-400 to-purple-400 bg-clip-text text-transparent">Buat Campaign</h1>
+            <h1 class="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">Buat Campaign</h1>
             <p class="text-gray-400 mt-1">Kampanye marketing baru</p>
         </div>
         <a href="{{ route('campaigns.index') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-xl transition-colors">
@@ -46,7 +46,7 @@
             </div>
             <div class="flex justify-end gap-3">
                 <a href="{{ route('campaigns.index') }}" class="px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-xl transition-colors">Batal</a>
-                <button type="submit" class="px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white font-semibold rounded-xl transition-all shadow-lg shadow-violet-500/25">Simpan</button>
+                <button type="submit" class="px-6 py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white font-semibold rounded-xl transition-all shadow-lg shadow-cyan-500/25">Simpan</button>
             </div>
         </form>
     </div>

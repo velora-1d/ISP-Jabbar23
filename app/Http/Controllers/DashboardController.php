@@ -223,6 +223,44 @@ class DashboardController extends Controller
             ->orderBy('month', 'asc')
             ->get();
 
+        // Payment by category (this month)
+        $paymentByCategory = [
+            'cash' => Payment::where('status', '=', 'confirmed')
+                ->whereMonth('paid_at', '=', $currentMonth)
+                ->whereYear('paid_at', '=', $currentYear)
+                ->where('payment_method', '=', 'cash')
+                ->sum('amount'),
+            'manual_transfer' => Payment::where('status', '=', 'confirmed')
+                ->whereMonth('paid_at', '=', $currentMonth)
+                ->whereYear('paid_at', '=', $currentYear)
+                ->where('payment_method', '=', 'bank_transfer')
+                ->sum('amount'),
+            'payment_gateway' => Payment::where('status', '=', 'confirmed')
+                ->whereMonth('paid_at', '=', $currentMonth)
+                ->whereYear('paid_at', '=', $currentYear)
+                ->whereIn('payment_method', ['qris', 'va', 'ewallet', 'cc'])
+                ->sum('amount'),
+        ];
+
+        // Payment count by category (this month)
+        $paymentCountByCategory = [
+            'cash' => Payment::where('status', '=', 'confirmed')
+                ->whereMonth('paid_at', '=', $currentMonth)
+                ->whereYear('paid_at', '=', $currentYear)
+                ->where('payment_method', '=', 'cash')
+                ->count(),
+            'manual_transfer' => Payment::where('status', '=', 'confirmed')
+                ->whereMonth('paid_at', '=', $currentMonth)
+                ->whereYear('paid_at', '=', $currentYear)
+                ->where('payment_method', '=', 'bank_transfer')
+                ->count(),
+            'payment_gateway' => Payment::where('status', '=', 'confirmed')
+                ->whereMonth('paid_at', '=', $currentMonth)
+                ->whereYear('paid_at', '=', $currentYear)
+                ->whereIn('payment_method', ['qris', 'va', 'ewallet', 'cc'])
+                ->count(),
+        ];
+
         return [
             'totalRevenue' => $totalRevenue,
             'revenueThisMonth' => $revenueThisMonth,
@@ -234,6 +272,8 @@ class DashboardController extends Controller
             'completedWorkOrders' => $completedWorkOrders,
             'revenueChart' => $revenueChart,
             'customerGrowth' => $customerGrowth,
+            'paymentByCategory' => $paymentByCategory,
+            'paymentCountByCategory' => $paymentCountByCategory,
         ];
     }
 
@@ -345,6 +385,44 @@ class DashboardController extends Controller
             ->take(5)
             ->get();
 
+        // Payment by category (this month)
+        $paymentByCategory = [
+            'cash' => Payment::where('status', '=', 'confirmed')
+                ->whereMonth('paid_at', '=', $currentMonth)
+                ->whereYear('paid_at', '=', $currentYear)
+                ->where('payment_method', '=', 'cash')
+                ->sum('amount'),
+            'manual_transfer' => Payment::where('status', '=', 'confirmed')
+                ->whereMonth('paid_at', '=', $currentMonth)
+                ->whereYear('paid_at', '=', $currentYear)
+                ->where('payment_method', '=', 'bank_transfer')
+                ->sum('amount'),
+            'payment_gateway' => Payment::where('status', '=', 'confirmed')
+                ->whereMonth('paid_at', '=', $currentMonth)
+                ->whereYear('paid_at', '=', $currentYear)
+                ->whereIn('payment_method', ['qris', 'va', 'ewallet', 'cc'])
+                ->sum('amount'),
+        ];
+
+        // Payment count by category (this month)
+        $paymentCountByCategory = [
+            'cash' => Payment::where('status', '=', 'confirmed')
+                ->whereMonth('paid_at', '=', $currentMonth)
+                ->whereYear('paid_at', '=', $currentYear)
+                ->where('payment_method', '=', 'cash')
+                ->count(),
+            'manual_transfer' => Payment::where('status', '=', 'confirmed')
+                ->whereMonth('paid_at', '=', $currentMonth)
+                ->whereYear('paid_at', '=', $currentYear)
+                ->where('payment_method', '=', 'bank_transfer')
+                ->count(),
+            'payment_gateway' => Payment::where('status', '=', 'confirmed')
+                ->whereMonth('paid_at', '=', $currentMonth)
+                ->whereYear('paid_at', '=', $currentYear)
+                ->whereIn('payment_method', ['qris', 'va', 'ewallet', 'cc'])
+                ->count(),
+        ];
+
         return [
             'totalRevenue' => $totalRevenue,
             'revenueThisMonth' => $revenueThisMonth,
@@ -356,6 +434,8 @@ class DashboardController extends Controller
             'paymentMethods' => $paymentMethods,
             'revenueChart' => $revenueChart,
             'recentPayments' => $recentPayments,
+            'paymentByCategory' => $paymentByCategory,
+            'paymentCountByCategory' => $paymentCountByCategory,
         ];
     }
 

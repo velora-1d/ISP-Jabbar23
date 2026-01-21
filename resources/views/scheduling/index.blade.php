@@ -24,7 +24,7 @@
                 <h3 class="text-white font-semibold mb-4">Legend Status</h3>
                 <div class="space-y-3">
                     <div class="flex items-center gap-3">
-                        <div class="w-4 h-4 rounded-full bg-purple-500"></div>
+                        <div class="w-4 h-4 rounded-full bg-teal-500"></div>
                         <span class="text-gray-300 text-sm">Scheduled (Terjadwal)</span>
                     </div>
                     <div class="flex items-center gap-3">

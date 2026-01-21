@@ -9,7 +9,7 @@
 
 @php
 $variants = [
-    'primary' => 'bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 hover:from-cyan-500 hover:via-blue-500 hover:to-purple-500 shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/30',
+    'primary' => 'bg-gradient-to-r from-cyan-600 via-blue-600 to-teal-600 hover:from-cyan-500 hover:via-blue-500 hover:to-teal-500 shadow-lg shadow-cyan-500/20 hover:shadow-cyan-500/30',
     'secondary' => 'bg-gray-700 hover:bg-gray-600 border border-gray-600 hover:border-gray-500',
     'danger' => 'bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 shadow-lg shadow-red-500/20 hover:shadow-red-500/30',
     'success' => 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-lg shadow-emerald-500/20 hover:shadow-emerald-500/30',

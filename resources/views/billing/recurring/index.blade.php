@@ -5,7 +5,7 @@
     <!-- Header -->
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h1 class="text-3xl font-bold bg-gradient-to-r from-violet-400 to-purple-400 bg-clip-text text-transparent">
+            <h1 class="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
                 Recurring Billing
             </h1>
             <p class="text-gray-400 mt-1">Kelola langganan dan siklus billing pelanggan aktif</p>
@@ -80,7 +80,7 @@
         <form method="GET" class="flex flex-wrap gap-4 items-end">
             <div class="flex-1 min-w-[200px]">
                 <label class="block text-sm font-medium text-gray-400 mb-2">Tanggal Billing</label>
-                <select name="billing_day" class="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-2.5 text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent">
+                <select name="billing_day" class="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-2.5 text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent">
                     <option value="">Semua Tanggal</option>
                     @for($i = 1; $i <= 28; $i++)
                         <option value="{{ $i }}" {{ request('billing_day') == $i ? 'selected' : '' }}>Tanggal {{ $i }}</option>
@@ -89,14 +89,14 @@
             </div>
             <div class="flex-1 min-w-[200px]">
                 <label class="block text-sm font-medium text-gray-400 mb-2">Paket</label>
-                <select name="package_id" class="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-2.5 text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent">
+                <select name="package_id" class="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-2.5 text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent">
                     <option value="">Semua Paket</option>
                     @foreach($packages as $package)
                         <option value="{{ $package->id }}" {{ request('package_id') == $package->id ? 'selected' : '' }}>{{ $package->name }}</option>
                     @endforeach
                 </select>
             </div>
-            <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white font-semibold rounded-xl transition-all duration-200">
+            <button type="submit" class="px-6 py-2.5 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white font-semibold rounded-xl transition-all duration-200">
                 Filter
             </button>
             <a href="{{ route('billing.recurring') }}" class="px-6 py-2.5 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-xl transition-all duration-200">
@@ -125,7 +125,7 @@
                     <tr class="hover:bg-gray-700/30 transition-colors">
                         <td class="px-6 py-4">
                             <div class="flex items-center gap-3">
-                                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white font-semibold">
+                                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-cyan-500 to-teal-600 flex items-center justify-center text-white font-semibold">
                                     {{ strtoupper(substr($customer->name, 0, 1)) }}
                                 </div>
                                 <div>
@@ -172,7 +172,7 @@
                             @endif
                         </td>
                         <td class="px-6 py-4 text-right">
-                            <a href="{{ route('billing.recurring.show', $customer) }}" class="inline-flex items-center gap-2 px-4 py-2 bg-violet-600/20 hover:bg-violet-600/40 text-violet-400 rounded-lg transition-colors">
+                            <a href="{{ route('billing.recurring.show', $customer) }}" class="inline-flex items-center gap-2 px-4 py-2 bg-cyan-600/20 hover:bg-cyan-600/40 text-cyan-400 rounded-lg transition-colors">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>

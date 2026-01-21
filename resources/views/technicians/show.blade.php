@@ -58,7 +58,7 @@
                                 @if($technician->photo)
                                     <img src="{{ $technician->photo_url }}" class="w-20 h-20 rounded-full object-cover ring-4 ring-gray-700">
                                 @else
-                                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center text-2xl font-bold text-white ring-4 ring-gray-700">
+                                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-indigo-500 to-teal-600 flex items-center justify-center text-2xl font-bold text-white ring-4 ring-gray-700">
                                         {{ strtoupper(substr($technician->name, 0, 1)) }}
                                     </div>
                                 @endif
@@ -187,7 +187,7 @@
                                             'registered' => ['bg' => 'gray', 'text' => 'gray'],
                                             'survey' => ['bg' => 'blue', 'text' => 'blue'],
                                             'approved' => ['bg' => 'indigo', 'text' => 'indigo'],
-                                            'scheduled' => ['bg' => 'purple', 'text' => 'purple'],
+                                            'scheduled' => ['bg' => 'teal', 'text' => 'teal'],
                                             'installing' => ['bg' => 'amber', 'text' => 'amber'],
                                             'active' => ['bg' => 'emerald', 'text' => 'emerald'],
                                         ];

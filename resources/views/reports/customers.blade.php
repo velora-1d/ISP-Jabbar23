@@ -48,14 +48,14 @@
         </div>
         <div class="bg-gray-800/50 backdrop-blur-xl rounded-2xl border border-gray-700/50 p-6">
             <div class="flex items-center gap-4">
-                <div class="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600">
+                <div class="p-3 rounded-xl bg-gradient-to-br from-teal-500 to-pink-600">
                     <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
                     </svg>
                 </div>
                 <div>
                     <p class="text-sm text-gray-400">Baru (Periode)</p>
-                    <p class="text-2xl font-bold text-purple-400">{{ number_format($newCustomers) }}</p>
+                    <p class="text-2xl font-bold text-teal-400">{{ number_format($newCustomers) }}</p>
                 </div>
             </div>
         </div>

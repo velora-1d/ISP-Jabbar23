@@ -48,10 +48,10 @@
           <!-- WiFi Logo with Glow -->
           <div class="relative">
             <div
-              class="absolute -inset-1.5 bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500 rounded-2xl blur-md opacity-50 group-hover:opacity-80 transition duration-500 animate-pulse">
+              class="absolute -inset-1.5 bg-gradient-to-r from-cyan-500 via-blue-500 to-teal-500 rounded-2xl blur-md opacity-50 group-hover:opacity-80 transition duration-500 animate-pulse">
             </div>
             <div
-              class="relative p-2.5 rounded-xl bg-gradient-to-br from-cyan-500 via-blue-600 to-purple-600 shadow-lg shadow-blue-500/30">
+              class="relative p-2.5 rounded-xl bg-gradient-to-br from-cyan-500 via-blue-600 to-teal-600 shadow-lg shadow-blue-500/30">
               <!-- WiFi Icon -->
               <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                 <path
@@ -62,7 +62,7 @@
           <!-- Brand Text -->
           <div class="ml-3 flex items-baseline">
             <span
-              class="text-lg sm:text-xl font-black tracking-tight bg-gradient-to-r from-cyan-400 via-blue-400 to-purple-400 bg-clip-text text-transparent">
+              class="text-lg sm:text-xl font-black tracking-tight bg-gradient-to-r from-cyan-400 via-blue-400 to-teal-400 bg-clip-text text-transparent">
               JABBAR23
             </span>
             <span class="ml-1.5 text-[10px] sm:text-xs font-bold text-gray-400 tracking-[0.2em] uppercase">

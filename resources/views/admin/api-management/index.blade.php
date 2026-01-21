@@ -47,12 +47,12 @@
             </div>
         </div>
         <div class="bg-gray-800/50 backdrop-blur-xl rounded-2xl border border-gray-700/50 p-6 flex items-center gap-4">
-            <div class="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-pink-600">
+            <div class="p-3 rounded-xl bg-gradient-to-br from-teal-500 to-pink-600">
                 <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/></svg>
             </div>
             <div>
                 <p class="text-sm text-gray-400">Total Requests</p>
-                <p class="text-2xl font-bold text-purple-400">{{ number_format($stats['total_usage']) }}</p>
+                <p class="text-2xl font-bold text-teal-400">{{ number_format($stats['total_usage']) }}</p>
             </div>
         </div>
     </div>

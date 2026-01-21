@@ -36,7 +36,7 @@
             <x-menu-item route="customers.index" label="Pelanggan" color-from="sky-500" color-to="blue-600">
                <x-slot:icon><svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 20 20"><path d="M9 6a3 3 0 11-6 0 3 3 0 016 0zM17 6a3 3 0 11-6 0 3 3 0 016 0zM12.93 17c.046-.327.07-.66.07-1a6.97 6.97 0 00-1.5-4.33A5 5 0 0119 16v1h-6.07zM6 11a5 5 0 015 5v1H1v-1a5 5 0 015-5z"/></svg></x-slot:icon>
             </x-menu-item>
-            <x-menu-item route="contracts.index" label="Kontrak" color-from="indigo-500" color-to="purple-600">
+            <x-menu-item route="contracts.index" label="Kontrak" color-from="indigo-500" color-to="teal-600">
                <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></x-slot:icon>
             </x-menu-item>
             <x-menu-item route="partners.index" label="Mitra/Reseller" color-from="teal-500" color-to="emerald-600">
@@ -54,13 +54,13 @@
             </button>
          </li>
          <div x-show="open === 'billing'" x-collapse>
-            <x-menu-item route="invoices.index" label="Tagihan (Invoice)" color-from="purple-500" color-to="indigo-600">
+            <x-menu-item route="invoices.index" label="Tagihan (Invoice)" color-from="teal-500" color-to="indigo-600">
                <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg></x-slot:icon>
             </x-menu-item>
             <x-menu-item route="payments.index" label="Pembayaran" color-from="blue-500" color-to="indigo-600">
                <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg></x-slot:icon>
             </x-menu-item>
-            <x-menu-item route="billing.recurring" label="Tagihan Otomatis" color-from="violet-500" color-to="purple-600">
+            <x-menu-item route="billing.recurring" label="Tagihan Otomatis" color-from="cyan-500" color-to="teal-600">
                <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/></svg></x-slot:icon>
             </x-menu-item>
             <x-menu-item route="billing.proforma" label="Proforma Invoice" color-from="fuchsia-500" color-to="pink-600">
@@ -211,11 +211,11 @@
                <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"/></svg></x-slot:icon>
             </x-menu-item>
             @endhasanyrole
-            <x-menu-item route="payroll.index" label="Penggajian (Payroll)" color-from="fuchsia-500" color-to="purple-600">
+            <x-menu-item route="payroll.index" label="Penggajian (Payroll)" color-from="fuchsia-500" color-to="teal-600">
                <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg></x-slot:icon>
             </x-menu-item>
             @hasanyrole('super-admin|admin|hrd')
-            <x-menu-item route="leave.index" label="Cuti & Izin" color-from="purple-500" color-to="indigo-600">
+            <x-menu-item route="leave.index" label="Cuti & Izin" color-from="teal-500" color-to="indigo-600">
                <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg></x-slot:icon>
             </x-menu-item>
             @endhasanyrole
@@ -255,7 +255,7 @@
             </button>
          </li>
          <div x-show="open === 'marketing'" x-collapse>
-            <x-menu-item route="campaigns.index" label="Kampanye" color-from="violet-500" color-to="purple-600">
+            <x-menu-item route="campaigns.index" label="Kampanye" color-from="cyan-500" color-to="teal-600">
                <x-slot:icon><svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5.882V19.24a1.76 1.76 0 01-3.417.592l-2.147-6.15M18 13a3 3 0 100-6M5.436 13.683A4.001 4.001 0 017 6h1.832c4.1 0 7.625-1.234 9.168-3v14c-1.543-1.766-5.067-3-9.168-3H7a3.988 3.988 0 01-1.564-.317z"/></svg></x-slot:icon>
             </x-menu-item>
             <x-menu-item route="promotions.index" label="Promosi/Voucher" color-from="fuchsia-500" color-to="pink-600">

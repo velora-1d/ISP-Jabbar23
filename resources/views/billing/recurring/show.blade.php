@@ -11,7 +11,7 @@
                 </svg>
                 Kembali
             </a>
-            <h1 class="text-3xl font-bold bg-gradient-to-r from-violet-400 to-purple-400 bg-clip-text text-transparent">
+            <h1 class="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">
                 Detail Langganan
             </h1>
             <p class="text-gray-400 mt-1">{{ $customer->name }} - {{ $customer->customer_id }}</p>
@@ -24,7 +24,7 @@
             <!-- Profile Card -->
             <div class="bg-gray-800/50 backdrop-blur-xl rounded-2xl border border-gray-700/50 p-6">
                 <div class="text-center mb-6">
-                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center text-white text-3xl font-bold mx-auto mb-4">
+                    <div class="w-20 h-20 rounded-full bg-gradient-to-br from-cyan-500 to-teal-600 flex items-center justify-center text-white text-3xl font-bold mx-auto mb-4">
                         {{ strtoupper(substr($customer->name, 0, 1)) }}
                     </div>
                     <h3 class="text-xl font-bold text-white">{{ $customer->name }}</h3>
@@ -60,9 +60,9 @@
                     <div class="mb-4">
                         <label class="block text-sm text-gray-400 mb-2">Tanggal Jatuh Tempo Setiap Bulan</label>
                         <input type="date" name="billing_date" value="{{ $customer->billing_date?->format('Y-m-d') }}" 
-                            class="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-2.5 text-white focus:ring-2 focus:ring-violet-500 focus:border-transparent">
+                            class="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-2.5 text-white focus:ring-2 focus:ring-cyan-500 focus:border-transparent">
                     </div>
-                    <button type="submit" class="w-full px-4 py-2.5 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white font-semibold rounded-xl transition-all duration-200">
+                    <button type="submit" class="w-full px-4 py-2.5 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white font-semibold rounded-xl transition-all duration-200">
                         Simpan Perubahan
                     </button>
                 </form>
@@ -91,7 +91,7 @@
                             @forelse($customer->invoices as $invoice)
                             <tr class="hover:bg-gray-700/30 transition-colors">
                                 <td class="px-6 py-4">
-                                    <a href="{{ route('invoices.show', $invoice) }}" class="text-violet-400 hover:text-violet-300 font-medium">
+                                    <a href="{{ route('invoices.show', $invoice) }}" class="text-cyan-400 hover:text-cyan-300 font-medium">
                                         {{ $invoice->invoice_number }}
                                     </a>
                                 </td>

@@ -26,8 +26,8 @@ $illustrations = [
         <svg class="w-24 h-24" viewBox="0 0 100 100" fill="none">
             <rect x="20" y="10" width="50" height="70" rx="4" class="stroke-gray-600" stroke-width="2"/>
             <path d="M30 30h30M30 42h25M30 54h20" class="stroke-gray-700" stroke-width="2" stroke-linecap="round"/>
-            <circle cx="70" cy="70" r="20" class="fill-purple-500/20 stroke-purple-500/50" stroke-width="2"/>
-            <path d="M65 70h10M70 65v10" class="stroke-purple-400" stroke-width="2" stroke-linecap="round"/>
+            <circle cx="70" cy="70" r="20" class="fill-teal-500/20 stroke-teal-500/50" stroke-width="2"/>
+            <path d="M65 70h10M70 65v10" class="stroke-teal-400" stroke-width="2" stroke-linecap="round"/>
         </svg>
     ',
     'payments' => '

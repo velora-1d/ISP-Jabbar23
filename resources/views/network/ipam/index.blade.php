@@ -15,7 +15,7 @@
 
             <x-slot name="actions">
                 <a href="{{ route('network.ipam.pools.create') }}"
-                    class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-violet-600 to-purple-600 hover:from-violet-500 hover:to-purple-500 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-violet-500/25">
+                    class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-cyan-600 to-teal-600 hover:from-cyan-500 hover:to-teal-500 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-cyan-500/25">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
@@ -39,7 +39,7 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div class="bg-gray-800/50 backdrop-blur-xl rounded-2xl border border-gray-700/50 p-6">
                 <div class="flex items-center gap-4">
-                    <div class="p-3 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600">
+                    <div class="p-3 rounded-xl bg-gradient-to-br from-cyan-500 to-teal-600">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
@@ -116,7 +116,7 @@
                             <span class="text-white">{{ $pool->usage_percent }}%</span>
                         </div>
                         <div class="h-2 bg-gray-700 rounded-full overflow-hidden">
-                            <div class="h-full bg-gradient-to-r from-violet-500 to-purple-500 rounded-full transition-all"
+                            <div class="h-full bg-gradient-to-r from-cyan-500 to-teal-500 rounded-full transition-all"
                                 style="width: {{ $pool->usage_percent }}%"></div>
                         </div>
                         <div class="flex justify-between text-xs text-gray-500 mt-1">
@@ -158,7 +158,7 @@
                     </svg>
                     <p class="text-gray-400">Belum ada IP Pool yang terdaftar.</p>
                     <a href="{{ route('network.ipam.pools.create') }}"
-                        class="text-violet-400 hover:underline mt-2 inline-block">Buat pool pertama</a>
+                        class="text-cyan-400 hover:underline mt-2 inline-block">Buat pool pertama</a>
                 </div>
             @endforelse
         </div>

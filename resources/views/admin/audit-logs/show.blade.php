@@ -4,7 +4,7 @@
 <div class="space-y-6">
     <div class="flex items-center justify-between">
         <div>
-            <h1 class="text-3xl font-bold bg-gradient-to-r from-violet-400 to-purple-400 bg-clip-text text-transparent">Detail Log</h1>
+            <h1 class="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">Detail Log</h1>
             <p class="text-gray-400 mt-1">{{ $auditLog->created_at->format('d F Y, H:i:s') }}</p>
         </div>
         <a href="{{ route('audit-logs.index') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-xl transition-colors">
@@ -69,7 +69,7 @@
             <div class="bg-gray-800/50 backdrop-blur-xl rounded-2xl border border-gray-700/50 p-6">
                 <h3 class="text-lg font-semibold text-white border-b border-gray-700 pb-3 mb-4">User</h3>
                 <div class="flex items-center gap-4">
-                    <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
+                    <div class="w-14 h-14 rounded-xl bg-gradient-to-br from-cyan-500 to-teal-600 flex items-center justify-center">
                         <span class="text-white font-bold text-xl">{{ strtoupper(substr($auditLog->user_name ?? 'S', 0, 2)) }}</span>
                     </div>
                     <div>

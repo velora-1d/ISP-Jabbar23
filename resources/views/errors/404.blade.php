@@ -25,14 +25,14 @@
             <div class="absolute inset-0 flex items-center justify-center">
                 <div class="text-center">
                     <span
-                        class="text-8xl font-black bg-gradient-to-br from-cyan-400 via-blue-500 to-purple-600 bg-clip-text text-transparent">404</span>
+                        class="text-8xl font-black bg-gradient-to-br from-cyan-400 via-blue-500 to-teal-600 bg-clip-text text-transparent">404</span>
                 </div>
             </div>
 
             <!-- Floating elements -->
             <div class="absolute top-4 right-8 w-4 h-4 rounded-full bg-cyan-500/50 animate-bounce"
                 style="animation-delay: 0s;"></div>
-            <div class="absolute bottom-8 left-4 w-3 h-3 rounded-full bg-purple-500/50 animate-bounce"
+            <div class="absolute bottom-8 left-4 w-3 h-3 rounded-full bg-teal-500/50 animate-bounce"
                 style="animation-delay: 0.5s;"></div>
             <div class="absolute top-1/2 left-0 w-2 h-2 rounded-full bg-blue-500/50 animate-bounce"
                 style="animation-delay: 1s;"></div>

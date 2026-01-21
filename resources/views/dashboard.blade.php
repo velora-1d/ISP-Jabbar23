@@ -73,7 +73,7 @@
                     <!-- Pending Work Orders -->
                     <x-stat-card title="Work Order Pending" value="{{ $pendingWorkOrders ?? 0 }}"
                         subtitle="{{ $completedWorkOrders ?? 0 }} selesai bulan ini" subtitleClass="text-emerald-400"
-                        valueClass="text-purple-400" colorFrom="purple-500" colorTo="pink-500"
+                        valueClass="text-teal-400" colorFrom="teal-500" colorTo="pink-500"
                         href="{{ route('work-orders.index') }}">
                         <x-slot:icon>
                             <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -127,318 +127,512 @@
                                 <p class="text-sm text-gray-400 mt-1">Suspend</p>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                {{-- ============================================== --}}
-                {{-- SALES DASHBOARD --}}
-                {{-- ============================================== --}}
+                        <!-- Payment Method KPI Cards -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                            <!-- Cash Payments -->
+                            <x-stat-card title="Pembayaran Cash"
+                                value="Rp {{ number_format($paymentByCategory['cash'] ?? 0, 0, ',', '.') }}"
+                                subtitle="{{ $paymentCountByCategory['cash'] ?? 0 }} transaksi bulan ini"
+                                valueClass="text-emerald-400" colorFrom="emerald-500" colorTo="green-500">
+                                <x-slot:icon>
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z">
+                                        </path>
+                                    </svg>
+                                </x-slot:icon>
+                            </x-stat-card>
+
+                            <!-- Transfer Manual Payments -->
+                            <x-stat-card title="Transfer Manual"
+                                value="Rp {{ number_format($paymentByCategory['manual_transfer'] ?? 0, 0, ',', '.') }}"
+                                subtitle="{{ $paymentCountByCategory['manual_transfer'] ?? 0 }} transaksi bulan ini"
+                                valueClass="text-blue-400" colorFrom="blue-500" colorTo="indigo-500">
+                                <x-slot:icon>
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4">
+                                        </path>
+                                    </svg>
+                                </x-slot:icon>
+                            </x-stat-card>
+
+                            <!-- Payment Gateway Payments -->
+                            <x-stat-card title="Payment Gateway"
+                                value="Rp {{ number_format($paymentByCategory['payment_gateway'] ?? 0, 0, ',', '.') }}"
+                                subtitle="{{ $paymentCountByCategory['payment_gateway'] ?? 0 }} transaksi bulan ini"
+                                valueClass="text-cyan-400" colorFrom="cyan-500" colorTo="teal-500">
+                                <x-slot:icon>
+                                    <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z">
+                                        </path>
+                                    </svg>
+                                </x-slot:icon>
+                            </x-stat-card>
+                        </div>
+
+                        <!-- Charts Section -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                            <!-- Revenue Chart -->
+                            <div class="rounded-2xl bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 p-6">
+                                <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                                    <svg class="w-5 h-5 mr-2 text-emerald-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z">
+                                        </path>
+                                    </svg>
+                                    Revenue 6 Bulan Terakhir
+                                </h3>
+                                <div class="h-64">
+                                    <canvas id="revenueChart"></canvas>
+                                </div>
+                            </div>
+
+                            <!-- Customer Growth Chart -->
+                            <div class="rounded-2xl bg-gray-800/50 backdrop-blur-xl border border-gray-700/50 p-6">
+                                <h3 class="text-lg font-bold text-white mb-4 flex items-center">
+                                    <svg class="w-5 h-5 mr-2 text-blue-400" fill="none" stroke="currentColor"
+                                        viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z">
+                                        </path>
+                                    </svg>
+                                    Pertumbuhan Pelanggan 6 Bulan Terakhir
+                                </h3>
+                                <div class="h-64">
+                                    <canvas id="customerGrowthChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        {{-- ============================================== --}}
+                        {{-- SALES DASHBOARD --}}
+                        {{-- ============================================== --}}
             @elseif($userRole === 'sales')
 
-                <!-- Sales Stats -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div class="relative group">
-                        <div
-                            class="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
-                        </div>
-                        <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
-                            <p class="text-sm font-medium text-gray-400">Pelanggan Hari Ini</p>
-                            <p class="text-3xl font-bold text-cyan-400 mt-1">{{ $newCustomersToday ?? 0 }}</p>
-                        </div>
-                    </div>
-                    <div class="relative group">
-                        <div
-                            class="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
-                        </div>
-                        <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
-                            <p class="text-sm font-medium text-gray-400">Pelanggan Minggu Ini</p>
-                            <p class="text-3xl font-bold text-blue-400 mt-1">{{ $newCustomersThisWeek ?? 0 }}</p>
-                        </div>
-                    </div>
-                    <div class="relative group">
-                        <div
-                            class="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
-                        </div>
-                        <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
-                            <p class="text-sm font-medium text-gray-400">Pelanggan Bulan Ini</p>
-                            <p class="text-3xl font-bold text-indigo-400 mt-1">{{ $newCustomersThisMonth ?? 0 }}</p>
-                        </div>
-                    </div>
-                    <div class="relative group">
-                        <div
-                            class="absolute -inset-0.5 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
-                        </div>
-                        <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
-                            <p class="text-sm font-medium text-gray-400">Tiket Open</p>
-                            <p class="text-3xl font-bold text-amber-400 mt-1">{{ $openTickets ?? 0 }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Lead Funnel -->
-                <div class="rounded-2xl bg-gray-800 border border-gray-700/50 p-6 mb-8">
-                    <h3 class="text-lg font-bold text-white mb-4">Lead Conversion Funnel</h3>
-                    <div class="grid grid-cols-4 gap-4">
-                        <div class="text-center p-4 rounded-xl bg-blue-500/10 border border-blue-500/30">
-                            <p class="text-2xl font-bold text-blue-400">{{ $leadStats['registered'] ?? 0 }}</p>
-                            <p class="text-sm text-gray-400 mt-1">Registered</p>
-                        </div>
-                        <div class="text-center p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/30">
-                            <p class="text-2xl font-bold text-yellow-400">{{ $leadStats['survey'] ?? 0 }}</p>
-                            <p class="text-sm text-gray-400 mt-1">Survey</p>
-                        </div>
-                        <div class="text-center p-4 rounded-xl bg-purple-500/10 border border-purple-500/30">
-                            <p class="text-2xl font-bold text-purple-400">{{ $leadStats['approved'] ?? 0 }}</p>
-                            <p class="text-sm text-gray-400 mt-1">Approved</p>
-                        </div>
-                        <div class="text-center p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
-                            <p class="text-2xl font-bold text-emerald-400">{{ $leadStats['active'] ?? 0 }}</p>
-                            <p class="text-sm text-gray-400 mt-1">Active</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Recent Customers -->
-                @if(isset($recentCustomers) && $recentCustomers->count() > 0)
-                    <div class="rounded-2xl bg-gray-800 border border-gray-700/50 overflow-hidden">
-                        <div class="p-6 border-b border-gray-700/50">
-                            <h3 class="text-lg font-bold text-white">Pelanggan Baru Terbaru</h3>
-                        </div>
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm">
-                                <thead class="bg-gray-900/50 text-gray-400 text-xs uppercase">
-                                    <tr>
-                                        <th class="px-6 py-3 text-left">Nama</th>
-                                        <th class="px-6 py-3 text-left">Paket</th>
-                                        <th class="px-6 py-3 text-left">Status</th>
-                                        <th class="px-6 py-3 text-left">Tanggal</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-700/50">
-                                    @foreach($recentCustomers as $customer)
-                                        <tr class="hover:bg-gray-750">
-                                            <td class="px-6 py-4 text-white font-medium">{{ $customer->name }}</td>
-                                            <td class="px-6 py-4 text-gray-400">{{ $customer->package->name ?? '-' }}</td>
-                                            <td class="px-6 py-4"><span
-                                                    class="px-2 py-1 rounded-full text-xs bg-blue-500/20 text-blue-400">{{ $customer->status }}</span>
-                                            </td>
-                                            <td class="px-6 py-4 text-gray-400">{{ $customer->created_at->diffForHumans() }}</td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                @endif
-
-                {{-- ============================================== --}}
-                {{-- FINANCE DASHBOARD --}}
-                {{-- ============================================== --}}
-            @elseif($userRole === 'finance')
-
-                <!-- Finance Stats -->
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div class="relative group">
-                        <div
-                            class="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
-                        </div>
-                        <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
-                            <p class="text-sm font-medium text-gray-400">Revenue Hari Ini</p>
-                            <p class="text-2xl font-bold text-emerald-400 mt-1">Rp
-                                {{ number_format($revenueToday ?? 0, 0, ',', '.') }}</p>
-                        </div>
-                    </div>
-                    <div class="relative group">
-                        <div
-                            class="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
-                        </div>
-                        <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
-                            <p class="text-sm font-medium text-gray-400">Revenue Bulan Ini</p>
-                            <p class="text-2xl font-bold text-blue-400 mt-1">Rp
-                                {{ number_format($revenueThisMonth ?? 0, 0, ',', '.') }}</p>
-                        </div>
-                    </div>
-                    <div class="relative group">
-                        <div
-                            class="absolute -inset-0.5 bg-gradient-to-r from-red-500 to-rose-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
-                        </div>
-                        <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
-                            <p class="text-sm font-medium text-gray-400">Total Belum Dibayar</p>
-                            <p class="text-2xl font-bold text-red-400 mt-1">Rp
-                                {{ number_format($totalUnpaid ?? 0, 0, ',', '.') }}</p>
-                        </div>
-                    </div>
-                    <div class="relative group">
-                        <div
-                            class="absolute -inset-0.5 bg-gradient-to-r from-orange-500 to-amber-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
-                        </div>
-                        <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
-                            <p class="text-sm font-medium text-gray-400">Invoice Terlambat</p>
-                            <p class="text-2xl font-bold text-orange-400 mt-1">{{ $overdueInvoices ?? 0 }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Invoice Overview -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                    <div class="rounded-2xl bg-gray-800 border border-gray-700/50 p-6">
-                        <h3 class="text-lg font-bold text-white mb-4">Status Invoice</h3>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div class="text-center p-4 rounded-xl bg-red-500/10 border border-red-500/30">
-                                <p class="text-3xl font-bold text-red-400">{{ $unpaidInvoices ?? 0 }}</p>
-                                <p class="text-sm text-gray-400 mt-1">Belum Bayar</p>
-                            </div>
-                            <div class="text-center p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
-                                <p class="text-3xl font-bold text-emerald-400">{{ $paidThisMonth ?? 0 }}</p>
-                                <p class="text-sm text-gray-400 mt-1">Lunas Bulan Ini</p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Payment Methods -->
-                    <div class="rounded-2xl bg-gray-800 border border-gray-700/50 p-6">
-                        <h3 class="text-lg font-bold text-white mb-4">Metode Pembayaran (Bulan Ini)</h3>
-                        @if(isset($paymentMethods) && count($paymentMethods) > 0)
-                            <div class="space-y-3">
-                                @foreach($paymentMethods as $method)
-                                    <div class="flex items-center justify-between p-3 rounded-lg bg-gray-900/50">
-                                        <span class="text-gray-300 capitalize">{{ $method->payment_method ?? 'Other' }}</span>
-                                        <div class="text-right">
-                                            <span class="text-emerald-400 font-bold">Rp
-                                                {{ number_format($method->total, 0, ',', '.') }}</span>
-                                            <span class="text-gray-500 text-sm ml-2">({{ $method->count }}x)</span>
-                                        </div>
-                                    </div>
-                                @endforeach
-                            </div>
-                        @else
-                            <p class="text-gray-500 text-center py-4">Belum ada data pembayaran bulan ini</p>
-                        @endif
-                    </div>
-                </div>
-
-                {{-- ============================================== --}}
-                {{-- WAREHOUSE DASHBOARD --}}
-                {{-- ============================================== --}}
-            @elseif($userRole === 'warehouse')
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                    <div class="relative group">
-                        <div
-                            class="absolute -inset-0.5 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
-                        </div>
-                        <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
-                            <p class="text-sm font-medium text-gray-400">Total Items</p>
-                            <p class="text-3xl font-bold text-amber-400 mt-1">{{ $totalItems ?? 0 }}</p>
-                        </div>
-                    </div>
-                    <div class="relative group">
-                        <div
-                            class="absolute -inset-0.5 bg-gradient-to-r from-red-500 to-rose-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
-                        </div>
-                        <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
-                            <p class="text-sm font-medium text-gray-400">Low Stock Alert</p>
-                            <p class="text-3xl font-bold text-red-400 mt-1">{{ $lowStockItems ?? 0 }}</p>
-                        </div>
-                    </div>
-                    <div class="relative group">
-                        <div
-                            class="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
-                        </div>
-                        <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
-                            <p class="text-sm font-medium text-gray-400">PO Pending</p>
-                            <p class="text-3xl font-bold text-blue-400 mt-1">{{ $pendingPO ?? 0 }}</p>
-                        </div>
-                    </div>
-                    <div class="relative group">
-                        <div
-                            class="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
-                        </div>
-                        <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
-                            <p class="text-sm font-medium text-gray-400">Total Assets</p>
-                            <p class="text-3xl font-bold text-purple-400 mt-1">{{ $totalAssets ?? 0 }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div
-                    class="rounded-2xl bg-gradient-to-br from-amber-900/20 to-orange-900/20 border border-amber-500/30 p-8 text-center">
-                    <svg class="w-16 h-16 mx-auto text-amber-400 mb-4" fill="none" stroke="currentColor"
-                        viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"></path>
-                    </svg>
-                    <h3 class="text-xl font-bold text-white mb-2">Modul Inventory</h3>
-                    <p class="text-gray-400">Fitur inventory management akan segera tersedia.</p>
-                </div>
-
-                {{-- ============================================== --}}
-                {{-- HRD DASHBOARD --}}
-                {{-- ============================================== --}}
-            @elseif($userRole === 'hrd')
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-                    <div class="relative group">
-                        <div
-                            class="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
-                        </div>
-                        <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
-                            <p class="text-sm font-medium text-gray-400">Total Karyawan</p>
-                            <p class="text-3xl font-bold text-blue-400 mt-1">{{ $totalEmployees ?? 0 }}</p>
-                        </div>
-                    </div>
-                    <div class="relative group">
-                        <div
-                            class="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
-                        </div>
-                        <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
-                            <p class="text-sm font-medium text-gray-400">Karyawan Aktif</p>
-                            <p class="text-3xl font-bold text-emerald-400 mt-1">{{ $activeEmployees ?? 0 }}</p>
-                        </div>
-                    </div>
-                    <div class="relative group">
-                        <div
-                            class="absolute -inset-0.5 bg-gradient-to-r from-purple-500 to-pink-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
-                        </div>
-                        <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
-                            <p class="text-sm font-medium text-gray-400">Total Roles</p>
-                            <p class="text-3xl font-bold text-purple-400 mt-1">
-                                {{ isset($roleBreakdown) ? count($roleBreakdown) : 0 }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Role Breakdown -->
-                @if(isset($roleBreakdown) && count($roleBreakdown) > 0)
-                    <div class="rounded-2xl bg-gray-800 border border-gray-700/50 p-6">
-                        <h3 class="text-lg font-bold text-white mb-4">Distribusi per Role</h3>
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            @foreach($roleBreakdown as $role)
-                                <div class="text-center p-4 rounded-xl bg-gray-900/50">
-                                    <p class="text-2xl font-bold text-white">{{ $role->count }}</p>
-                                    <p class="text-sm text-gray-400 mt-1 capitalize">{{ $role->name }}</p>
+                        <!-- Sales Stats -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                            <div class="relative group">
+                                <div
+                                    class="absolute -inset-0.5 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
                                 </div>
-                            @endforeach
+                                <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
+                                    <p class="text-sm font-medium text-gray-400">Pelanggan Hari Ini</p>
+                                    <p class="text-3xl font-bold text-cyan-400 mt-1">{{ $newCustomersToday ?? 0 }}</p>
+                                </div>
+                            </div>
+                            <div class="relative group">
+                                <div
+                                    class="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
+                                </div>
+                                <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
+                                    <p class="text-sm font-medium text-gray-400">Pelanggan Minggu Ini</p>
+                                    <p class="text-3xl font-bold text-blue-400 mt-1">{{ $newCustomersThisWeek ?? 0 }}</p>
+                                </div>
+                            </div>
+                            <div class="relative group">
+                                <div
+                                    class="absolute -inset-0.5 bg-gradient-to-r from-indigo-500 to-teal-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
+                                </div>
+                                <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
+                                    <p class="text-sm font-medium text-gray-400">Pelanggan Bulan Ini</p>
+                                    <p class="text-3xl font-bold text-indigo-400 mt-1">{{ $newCustomersThisMonth ?? 0 }}</p>
+                                </div>
+                            </div>
+                            <div class="relative group">
+                                <div
+                                    class="absolute -inset-0.5 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
+                                </div>
+                                <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
+                                    <p class="text-sm font-medium text-gray-400">Tiket Open</p>
+                                    <p class="text-3xl font-bold text-amber-400 mt-1">{{ $openTickets ?? 0 }}</p>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                @endif
 
-                {{-- ============================================== --}}
-                {{-- DEFAULT / FALLBACK DASHBOARD --}}
-                {{-- ============================================== --}}
-            @else
+                        <!-- Lead Funnel -->
+                        <div class="rounded-2xl bg-gray-800 border border-gray-700/50 p-6 mb-8">
+                            <h3 class="text-lg font-bold text-white mb-4">Lead Conversion Funnel</h3>
+                            <div class="grid grid-cols-4 gap-4">
+                                <div class="text-center p-4 rounded-xl bg-blue-500/10 border border-blue-500/30">
+                                    <p class="text-2xl font-bold text-blue-400">{{ $leadStats['registered'] ?? 0 }}</p>
+                                    <p class="text-sm text-gray-400 mt-1">Registered</p>
+                                </div>
+                                <div class="text-center p-4 rounded-xl bg-yellow-500/10 border border-yellow-500/30">
+                                    <p class="text-2xl font-bold text-yellow-400">{{ $leadStats['survey'] ?? 0 }}</p>
+                                    <p class="text-sm text-gray-400 mt-1">Survey</p>
+                                </div>
+                                <div class="text-center p-4 rounded-xl bg-teal-500/10 border border-teal-500/30">
+                                    <p class="text-2xl font-bold text-teal-400">{{ $leadStats['approved'] ?? 0 }}</p>
+                                    <p class="text-sm text-gray-400 mt-1">Approved</p>
+                                </div>
+                                <div class="text-center p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
+                                    <p class="text-2xl font-bold text-emerald-400">{{ $leadStats['active'] ?? 0 }}</p>
+                                    <p class="text-sm text-gray-400 mt-1">Active</p>
+                                </div>
+                            </div>
+                        </div>
 
-                <div class="rounded-2xl bg-gray-800 border border-gray-700/50 p-8 text-center">
-                    <svg class="w-16 h-16 mx-auto text-gray-500 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
-                        </path>
-                    </svg>
-                    <h3 class="text-xl font-bold text-white mb-2">Selamat Datang!</h3>
-                    <p class="text-gray-400">Dashboard khusus untuk role Anda akan segera tersedia.</p>
+                        <!-- Recent Customers -->
+                        @if(isset($recentCustomers) && $recentCustomers->count() > 0)
+                            <div class="rounded-2xl bg-gray-800 border border-gray-700/50 overflow-hidden">
+                                <div class="p-6 border-b border-gray-700/50">
+                                    <h3 class="text-lg font-bold text-white">Pelanggan Baru Terbaru</h3>
+                                </div>
+                                <div class="overflow-x-auto">
+                                    <table class="w-full text-sm">
+                                        <thead class="bg-gray-900/50 text-gray-400 text-xs uppercase">
+                                            <tr>
+                                                <th class="px-6 py-3 text-left">Nama</th>
+                                                <th class="px-6 py-3 text-left">Paket</th>
+                                                <th class="px-6 py-3 text-left">Status</th>
+                                                <th class="px-6 py-3 text-left">Tanggal</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody class="divide-y divide-gray-700/50">
+                                            @foreach($recentCustomers as $customer)
+                                                <tr class="hover:bg-gray-750">
+                                                    <td class="px-6 py-4 text-white font-medium">{{ $customer->name }}</td>
+                                                    <td class="px-6 py-4 text-gray-400">{{ $customer->package->name ?? '-' }}</td>
+                                                    <td class="px-6 py-4"><span
+                                                            class="px-2 py-1 rounded-full text-xs bg-blue-500/20 text-blue-400">{{ $customer->status }}</span>
+                                                    </td>
+                                                    <td class="px-6 py-4 text-gray-400">{{ $customer->created_at->diffForHumans() }}
+                                                    </td>
+                                                </tr>
+                                            @endforeach
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        @endif
+
+                        {{-- ============================================== --}}
+                        {{-- FINANCE DASHBOARD --}}
+                        {{-- ============================================== --}}
+                    @elseif($userRole === 'finance')
+
+                        <!-- Finance Stats -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                            <div class="relative group">
+                                <div
+                                    class="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
+                                </div>
+                                <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
+                                    <p class="text-sm font-medium text-gray-400">Revenue Hari Ini</p>
+                                    <p class="text-2xl font-bold text-emerald-400 mt-1">Rp
+                                        {{ number_format($revenueToday ?? 0, 0, ',', '.') }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="relative group">
+                                <div
+                                    class="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
+                                </div>
+                                <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
+                                    <p class="text-sm font-medium text-gray-400">Revenue Bulan Ini</p>
+                                    <p class="text-2xl font-bold text-blue-400 mt-1">Rp
+                                        {{ number_format($revenueThisMonth ?? 0, 0, ',', '.') }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="relative group">
+                                <div
+                                    class="absolute -inset-0.5 bg-gradient-to-r from-red-500 to-rose-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
+                                </div>
+                                <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
+                                    <p class="text-sm font-medium text-gray-400">Total Belum Dibayar</p>
+                                    <p class="text-2xl font-bold text-red-400 mt-1">Rp
+                                        {{ number_format($totalUnpaid ?? 0, 0, ',', '.') }}
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="relative group">
+                                <div
+                                    class="absolute -inset-0.5 bg-gradient-to-r from-orange-500 to-amber-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
+                                </div>
+                                <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
+                                    <p class="text-sm font-medium text-gray-400">Invoice Terlambat</p>
+                                    <p class="text-2xl font-bold text-orange-400 mt-1">{{ $overdueInvoices ?? 0 }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Invoice Overview -->
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                            <div class="rounded-2xl bg-gray-800 border border-gray-700/50 p-6">
+                                <h3 class="text-lg font-bold text-white mb-4">Status Invoice</h3>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="text-center p-4 rounded-xl bg-red-500/10 border border-red-500/30">
+                                        <p class="text-3xl font-bold text-red-400">{{ $unpaidInvoices ?? 0 }}</p>
+                                        <p class="text-sm text-gray-400 mt-1">Belum Bayar</p>
+                                    </div>
+                                    <div class="text-center p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/30">
+                                        <p class="text-3xl font-bold text-emerald-400">{{ $paidThisMonth ?? 0 }}</p>
+                                        <p class="text-sm text-gray-400 mt-1">Lunas Bulan Ini</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Payment Methods -->
+                            <div class="rounded-2xl bg-gray-800 border border-gray-700/50 p-6">
+                                <h3 class="text-lg font-bold text-white mb-4">Metode Pembayaran (Bulan Ini)</h3>
+                                @if(isset($paymentMethods) && count($paymentMethods) > 0)
+                                    <div class="space-y-3">
+                                        @foreach($paymentMethods as $method)
+                                            <div class="flex items-center justify-between p-3 rounded-lg bg-gray-900/50">
+                                                <span
+                                                    class="text-gray-300 capitalize">{{ $method->payment_method ?? 'Other' }}</span>
+                                                <div class="text-right">
+                                                    <span class="text-emerald-400 font-bold">Rp
+                                                        {{ number_format($method->total, 0, ',', '.') }}</span>
+                                                    <span class="text-gray-500 text-sm ml-2">({{ $method->count }}x)</span>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @else
+                                    <p class="text-gray-500 text-center py-4">Belum ada data pembayaran bulan ini</p>
+                                @endif
+                            </div>
+                        </div>
+
+                        {{-- ============================================== --}}
+                        {{-- WAREHOUSE DASHBOARD --}}
+                        {{-- ============================================== --}}
+                    @elseif($userRole === 'warehouse')
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                            <div class="relative group">
+                                <div
+                                    class="absolute -inset-0.5 bg-gradient-to-r from-amber-500 to-orange-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
+                                </div>
+                                <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
+                                    <p class="text-sm font-medium text-gray-400">Total Items</p>
+                                    <p class="text-3xl font-bold text-amber-400 mt-1">{{ $totalItems ?? 0 }}</p>
+                                </div>
+                            </div>
+                            <div class="relative group">
+                                <div
+                                    class="absolute -inset-0.5 bg-gradient-to-r from-red-500 to-rose-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
+                                </div>
+                                <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
+                                    <p class="text-sm font-medium text-gray-400">Low Stock Alert</p>
+                                    <p class="text-3xl font-bold text-red-400 mt-1">{{ $lowStockItems ?? 0 }}</p>
+                                </div>
+                            </div>
+                            <div class="relative group">
+                                <div
+                                    class="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-cyan-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
+                                </div>
+                                <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
+                                    <p class="text-sm font-medium text-gray-400">PO Pending</p>
+                                    <p class="text-3xl font-bold text-blue-400 mt-1">{{ $pendingPO ?? 0 }}</p>
+                                </div>
+                            </div>
+                            <div class="relative group">
+                                <div
+                                    class="absolute -inset-0.5 bg-gradient-to-r from-teal-500 to-pink-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
+                                </div>
+                                <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
+                                    <p class="text-sm font-medium text-gray-400">Total Assets</p>
+                                    <p class="text-3xl font-bold text-teal-400 mt-1">{{ $totalAssets ?? 0 }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div
+                            class="rounded-2xl bg-gradient-to-br from-amber-900/20 to-orange-900/20 border border-amber-500/30 p-8 text-center">
+                            <svg class="w-16 h-16 mx-auto text-amber-400 mb-4" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4">
+                                </path>
+                            </svg>
+                            <h3 class="text-xl font-bold text-white mb-2">Modul Inventory</h3>
+                            <p class="text-gray-400">Fitur inventory management akan segera tersedia.</p>
+                        </div>
+
+                        {{-- ============================================== --}}
+                        {{-- HRD DASHBOARD --}}
+                        {{-- ============================================== --}}
+                    @elseif($userRole === 'hrd')
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                            <div class="relative group">
+                                <div
+                                    class="absolute -inset-0.5 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
+                                </div>
+                                <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
+                                    <p class="text-sm font-medium text-gray-400">Total Karyawan</p>
+                                    <p class="text-3xl font-bold text-blue-400 mt-1">{{ $totalEmployees ?? 0 }}</p>
+                                </div>
+                            </div>
+                            <div class="relative group">
+                                <div
+                                    class="absolute -inset-0.5 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
+                                </div>
+                                <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
+                                    <p class="text-sm font-medium text-gray-400">Karyawan Aktif</p>
+                                    <p class="text-3xl font-bold text-emerald-400 mt-1">{{ $activeEmployees ?? 0 }}</p>
+                                </div>
+                            </div>
+                            <div class="relative group">
+                                <div
+                                    class="absolute -inset-0.5 bg-gradient-to-r from-teal-500 to-pink-500 rounded-2xl blur opacity-30 group-hover:opacity-50 transition duration-500">
+                                </div>
+                                <div class="relative p-6 bg-gray-800 rounded-2xl border border-gray-700/50">
+                                    <p class="text-sm font-medium text-gray-400">Total Roles</p>
+                                    <p class="text-3xl font-bold text-teal-400 mt-1">
+                                        {{ isset($roleBreakdown) ? count($roleBreakdown) : 0 }}
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Role Breakdown -->
+                        @if(isset($roleBreakdown) && count($roleBreakdown) > 0)
+                            <div class="rounded-2xl bg-gray-800 border border-gray-700/50 p-6">
+                                <h3 class="text-lg font-bold text-white mb-4">Distribusi per Role</h3>
+                                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                    @foreach($roleBreakdown as $role)
+                                        <div class="text-center p-4 rounded-xl bg-gray-900/50">
+                                            <p class="text-2xl font-bold text-white">{{ $role->count }}</p>
+                                            <p class="text-sm text-gray-400 mt-1 capitalize">{{ $role->name }}</p>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+
+                        {{-- ============================================== --}}
+                        {{-- DEFAULT / FALLBACK DASHBOARD --}}
+                        {{-- ============================================== --}}
+                    @else
+
+                        <div class="rounded-2xl bg-gray-800 border border-gray-700/50 p-8 text-center">
+                            <svg class="w-16 h-16 mx-auto text-gray-500 mb-4" fill="none" stroke="currentColor"
+                                viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                    d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z">
+                                </path>
+                            </svg>
+                            <h3 class="text-xl font-bold text-white mb-2">Selamat Datang!</h3>
+                            <p class="text-gray-400">Dashboard khusus untuk role Anda akan segera tersedia.</p>
+                        </div>
+
+                    @endif
                 </div>
+            </div>
 
+            @if(isset($revenueChart) || isset($customerGrowth))
+                @push('scripts')
+                        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+                        <script>
+                            document.addEventListener('DOMContentLoaded', function () {
+                                const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+
+                                // Revenue Chart
+                                @if(isset($revenueChart))
+                                    const revenueCtx = document.getElementById('revenueChart');
+                                    if (revenueCtx) {
+                                        const revenueData = @json($revenueChart);
+                                        new Chart(revenueCtx, {
+                                            type: 'bar',
+                                            data: {
+                                                labels: revenueData.map(item => monthNames[item.month - 1] + ' ' + item.year),
+                                                datasets: [{
+                                                    label: 'Revenue (Rp)',
+                                                    data: revenueData.map(item => item.total),
+                                                    backgroundColor: 'rgba(16, 185, 129, 0.5)',
+                                                    borderColor: 'rgb(16, 185, 129)',
+                                                    borderWidth: 2,
+                                                    borderRadius: 8,
+                                                }]
+                                            },
+                                            options: {
+                                                responsive: true,
+                                                maintainAspectRatio: false,
+                                                plugins: {
+                                                    legend: { display: false },
+                                                    tooltip: {
+                                                        callbacks: {
+                                                            label: function (context) {
+                                                                return 'Rp ' + new Intl.NumberFormat('id-ID').format(context.raw);
+                                                            }
+                                                        }
+                                                    }
+                                                },
+                                                scales: {
+                                                    y: {
+                                                        beginAtZero: true,
+                                                        grid: { color: 'rgba(255,255,255,0.1)' },
+                                                        ticks: {
+                                                            color: '#9CA3AF',
+                                                            callback: function (value) {
+                                                                return 'Rp ' + new Intl.NumberFormat('id-ID').format(value);
+                                                            }
+                                                        }
+                                                    },
+                                                    x: {
+                                                        grid: { display: false },
+                                                        ticks: { color: '#9CA3AF' }
+                                                    }
+                                                }
+                                            }
+                                        });
+                                    }
+                                @endif
+
+                                    // Customer Growth Chart
+                                    @if(isset($customerGrowth))
+                                        const customerCtx = document.getElementById('customerGrowthChart');
+                                        if (customerCtx) {
+                                            const customerData = @json($customerGrowth);
+                                            new Chart(customerCtx, {
+                                                type: 'line',
+                                                data: {
+                                                    labels: customerData.map(item => monthNames[item.month - 1] + ' ' + item.year),
+                                                    datasets: [{
+                                                        label: 'Pelanggan Baru',
+                                                        data: customerData.map(item => item.total),
+                                                        borderColor: 'rgb(59, 130, 246)',
+                                                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                                                        fill: true,
+                                                        tension: 0.4,
+                                                        pointBackgroundColor: 'rgb(59, 130, 246)',
+                                                        pointBorderColor: '#fff',
+                                                        pointBorderWidth: 2,
+                                                        pointRadius: 5,
+                                                    }]
+                                                },
+                                                options: {
+                                                    responsive: true,
+                                                    maintainAspectRatio: false,
+                                                    plugins: {
+                                                        legend: { display: false }
+                                                    },
+                                                    scales: {
+                                                        y: {
+                                                            beginAtZero: true,
+                                                            grid: { color: 'rgba(255,255,255,0.1)' },
+                                                            ticks: { color: '#9CA3AF' }
+                                                        },
+                                                        x: {
+                                                            grid: { display: false },
+                                                            ticks: { color: '#9CA3AF' }
+                                                        }
+                                                    }
+                                                }
+                                            });
+                                        }
+                                    @endif
+                    });
+                        </script>
+                @endpush
             @endif
-        </div>
-    </div>
+
 </x-app-layout>

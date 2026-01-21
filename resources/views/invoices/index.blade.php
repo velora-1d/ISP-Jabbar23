@@ -5,7 +5,7 @@
         <!-- Header -->
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
             <div>
-                <h1 class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-indigo-400 bg-clip-text text-transparent">
+                <h1 class="text-3xl font-bold bg-gradient-to-r from-teal-400 to-indigo-400 bg-clip-text text-transparent">
                     Invoices
                 </h1>
                 <p class="text-gray-400 mt-1">Billing & Financial Records</p>
@@ -24,7 +24,7 @@
                     </button>
                 </form>
                 <a href="{{ route('invoices.create') }}"
-                    class="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-purple-500/25">
+                    class="inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-teal-600 to-indigo-600 hover:from-teal-500 hover:to-indigo-500 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-teal-500/25">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
@@ -37,7 +37,7 @@
         <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
             <div class="bg-gray-800/50 backdrop-blur-xl rounded-2xl border border-gray-700/50 p-6">
                 <div class="flex items-center gap-4">
-                    <div class="p-3 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600">
+                    <div class="p-3 rounded-xl bg-gradient-to-br from-teal-500 to-indigo-600">
                         <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                 d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -143,7 +143,7 @@
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
                                         <div
-                                            class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
+                                            class="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-indigo-600 flex items-center justify-center">
                                             <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor"
                                                 viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -190,7 +190,7 @@
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <a href="{{ route('invoices.show', $invoice) }}"
-                                        class="inline-flex items-center gap-1 px-3 py-1.5 bg-purple-600/20 hover:bg-purple-600/40 text-purple-400 rounded-lg transition-colors">
+                                        class="inline-flex items-center gap-1 px-3 py-1.5 bg-teal-600/20 hover:bg-teal-600/40 text-teal-400 rounded-lg transition-colors">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                                 d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
@@ -235,7 +235,7 @@
                         <div class="flex items-start justify-between mb-3">
                             <div class="flex items-center gap-3">
                                 <div
-                                    class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center flex-shrink-0">
+                                    class="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-indigo-600 flex items-center justify-center flex-shrink-0">
                                     <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                             d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
@@ -271,7 +271,7 @@
                         <div class="flex items-center justify-between pt-3 border-t border-gray-700/50">
                             <p class="text-xs text-gray-500">{{ $invoice->created_at->format('d M Y') }}</p>
                             <a href="{{ route('invoices.show', $invoice) }}"
-                                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-purple-600/20 hover:bg-purple-600/40 text-purple-400 rounded-lg text-sm font-medium transition-colors">
+                                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-teal-600/20 hover:bg-teal-600/40 text-teal-400 rounded-lg text-sm font-medium transition-colors">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />

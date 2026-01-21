@@ -4,12 +4,12 @@
 <div class="space-y-6">
     <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-            <h1 class="text-3xl font-bold bg-gradient-to-r from-violet-400 to-purple-400 bg-clip-text text-transparent">Detail Campaign</h1>
+            <h1 class="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-teal-400 bg-clip-text text-transparent">Detail Campaign</h1>
             <p class="text-gray-400 mt-1">{{ $campaign->name }}</p>
         </div>
         <div class="flex items-center gap-3">
             @if($campaign->status === 'draft' || $campaign->status === 'scheduled')
-            <a href="{{ route('campaigns.edit', $campaign) }}" class="inline-flex items-center gap-2 px-4 py-2 bg-violet-600 hover:bg-violet-500 text-white rounded-xl transition-colors">
+            <a href="{{ route('campaigns.edit', $campaign) }}" class="inline-flex items-center gap-2 px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white rounded-xl transition-colors">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
                 Edit
             </a>

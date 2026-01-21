@@ -16,7 +16,7 @@
 
             <x-slot name="actions">
                 <a href="{{ route('leave.create') }}"
-                    class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-purple-500/25">
+                    class="inline-flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-teal-600 to-indigo-600 hover:from-teal-500 hover:to-indigo-500 text-white font-semibold rounded-xl transition-all duration-200 shadow-lg shadow-teal-500/25">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
                     </svg>
@@ -121,7 +121,7 @@
                                 <td class="px-6 py-4">
                                     <div class="flex items-center gap-3">
                                         <div
-                                            class="w-10 h-10 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
+                                            class="w-10 h-10 rounded-xl bg-gradient-to-br from-teal-500 to-indigo-600 flex items-center justify-center">
                                             <span
                                                 class="text-white font-bold text-sm">{{ strtoupper(substr($leave->user->name ?? 'U', 0, 2)) }}</span>
                                         </div>

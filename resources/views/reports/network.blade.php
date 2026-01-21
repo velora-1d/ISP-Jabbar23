@@ -97,9 +97,9 @@
     <div class="bg-gray-800/50 backdrop-blur-xl rounded-2xl border border-gray-700/50 p-6">
         <h3 class="text-lg font-semibold text-white mb-4">Bandwidth Allocation</h3>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="p-6 bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-500/30 rounded-xl">
+            <div class="p-6 bg-gradient-to-br from-teal-500/20 to-pink-500/20 border border-teal-500/30 rounded-xl">
                 <p class="text-sm text-gray-400">Total Allocated Bandwidth</p>
-                <p class="text-4xl font-bold text-purple-400 mt-2">{{ number_format($bandwidthUsage['total_allocated'] ?? 0) }} Mbps</p>
+                <p class="text-4xl font-bold text-teal-400 mt-2">{{ number_format($bandwidthUsage['total_allocated'] ?? 0) }} Mbps</p>
                 <p class="text-sm text-gray-500 mt-2">Dari semua pelanggan aktif</p>
             </div>
             <div class="p-6 bg-gray-700/30 rounded-xl">

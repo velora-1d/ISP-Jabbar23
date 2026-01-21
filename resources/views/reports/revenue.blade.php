@@ -103,7 +103,7 @@
                     $colors = [
                         'cash' => 'emerald',
                         'transfer' => 'blue',
-                        'qris' => 'purple',
+                        'qris' => 'teal',
                         'va' => 'indigo',
                         'default' => 'gray'
                     ];
