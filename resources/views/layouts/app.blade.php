@@ -235,34 +235,76 @@
           </button>
         </div>
 
-        <!-- Center: Logo & Branding -->
-        <a href="{{ route('dashboard') }}"
-          class="flex items-center group absolute left-1/2 -translate-x-1/2 sm:relative sm:left-auto sm:translate-x-0 sm:ml-16 md:ml-64">
-          <!-- WiFi Logo with Glow -->
-          <div class="relative">
-            <div
-              class="absolute -inset-1.5 bg-gradient-to-r from-cyan-500 via-blue-500 to-teal-500 rounded-2xl blur-md opacity-50 group-hover:opacity-80 transition duration-500 animate-pulse">
-            </div>
-            <div
-              class="relative p-2.5 rounded-xl bg-gradient-to-br from-cyan-500 via-blue-600 to-teal-600 shadow-lg shadow-blue-500/30">
-              <!-- WiFi Icon -->
-              <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path
-                  d="M12 21l-1.5-1.5c-2.8-2.8-2.8-7.2 0-10l1.5 1.5c-2 2-2 5.2 0 7.2L12 21zm-3-3l-1.5-1.5c-1.7-1.7-1.7-4.3 0-6L9 12c-1 1-1 2.5 0 3.5L9 18zm6 0l1.5-1.5c1-1 1-2.5 0-3.5L15 12l1.5-1.5c1.7 1.7 1.7 4.3 0 6L15 18zm3-3l1.5-1.5c2-2 2-5.2 0-7.2L18 7.8c2 2 2 5.2 0 7.2L18 15zM12 13c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1z" />
-              </svg>
-            </div>
+        <!-- Center: Logo & Branding with Wave Animations -->
+        <div class="flex items-center justify-center absolute left-1/2 -translate-x-1/2">
+          <!-- Left Wave Animation (near J) -->
+          <div class="hidden sm:block mr-3">
+            <svg class="w-24 h-10 opacity-70" viewBox="0 0 100 40">
+              <path class="animate-wave-1" d="M100,20 Q85,8 70,20 T40,20 T10,20 T0,20" fill="none"
+                stroke="url(#wave-grad-left)" stroke-width="2.5" />
+              <path class="animate-wave-2" d="M100,20 Q85,32 70,20 T40,20 T10,20 T0,20" fill="none"
+                stroke="url(#wave-grad-left)" stroke-width="1.5" />
+              <circle class="animate-particle-1" cx="85" cy="12" r="2" fill="#22d3ee" opacity="0.8" />
+              <circle class="animate-particle-2" cx="70" cy="28" r="1.5" fill="#3b82f6" opacity="0.6" />
+              <circle class="animate-particle-3" cx="55" cy="10" r="1.5" fill="#2dd4bf" opacity="0.7" />
+              <defs>
+                <linearGradient id="wave-grad-left" x1="100%" y1="0%" x2="0%" y2="0%">
+                  <stop offset="0%" stop-color="#22d3ee" />
+                  <stop offset="100%" stop-color="transparent" />
+                </linearGradient>
+              </defs>
+            </svg>
           </div>
-          <!-- Brand Text -->
-          <div class="ml-3 flex items-baseline">
-            <span
-              class="text-lg sm:text-xl font-black tracking-tight bg-gradient-to-r from-cyan-400 via-blue-400 to-teal-400 bg-clip-text text-transparent">
-              JABBAR23
-            </span>
-            <span class="ml-1.5 text-[10px] sm:text-xs font-bold text-gray-400 tracking-[0.2em] uppercase">
-              ISP
-            </span>
+
+          <!-- Logo & Text -->
+          <a href="{{ route('dashboard') }}" class="flex items-center group">
+            <!-- WiFi Logo with Glow -->
+            <div class="relative">
+              <div
+                class="absolute -inset-1.5 bg-gradient-to-r from-cyan-500 via-blue-500 to-teal-500 rounded-2xl blur-md opacity-50 group-hover:opacity-80 transition duration-500 animate-pulse">
+              </div>
+              <div
+                class="relative p-2.5 rounded-xl bg-gradient-to-br from-cyan-500 via-blue-600 to-teal-600 shadow-lg shadow-blue-500/30">
+                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                  <path
+                    d="M12 21l-1.5-1.5c-2.8-2.8-2.8-7.2 0-10l1.5 1.5c-2 2-2 5.2 0 7.2L12 21zm-3-3l-1.5-1.5c-1.7-1.7-1.7-4.3 0-6L9 12c-1 1-1 2.5 0 3.5L9 18zm6 0l1.5-1.5c1-1 1-2.5 0-3.5L15 12l1.5-1.5c1.7 1.7 1.7 4.3 0 6L15 18zm3-3l1.5-1.5c2-2 2-5.2 0-7.2L18 7.8c2 2 2 5.2 0 7.2L18 15zM12 13c-.6 0-1-.4-1-1s.4-1 1-1 1 .4 1 1-.4 1-1 1z" />
+                </svg>
+              </div>
+            </div>
+            <!-- Brand Text -->
+            <div class="ml-3 flex items-baseline flex-wrap justify-center">
+              <span
+                class="text-lg sm:text-xl font-black tracking-tight bg-gradient-to-r from-cyan-400 via-blue-400 to-teal-400 bg-clip-text text-transparent">
+                JABBAR23
+              </span>
+              <span class="ml-1.5 text-sm sm:text-base font-bold text-gray-300">
+                ISP
+              </span>
+              <span class="hidden sm:inline ml-1.5 text-xs text-gray-500">
+                (Internet Service Provider)
+              </span>
+            </div>
+          </a>
+
+          <!-- Right Wave Animation (near )) -->
+          <div class="hidden sm:block ml-3">
+            <svg class="w-24 h-10 opacity-70" viewBox="0 0 100 40">
+              <path class="animate-wave-1" d="M0,20 Q15,8 30,20 T60,20 T90,20 T100,20" fill="none"
+                stroke="url(#wave-grad-right)" stroke-width="2.5" />
+              <path class="animate-wave-2" d="M0,20 Q15,32 30,20 T60,20 T90,20 T100,20" fill="none"
+                stroke="url(#wave-grad-right)" stroke-width="1.5" />
+              <circle class="animate-particle-1" cx="15" cy="12" r="2" fill="#2dd4bf" opacity="0.8" />
+              <circle class="animate-particle-2" cx="30" cy="28" r="1.5" fill="#22d3ee" opacity="0.6" />
+              <circle class="animate-particle-3" cx="45" cy="10" r="1.5" fill="#3b82f6" opacity="0.7" />
+              <defs>
+                <linearGradient id="wave-grad-right" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stop-color="#2dd4bf" />
+                  <stop offset="100%" stop-color="transparent" />
+                </linearGradient>
+              </defs>
+            </svg>
           </div>
-        </a>
+        </div>
 
         <!-- Right: User Menu -->
         <div class="flex items-center">
