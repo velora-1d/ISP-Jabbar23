@@ -95,36 +95,20 @@
         </div>
 
         <!-- Filters -->
-        <div class="bg-gray-800/50 backdrop-blur-xl rounded-2xl border border-gray-700/50 p-6">
-            <form action="" method="GET" class="flex flex-wrap gap-4 items-end">
-                <div class="flex-1 min-w-[250px]">
-                    <label class="block text-sm font-medium text-gray-400 mb-2">Search</label>
-                    <input type="text" name="search" value="{{ request('search') }}"
-                        placeholder="Invoice Number or Customer Name..."
-                        class="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-2.5 text-white placeholder-gray-400 focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-                </div>
-                <div class="min-w-[150px]">
-                    <label class="block text-sm font-medium text-gray-400 mb-2">Status</label>
-                    <select name="status"
-                        class="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-2.5 text-white focus:ring-2 focus:ring-purple-500 focus:border-transparent">
-                        <option value="">All Status</option>
-                        <option value="unpaid" {{ request('status') == 'unpaid' ? 'selected' : '' }}>Unpaid</option>
-                        <option value="paid" {{ request('status') == 'paid' ? 'selected' : '' }}>Paid</option>
-                        <option value="partial" {{ request('status') == 'partial' ? 'selected' : '' }}>Partial</option>
-                        <option value="overdue" {{ request('status') == 'overdue' ? 'selected' : '' }}>Overdue</option>
-                        <option value="cancelled" {{ request('status') == 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                    </select>
-                </div>
-                <button type="submit"
-                    class="px-6 py-2.5 bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-500 hover:to-indigo-500 text-white font-semibold rounded-xl transition-all duration-200">
-                    Filter
-                </button>
-                <a href="{{ route('invoices.index') }}"
-                    class="px-6 py-2.5 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-xl transition-all duration-200">
-                    Reset
-                </a>
-            </form>
-        </div>
+        <x-filter-bar :resetUrl="route('invoices.index')">
+            <x-filter-global searchPlaceholder="No. Invoice atau Nama Customer..." />
+
+            <x-filter-select name="status" label="Status" :options="[
+            'unpaid' => 'Unpaid',
+            'paid' => 'Paid',
+            'partial' => 'Partial',
+            'overdue' => 'Overdue',
+            'cancelled' => 'Cancelled',
+        ]" />
+
+            <x-filter-select name="customer_id" label="Customer" :options="$customers->pluck('name', 'id')->toArray()"
+                placeholder="Semua Customer" />
+        </x-filter-bar>
 
         <!-- Table -->
         <div class="bg-gray-800/50 backdrop-blur-xl rounded-2xl border border-gray-700/50 overflow-hidden">

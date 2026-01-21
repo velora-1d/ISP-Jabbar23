@@ -72,7 +72,8 @@
                     <div>
                         <p class="text-sm text-gray-400">Bulan Ini</p>
                         <p class="text-2xl font-bold text-purple-400">Rp
-                            {{ number_format($stats['this_month'], 0, ',', '.') }}</p>
+                            {{ number_format($stats['this_month'], 0, ',', '.') }}
+                        </p>
                     </div>
                 </div>
             </div>
@@ -93,33 +94,13 @@
         </div>
 
         <!-- Filters -->
-        <div class="bg-gray-800/50 backdrop-blur-xl rounded-2xl border border-gray-700/50 p-6">
-            <form method="GET" class="flex flex-wrap gap-4 items-end">
-                <div class="flex-1 min-w-[200px]">
-                    <label class="block text-sm font-medium text-gray-400 mb-2">Cari</label>
-                    <input type="text" name="search" value="{{ request('search') }}" placeholder="Cari payment..."
-                        class="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-2.5 text-white placeholder-gray-400 focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                </div>
-                <div class="min-w-[150px]">
-                    <label class="block text-sm font-medium text-gray-400 mb-2">Status</label>
-                    <select name="status"
-                        class="w-full bg-gray-700/50 border border-gray-600 rounded-xl px-4 py-2.5 text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                        <option value="">Semua Status</option>
-                        @foreach(\App\Models\Payment::STATUSES as $key => $label)
-                            <option value="{{ $key }}" {{ request('status') == $key ? 'selected' : '' }}>{{ $label }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <button type="submit"
-                    class="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-cyan-600 hover:from-blue-500 hover:to-cyan-500 text-white font-semibold rounded-xl transition-all duration-200">
-                    Filter
-                </button>
-                <a href="{{ route('payments.index') }}"
-                    class="px-6 py-2.5 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-xl transition-all duration-200">
-                    Reset
-                </a>
-            </form>
-        </div>
+        <x-filter-bar :resetUrl="route('payments.index')">
+            <x-filter-global searchPlaceholder="No. Payment, Referensi, atau Customer..." />
+
+            <x-filter-select name="status" label="Status" :options="\App\Models\Payment::STATUSES" />
+
+            <x-filter-select name="payment_method" label="Metode" :options="$paymentMethods" placeholder="Semua Metode" />
+        </x-filter-bar>
 
         <!-- Table -->
         <div class="bg-gray-800/50 backdrop-blur-xl rounded-2xl border border-gray-700/50 overflow-hidden">

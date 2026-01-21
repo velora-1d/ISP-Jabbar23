@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Payment;
 use App\Models\Invoice;
+use App\Traits\HasFilters;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 
 class PaymentController extends Controller
 {
+    use HasFilters;
+
     public function __construct()
     {
         $this->middleware('permission:view payments')->only(['index']);
@@ -21,21 +24,47 @@ class PaymentController extends Controller
     {
         $query = Payment::with(['invoice', 'customer', 'processedBy']);
 
-        if ($request->has('status') && $request->status != '') {
-            $query->where('status', $request->status);
+        // Apply global filters (year, month, search)
+        $this->applyGlobalFilters($query, $request, [
+            'dateColumn' => 'paid_at',
+            'searchColumns' => ['payment_number', 'reference_number', 'customer.name']
+        ]);
+
+        // Apply status filter
+        $this->applyStatusFilter($query, $request);
+
+        // Apply payment method filter
+        if ($request->filled('payment_method')) {
+            $query->where('payment_method', $request->payment_method);
         }
 
-        $payments = $query->latest()->paginate(15);
+        $payments = $query->latest()->paginate(15)->withQueryString();
 
-        // Calculate stats
+        // Stats respecting filters
+        $statsQuery = Payment::where('status', 'confirmed');
+        if ($request->filled('year')) {
+            $statsQuery->whereYear('paid_at', $request->year);
+        }
+        if ($request->filled('month')) {
+            $statsQuery->whereMonth('paid_at', $request->month);
+        }
+
         $stats = [
-            'total' => Payment::where('status', '=', 'confirmed', 'and')->sum('amount'),
-            'today' => Payment::where('status', '=', 'confirmed', 'and')->whereDate('paid_at', today())->sum('amount'),
-            'this_month' => Payment::where('status', '=', 'confirmed', 'and')->whereMonth('paid_at', now()->month)->whereYear('paid_at', now()->year)->sum('amount'),
-            'pending' => Payment::where('status', '=', 'pending', 'and')->count(),
+            'total' => (clone $statsQuery)->sum('amount'),
+            'today' => Payment::where('status', 'confirmed')->whereDate('paid_at', today())->sum('amount'),
+            'this_month' => Payment::where('status', 'confirmed')->whereMonth('paid_at', now()->month)->whereYear('paid_at', now()->year)->sum('amount'),
+            'pending' => Payment::where('status', 'pending')->count(),
         ];
 
-        return view('payments.index', compact('payments', 'stats'));
+        // Payment methods for filter dropdown
+        $paymentMethods = Payment::PAYMENT_METHODS ?? [
+            'cash' => 'Cash',
+            'bank_transfer' => 'Transfer Bank',
+            'qris' => 'QRIS',
+            'e-wallet' => 'E-Wallet',
+        ];
+
+        return view('payments.index', compact('payments', 'stats', 'paymentMethods'));
     }
 
     public function store(Request $request)

@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Invoice;
 use App\Models\Customer;
+use App\Traits\HasFilters;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class InvoiceController extends Controller
 {
+    use HasFilters;
+
     public function __construct()
     {
         $this->middleware('permission:view invoices')->only(['index', 'show']);
@@ -22,27 +25,39 @@ class InvoiceController extends Controller
     {
         $query = Invoice::with('customer');
 
-        if ($request->has('status') && $request->status != '') {
-            $query->where('status', $request->status);
-        }
+        // Apply global filters (year, month, date range, search)
+        $this->applyGlobalFilters($query, $request, [
+            'dateColumn' => 'created_at',
+            'searchColumns' => ['invoice_number', 'customer.name', 'customer.cid']
+        ]);
 
-        if ($request->has('search') && $request->search != '') {
-            $search = $request->search;
-            $query->whereHas('customer', function($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('cid', 'like', "%{$search}%");
-            })->orWhere('invoice_number', 'like', "%{$search}%");
-        }
+        // Apply status filter
+        $this->applyStatusFilter($query, $request);
 
-        $invoices = $query->latest()->paginate(15);
+        // Apply customer filter
+        $this->applyRelationFilter($query, $request, 'customer_id');
+
+        $invoices = $query->latest()->paginate(15)->withQueryString();
+
+        // Stats for current filter context
+        $statsQuery = Invoice::query();
+        if ($request->filled('year')) {
+            $statsQuery->whereYear('created_at', $request->year);
+        }
+        if ($request->filled('month')) {
+            $statsQuery->whereMonth('created_at', $request->month);
+        }
 
         $stats = [
-            'unpaid' => Invoice::where('status', 'unpaid')->sum('amount'),
-            'paid' => Invoice::where('status', 'paid')->whereMonth('updated_at', now()->month)->sum('amount'),
-            'overdue' => Invoice::where('status', 'overdue')->count(),
+            'unpaid' => (clone $statsQuery)->where('status', 'unpaid')->sum('amount'),
+            'paid' => (clone $statsQuery)->where('status', 'paid')->sum('amount'),
+            'overdue' => (clone $statsQuery)->where('status', 'overdue')->count(),
         ];
 
-        return view('invoices.index', compact('invoices', 'stats'));
+        // Get customers for filter dropdown
+        $customers = Customer::select(['id', 'name', 'cid'])->orderBy('name')->get();
+
+        return view('invoices.index', compact('invoices', 'stats', 'customers'));
     }
 
     public function show(Invoice $invoice)
@@ -69,7 +84,7 @@ class InvoiceController extends Controller
         ]);
 
         $customer = Customer::find($validated['customer_id']);
-        
+
         $invoice = Invoice::create([
             'invoice_number' => 'INV-' . date('Ymd') . '-' . strtoupper(Str::random(5)),
             'customer_id' => $customer->id,
