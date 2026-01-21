@@ -5,10 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\InstallationReport;
 use App\Models\WorkOrder;
 use App\Models\User;
+use App\Traits\HasFilters;
 use Illuminate\Http\Request;
 
 class InstallationReportController extends Controller
 {
+    use HasFilters;
+
     public function __construct()
     {
         $this->middleware('role:super-admin|admin|noc|technician');
@@ -16,36 +19,48 @@ class InstallationReportController extends Controller
 
     public function index(Request $request)
     {
-        $query = InstallationReport::with(['workOrder', 'technician', 'customer'])
-            ->orderBy('installation_date', 'desc');
+        $query = InstallationReport::with(['workOrder', 'technician', 'customer']);
 
-        if ($request->filled('technician_id')) {
-            $query->where('technician_id', $request->technician_id);
-        }
+        // Apply global filters
+        $this->applyGlobalFilters($query, $request, [
+            'dateColumn' => 'installation_date',
+            'searchColumns' => ['work_performed', 'issues_found', 'customer.name']
+        ]);
 
-        if ($request->filled('status')) {
-            $query->where('status', $request->status);
-        }
+        // Apply status filter
+        $this->applyStatusFilter($query, $request);
 
-        if ($request->filled('start_date')) {
-            $query->whereDate('installation_date', '>=', $request->start_date);
-        }
-        if ($request->filled('end_date')) {
-            $query->whereDate('installation_date', '<=', $request->end_date);
-        }
+        // Apply technician filter
+        $this->applyRelationFilter($query, $request, 'technician_id');
 
-        $reports = $query->paginate(20);
+        $reports = $query->latest('installation_date')->paginate(20)->withQueryString();
+
+        // Stats
+        $statsQuery = InstallationReport::query();
+        if ($request->filled('year')) {
+            $statsQuery->whereYear('installation_date', $request->year);
+        }
+        if ($request->filled('month')) {
+            $statsQuery->whereMonth('installation_date', $request->month);
+        }
 
         $stats = [
-            'total' => InstallationReport::count(),
-            'completed' => InstallationReport::where('status', 'completed')->count(),
+            'total' => (clone $statsQuery)->count(),
+            'completed' => (clone $statsQuery)->where('status', 'completed')->count(),
             'avg_rating' => InstallationReport::whereNotNull('customer_rating')->avg('customer_rating'),
             'this_month' => InstallationReport::whereMonth('installation_date', now()->month)->count(),
         ];
 
-        $technicians = User::role('noc')->where('is_active', true)->orderBy('name')->get(['id', 'name']);
+        // Filter options
+        $technicians = User::role('technician')->where('is_active', true)->orderBy('name')->get(['id', 'name']);
+        $statuses = [
+            'completed' => 'Completed',
+            'partial' => 'Partial',
+            'failed' => 'Failed',
+            'rescheduled' => 'Rescheduled',
+        ];
 
-        return view('field.installation-reports.index', compact('reports', 'stats', 'technicians'));
+        return view('field.installation-reports.index', compact('reports', 'stats', 'technicians', 'statuses'));
     }
 
     public function create(Request $request)

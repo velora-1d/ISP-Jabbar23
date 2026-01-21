@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use App\Models\Customer;
+use App\Traits\HasFilters;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
@@ -12,26 +13,54 @@ use Illuminate\Support\Facades\Storage;
 
 class TechnicianController extends Controller
 {
+    use HasFilters;
+
     /**
      * Display a listing of technicians with their real-time status.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $technicians = User::role('noc')
+        $query = User::role('technician')
             ->with(['currentTasks.package', 'currentTasks'])
-            ->withCount(['currentTasks', 'completedCustomers', 'assignedCustomers'])
-            ->orderBy('name')
+            ->withCount(['currentTasks', 'completedCustomers', 'assignedCustomers']);
+
+        // Apply global filters
+        $this->applyGlobalFilters($query, $request, [
+            'dateColumn' => 'created_at',
+            'searchColumns' => ['name', 'email', 'phone']
+        ]);
+
+        // Apply status filter
+        if ($request->filled('status')) {
+            if ($request->status === 'active') {
+                $query->where('is_active', true);
+            } elseif ($request->status === 'inactive') {
+                $query->where('is_active', false);
+            }
+        }
+
+        $technicians = $query->orderBy('name')->paginate(15)->withQueryString();
+
+        // Calculate stats
+        $allTechs = User::role('technician')
+            ->with('currentTasks')
+            ->withCount('currentTasks')
             ->get();
 
-        // Calculate stats based on computed status
         $stats = [
-            'total' => $technicians->count(),
-            'available' => $technicians->filter(fn($t) => $t->computed_status === 'available')->count(),
-            'on_task' => $technicians->filter(fn($t) => $t->computed_status === 'on_task')->count(),
-            'off_duty' => $technicians->filter(fn($t) => $t->computed_status === 'off_duty')->count(),
+            'total' => $allTechs->count(),
+            'available' => $allTechs->filter(fn($t) => $t->computed_status === 'available')->count(),
+            'on_task' => $allTechs->filter(fn($t) => $t->computed_status === 'on_task')->count(),
+            'off_duty' => $allTechs->filter(fn($t) => $t->computed_status === 'off_duty')->count(),
         ];
 
-        return view('technicians.index', compact('technicians', 'stats'));
+        // Filter options
+        $statuses = [
+            'active' => 'Active',
+            'inactive' => 'Inactive',
+        ];
+
+        return view('technicians.index', compact('technicians', 'stats', 'statuses'));
     }
 
     /**
@@ -41,13 +70,13 @@ class TechnicianController extends Controller
     {
         /** @var User $technician */
         $technician = $request->user();
-        
+
         // Eager load active tasks (survey, installing, etc)
         $activeTasks = $technician->currentTasks()
             ->with(['package'])
             ->orderBy('updated_at', 'desc')
             ->get();
-            
+
         // Stats
         $stats = [
             'completed_today' => $technician->completedCustomers()->whereDate('updated_at', today())->count(),

@@ -5,12 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\ProformaInvoice;
+use App\Traits\HasFilters;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
 class ProformaInvoiceController extends Controller
 {
+    use HasFilters;
+
     public function __construct()
     {
         $this->middleware('permission:view invoices')->only(['index', 'show']);
@@ -22,27 +25,42 @@ class ProformaInvoiceController extends Controller
     {
         $query = ProformaInvoice::with('customer');
 
-        // Filter by status
-        if ($request->filled('status')) {
-            $query->where('status', '=', $request->status, 'and');
+        // Apply global filters
+        $this->applyGlobalFilters($query, $request, [
+            'dateColumn' => 'issue_date',
+            'searchColumns' => ['proforma_number', 'customer.name']
+        ]);
+
+        // Apply status filter
+        $this->applyStatusFilter($query, $request);
+
+        $proformas = $query->latest()->paginate(15)->withQueryString();
+
+        // Stats respecting filters
+        $statsQuery = ProformaInvoice::query();
+        if ($request->filled('year')) {
+            $statsQuery->whereYear('issue_date', $request->year);
+        }
+        if ($request->filled('month')) {
+            $statsQuery->whereMonth('issue_date', $request->month);
         }
 
-        $proformas = $query->latest()->paginate(15, ['*']);
-
-        // Stats
-        $pendingCount = ProformaInvoice::where('status', '=', 'pending', 'and')->count(['*']);
-        $pendingValue = ProformaInvoice::where('status', '=', 'pending', 'and')->sum('amount');
-        $convertedCount = ProformaInvoice::where('status', '=', 'converted', 'and')->count(['*']);
-        $expiredCount = ProformaInvoice::where('status', '=', 'expired', 'and')->count(['*']);
-
         $stats = [
-            'pending_count' => $pendingCount,
-            'pending_value' => $pendingValue,
-            'converted_count' => $convertedCount,
-            'expired_count' => $expiredCount,
+            'pending_count' => (clone $statsQuery)->where('status', 'pending')->count(),
+            'pending_value' => (clone $statsQuery)->where('status', 'pending')->sum('amount'),
+            'converted_count' => (clone $statsQuery)->where('status', 'converted')->count(),
+            'expired_count' => (clone $statsQuery)->where('status', 'expired')->count(),
         ];
 
-        return view('billing.proforma.index', compact('proformas', 'stats'));
+        // Filter options
+        $statuses = [
+            'pending' => 'Pending',
+            'converted' => 'Converted',
+            'expired' => 'Expired',
+            'cancelled' => 'Cancelled',
+        ];
+
+        return view('billing.proforma.index', compact('proformas', 'stats', 'statuses'));
     }
 
     public function create()
