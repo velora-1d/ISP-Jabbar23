@@ -111,7 +111,7 @@ class InstallationReportController extends Controller
 
     public function edit(InstallationReport $installationReport)
     {
-        $workOrders = \App\Models\WorkOrder::with('customer')->orderBy('id', 'desc')->get();
+        $workOrders = WorkOrder::with('customer')->orderBy('id', 'desc')->get();
         return view('field.installation-reports.edit', compact('installationReport', 'workOrders'));
     }
 
