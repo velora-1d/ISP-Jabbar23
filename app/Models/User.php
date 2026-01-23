@@ -39,6 +39,16 @@ class User extends Authenticatable
         'last_latitude',
         'last_longitude',
         'last_location_update',
+        // Employee fields
+        'nik',
+        'address',
+        'date_of_birth',
+        'gender',
+        'position',
+        'department',
+        'join_date',
+        'emergency_contact_name',
+        'emergency_contact_phone',
     ];
 
     /**
