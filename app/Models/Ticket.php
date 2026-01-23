@@ -19,6 +19,8 @@ class Ticket extends Model
         'description',
         'status',
         'priority',
+        'optical_power',
+        'evidence_photo',
         'admin_notes',
         'resolved_at',
     ];

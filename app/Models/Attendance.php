@@ -15,6 +15,8 @@ class Attendance extends Model
         'status',
         'clock_in_location',
         'clock_out_location',
+        'photo_in',
+        'photo_out',
         'notes',
     ];
 

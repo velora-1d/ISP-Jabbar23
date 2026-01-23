@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\CustomerApiController;
 use App\Http\Controllers\Api\TicketApiController;
+use App\Http\Controllers\Api\TechnicianApiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -25,4 +26,14 @@ Route::middleware('auth:sanctum')->group(function () {
     // Ticket Features
     Route::get('/customer/tickets', [TicketApiController::class, 'index']);
     Route::post('/customer/tickets', [TicketApiController::class, 'store']);
+
+    // Technician Features
+    Route::get('/technician/dashboard', [TechnicianApiController::class, 'dashboard']);
+    Route::get('/technician/jobs', [TechnicianApiController::class, 'jobs']);
+    Route::post('/technician/jobs/{id}/status', [TechnicianApiController::class, 'updateStatus']);
+
+    Route::get('/technician/inventory', [TechnicianApiController::class, 'inventory']);
+    Route::get('/technician/attendance', [TechnicianApiController::class, 'attendance']);
+    Route::post('/technician/attendance/in', [TechnicianApiController::class, 'clockIn']);
+    Route::post('/technician/attendance/out', [TechnicianApiController::class, 'clockOut']);
 });
