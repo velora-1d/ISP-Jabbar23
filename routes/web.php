@@ -28,14 +28,10 @@ use App\Http\Controllers\RecurringBillingController;
 
 use App\Http\Controllers\LandingController;
 
-// Parsing host from APP_URL for Landing Page Domain
-$appUrl = config('app.url');
-$landingDomain = parse_url($appUrl, PHP_URL_HOST) ?? 'localhost';
-
 // ============================================
-// Landing Page Routes (jabbar.ve-lora.my.id)
+// Landing Page Routes (HARDCODED DOMAIN)
 // ============================================
-Route::domain($landingDomain)->group(function () {
+Route::domain('jabbar.ve-lora.my.id')->group(function () {
     Route::get('/', [LandingController::class, 'index'])->name('landing.home');
     Route::get('/jangkauan', [LandingController::class, 'coverage'])->name('landing.coverage');
     Route::get('/hubungi-kami', [LandingController::class, 'contact'])->name('landing.contact');
@@ -45,9 +41,9 @@ Route::domain($landingDomain)->group(function () {
 // All Authenticated Routes
 // ============================================
 // ============================================
-// Dashboard / Admin Routes (jabbardash.ve-lora.my.id)
+// Dashboard / Admin Routes (HARDCODED DOMAIN)
 // ============================================
-Route::domain(config('app.dashboard_domain', 'jabbardash.ve-lora.my.id'))->group(function () {
+Route::domain('jabbardash.ve-lora.my.id')->group(function () {
     
     // Auth Routes for Dashboard (Login, Register, etc)
     require __DIR__ . '/auth.php';
