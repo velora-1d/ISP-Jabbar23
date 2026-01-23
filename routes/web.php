@@ -23,9 +23,18 @@ use App\Http\Controllers\RecurringBillingController;
 
 use App\Http\Controllers\LandingController;
 
-Route::get('/', [LandingController::class, 'index'])->name('landing.home');
-Route::get('/jangkauan', [LandingController::class, 'coverage'])->name('landing.coverage');
-Route::get('/hubungi-kami', [LandingController::class, 'contact'])->name('landing.contact');
+// Parsing host from APP_URL for Landing Page Domain
+$appUrl = config('app.url');
+$landingDomain = parse_url($appUrl, PHP_URL_HOST) ?? 'localhost';
+
+// ============================================
+// Landing Page Routes (jabbar.ve-lora.my.id)
+// ============================================
+Route::domain($landingDomain)->group(function () {
+    Route::get('/', [LandingController::class, 'index'])->name('landing.home');
+    Route::get('/jangkauan', [LandingController::class, 'coverage'])->name('landing.coverage');
+    Route::get('/hubungi-kami', [LandingController::class, 'contact'])->name('landing.contact');
+});
 
 // ============================================
 // All Authenticated Routes
@@ -37,6 +46,9 @@ Route::domain(config('app.dashboard_domain', 'jabbardash.ve-lora.my.id'))->group
     
     // Auth Routes for Dashboard (Login, Register, etc)
     require __DIR__ . '/auth.php';
+
+    // Explicit Redirect for Dashboard Root
+    Route::redirect('/', '/login');
 
     Route::middleware(['auth', 'verified'])->group(function () {
         // Dashboard
