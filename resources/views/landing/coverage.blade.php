@@ -36,7 +36,7 @@
                                     </div>
                                     <div>
                                         <h4 class="font-bold text-white">{{ $odp->name }}</h4>
-                                        <p class="text-sm text-gray-400">{{ $odp->location_description ?? 'Lokasi Tercover' }}</p>
+                                        <p class="text-sm text-gray-400">{{ $odp->address ?? $odp->description ?? 'Lokasi Tercover' }}</p>
                                     </div>
                                 </div>
                                 <div class="text-right">
