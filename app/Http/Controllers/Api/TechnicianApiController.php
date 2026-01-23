@@ -108,16 +108,21 @@ class TechnicianApiController extends Controller
         ]);
     }
     /**
-     * Get technician inventory (Mock).
+     * Get technician inventory (Real DB).
      */
     public function inventory(Request $request)
     {
-        return response()->json([
-            ['id' => 1, 'name' => 'Kabel Dropcore 1 Core', 'stock' => 500, 'unit' => 'meter'],
-            ['id' => 2, 'name' => 'ONT Huawei HG8245H', 'stock' => 5, 'unit' => 'unit'],
-            ['id' => 3, 'name' => 'Patchcord SC-UPC 3m', 'stock' => 10, 'unit' => 'pcs'],
-            ['id' => 4, 'name' => 'Konektor Fast Connector', 'stock' => 20, 'unit' => 'pcs'],
-        ]);
+        $items = \App\Models\InventoryItem::with('stocks')->get()->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'name' => $item->name,
+                'stock' => (int) $item->stocks->sum('quantity'), // Sum all locations for now
+                'unit' => $item->unit,
+                // 'image' => ...
+            ];
+        });
+
+        return response()->json($items);
     }
 
     /**
