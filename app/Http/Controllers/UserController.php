@@ -79,12 +79,34 @@ class UserController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8',
             'role' => 'required|exists:roles,name',
+            // Employee fields (nullable)
+            'nik' => 'nullable|string|max:50',
+            'phone' => 'nullable|string|max:20',
+            'address' => 'nullable|string',
+            'date_of_birth' => 'nullable|date',
+            'gender' => 'nullable|in:male,female',
+            'position' => 'nullable|string|max:100',
+            'department' => 'nullable|string|max:100',
+            'join_date' => 'nullable|date',
+            'emergency_contact_name' => 'nullable|string|max:100',
+            'emergency_contact_phone' => 'nullable|string|max:20',
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => bcrypt($request->password),
+            // Employee fields
+            'nik' => $request->nik,
+            'phone' => $request->phone,
+            'address' => $request->address,
+            'date_of_birth' => $request->date_of_birth,
+            'gender' => $request->gender,
+            'position' => $request->position,
+            'department' => $request->department,
+            'join_date' => $request->join_date,
+            'emergency_contact_name' => $request->emergency_contact_name,
+            'emergency_contact_phone' => $request->emergency_contact_phone,
         ]);
 
         $user->assignRole($request->role);
