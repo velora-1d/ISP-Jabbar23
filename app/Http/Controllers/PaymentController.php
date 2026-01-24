@@ -105,10 +105,18 @@ class PaymentController extends Controller
                     'payment_method' => $validated['payment_method'],
                 ]);
 
-                // Send WhatsApp Notification in Background Queue
-                if ($invoice->customer && $invoice->customer->phone) {
+
                     $message = "Halo {$invoice->customer->name},\n\nTerima kasih, pembayaran tagihan *{$invoice->invoice_number}* sebesar *Rp " . number_format($validated['amount'], 0, ',', '.') . "* telah kami terima.\n\nStatus: LUNAS ✅\nTerima kasih telah menggunakan layanan ISP Jabbar.";
                     \App\Jobs\SendWhatsAppJob::dispatch($invoice->customer->phone, $message);
+
+                    // Auto-Restore Internet Access (Radius)
+                    if ($invoice->customer && $invoice->customer->pppoe_username) {
+                        try {
+                            app(\App\Services\RadiusService::class)->restoreUser($invoice->customer->pppoe_username);
+                        } catch (\Exception $e) {
+                            \Illuminate\Support\Facades\Log::error("Auto-Restore Failed: " . $e->getMessage());
+                        }
+                    }
                 }
 
                 // Invalidate User Dashboard Cache
@@ -166,10 +174,17 @@ class PaymentController extends Controller
                     ['amount' => $notif->gross_amount, 'status' => 'paid']
                 );
 
-                // Send WhatsApp Notification in Background Queue
-                if ($invoice->customer && $invoice->customer->phone) {
                     $message = "Halo {$invoice->customer->name},\n\nTerima kasih, pembayaran via {$notif->payment_type} untuk tagihan *{$invoice->invoice_number}* sebesar *Rp " . number_format($notif->gross_amount, 0, ',', '.') . "* telah BERHASIL diverifikasi.\n\nStatus: LUNAS ✅\nTerima kasih telah menggunakan layanan ISP Jabbar.";
                     \App\Jobs\SendWhatsAppJob::dispatch($invoice->customer->phone, $message);
+
+                    // Auto-Restore Internet Access (Radius)
+                    if ($invoice->customer && $invoice->customer->pppoe_username) {
+                        try {
+                            app(\App\Services\RadiusService::class)->restoreUser($invoice->customer->pppoe_username);
+                        } catch (\Exception $e) {
+                            \Illuminate\Support\Facades\Log::error("Auto-Restore Failed: " . $e->getMessage());
+                        }
+                    }
                 }
 
                 // Invalidate User Dashboard Cache
