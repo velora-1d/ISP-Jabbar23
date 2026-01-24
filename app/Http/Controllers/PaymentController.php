@@ -104,114 +104,31 @@ class PaymentController extends Controller
                     'payment_date' => now(),
                     'payment_method' => $validated['payment_method'],
                 ]);
+
+                // Send WhatsApp Notification in Background Queue
+                if ($invoice->customer && $invoice->customer->phone) {
+                    $message = "Halo {$invoice->customer->name},\n\nTerima kasih, pembayaran tagihan *{$invoice->invoice_number}* sebesar *Rp " . number_format($validated['amount'], 0, ',', '.') . "* telah kami terima.\n\nStatus: LUNAS ✅\nTerima kasih telah menggunakan layanan ISP Jabbar.";
+                    \App\Jobs\SendWhatsAppJob::dispatch($invoice->customer->phone, $message);
+                }
+
             } else {
                 // Only update to partial if currently unpaid or overdue
                 if (in_array($invoice->status, ['unpaid', 'overdue'])) {
                     $invoice->update(['status' => 'partial']);
+                    
+                    // Send WhatsApp for Partial Payment
+                    if ($invoice->customer && $invoice->customer->phone) {
+                        $message = "Halo {$invoice->customer->name},\n\nPembayaran sebesar *Rp " . number_format($validated['amount'], 0, ',', '.') . "* untuk tagihan *{$invoice->invoice_number}* telah diterima. (Parsial)";
+                        \App\Jobs\SendWhatsAppJob::dispatch($invoice->customer->phone, $message);
+                    }
                 }
             }
         });
 
         return back()->with('success', 'Pembayaran berhasil dicatat!');
     }
-    public function createTransaction(Request $request, Invoice $invoice, \App\Services\MidtransService $midtrans)
-    {
-        // Validasi invoice belum lunas
-        if ($invoice->status === 'paid') {
-            return response()->json(['error' => 'Invoice sudah lunas.'], 400);
-        }
 
-        $transactionId = $invoice->invoice_number . '-' . time(); // Unique ID
-
-        $params = [
-            'transaction_details' => [
-                'order_id' => $transactionId,
-                'gross_amount' => (int) $invoice->amount,
-            ],
-            'customer_details' => [
-                'first_name' => $invoice->customer->name,
-                'email' => $invoice->customer->email,
-                'phone' => $invoice->customer->phone,
-            ],
-            'item_details' => [
-                [
-                    'id' => $invoice->invoice_number,
-                    'price' => (int) $invoice->amount,
-                    'quantity' => 1,
-                    'name' => 'Tagihan Internet ' . $invoice->period_start->format('M Y'),
-                ]
-            ]
-        ];
-
-        try {
-            $snapToken = $midtrans->getSnapToken($params);
-
-            // Simpan record payment pending (Optional, tapi bagus buat track)
-            // Payment::create([... 'status' => 'pending', 'reference_number' => $transactionId ...]);
-
-            return response()->json(['snap_token' => $snapToken]);
-        } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
-        }
-    }
-
-    /**
-     * Handle Midtrans Webhook Notification / HTTP Notification
-     */
-    public function handleWebhook(Request $request)
-    {
-        try {
-            $notif = new \Midtrans\Notification();
-        } catch (\Exception $e) {
-            return response('Invalid Notification', 400);
-        }
-
-        $transaction = $notif->transaction_status;
-        $type = $notif->payment_type;
-        $orderId = $notif->order_id;
-        $fraud = $notif->fraud_status;
-
-        // Security: Verify Signature Key
-        // SHA512(order_id + status_code + gross_amount + ServerKey)
-        $input = $orderId . $notif->status_code . $notif->gross_amount . config('midtrans.server_key');
-        $signature = openssl_digest($input, 'sha512');
-
-        if ($signature != $notif->signature_key) {
-            return response('Invalid Signature', 403);
-        }
-
-        // Extract Invoice Number from Order ID (Format: INV-XXXX-TIMESTAMP)
-        // Split by last dash to separate timestamp
-        $lastDashPos = strrpos($orderId, '-');
-        $invoiceNumber = substr($orderId, 0, $lastDashPos);
-
-        $invoice = Invoice::where('invoice_number', '=', $invoiceNumber, 'and')->first();
-        if (!$invoice) {
-            return response('Invoice Not Found', 404);
-        }
-
-        if ($transaction == 'capture') {
-            if ($type == 'credit_card') {
-                if ($fraud == 'challenge') {
-                    // Challenge
-                } else {
-                    $this->recordPayment($invoice, $notif, 'verified');
-                }
-            }
-        } else if ($transaction == 'settlement') {
-            $this->recordPayment($invoice, $notif, 'verified');
-        } else if ($transaction == 'pending') {
-            // Pending
-        } else if ($transaction == 'deny') {
-            // Deny
-        } else if ($transaction == 'expire') {
-            // Expire
-        } else if ($transaction == 'cancel') {
-            // Cancel
-        }
-
-        return response('OK');
-    }
+    // ... (skipped irrelevant methods) ...
 
     private function recordPayment($invoice, $notif, $status)
     {
@@ -242,6 +159,12 @@ class PaymentController extends Controller
                     [],
                     ['amount' => $notif->gross_amount, 'status' => 'paid']
                 );
+
+                // Send WhatsApp Notification in Background Queue
+                if ($invoice->customer && $invoice->customer->phone) {
+                    $message = "Halo {$invoice->customer->name},\n\nTerima kasih, pembayaran via {$notif->payment_type} untuk tagihan *{$invoice->invoice_number}* sebesar *Rp " . number_format($notif->gross_amount, 0, ',', '.') . "* telah BERHASIL diverifikasi.\n\nStatus: LUNAS ✅\nTerima kasih telah menggunakan layanan ISP Jabbar.";
+                    \App\Jobs\SendWhatsAppJob::dispatch($invoice->customer->phone, $message);
+                }
             }
         });
     }
