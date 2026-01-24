@@ -111,6 +111,12 @@ class PaymentController extends Controller
                     \App\Jobs\SendWhatsAppJob::dispatch($invoice->customer->phone, $message);
                 }
 
+                // Invalidate User Dashboard Cache
+                $user = \App\Models\User::where('email', $invoice->customer->email)->first();
+                if ($user) {
+                    \Illuminate\Support\Facades\Cache::forget("api_dashboard_{$user->id}");
+                }
+
             } else {
                 // Only update to partial if currently unpaid or overdue
                 if (in_array($invoice->status, ['unpaid', 'overdue'])) {
@@ -164,6 +170,12 @@ class PaymentController extends Controller
                 if ($invoice->customer && $invoice->customer->phone) {
                     $message = "Halo {$invoice->customer->name},\n\nTerima kasih, pembayaran via {$notif->payment_type} untuk tagihan *{$invoice->invoice_number}* sebesar *Rp " . number_format($notif->gross_amount, 0, ',', '.') . "* telah BERHASIL diverifikasi.\n\nStatus: LUNAS ✅\nTerima kasih telah menggunakan layanan ISP Jabbar.";
                     \App\Jobs\SendWhatsAppJob::dispatch($invoice->customer->phone, $message);
+                }
+
+                // Invalidate User Dashboard Cache
+                $user = \App\Models\User::where('email', $invoice->customer->email)->first();
+                if ($user) {
+                    \Illuminate\Support\Facades\Cache::forget("api_dashboard_{$user->id}");
                 }
             }
         });
