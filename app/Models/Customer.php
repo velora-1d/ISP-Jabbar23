@@ -55,6 +55,12 @@ class Customer extends Model
         'billing_date',
         'notes',
         'payment_token',
+        'router_id',
+        'pppoe_username',
+        'pppoe_password',
+        'mikrotik_ip',
+        'olt_id',
+        'onu_index',
     ];
 
     protected $casts = [
@@ -146,6 +152,20 @@ class Customer extends Model
         return $this->belongsTo(User::class, 'assigned_to');
     }
 
+    public function router(): BelongsTo
+    {
+        return $this->belongsTo(Router::class, 'router_id');
+    }
+
+    public function olt(): BelongsTo
+    {
+        return $this->belongsTo(Olt::class, 'olt_id');
+    }
+
+    public function inventorySerials(): HasMany
+    {
+        return $this->hasMany(InventorySerial::class);
+    }
     /**
      * Get status change logs.
      */

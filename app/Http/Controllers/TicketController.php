@@ -98,6 +98,8 @@ class TicketController extends Controller
 
         $ticket = Ticket::create($request->all());
 
+        \App\Events\TicketCreated::dispatch($ticket);
+
         return redirect()->route('tickets.index')->with('success', 'Tiket pelaporan baru berhasil dibuat.');
     }
 

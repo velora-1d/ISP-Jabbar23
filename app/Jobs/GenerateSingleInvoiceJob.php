@@ -71,8 +71,9 @@ class GenerateSingleInvoiceJob implements ShouldQueue
             
             Log::info("Invoice generated for {$customer->name} ($invoiceNumber)");
             
-            // Optional: Send WA Notification via Queue immediately
-            // SendWhatsAppJob::dispatch($customer->phone, "Tagihan bulan ini sudah terbit...");
+            // Dispatch Event for Notification
+            $invoice = Invoice::where('invoice_number', $invoiceNumber)->first();
+            \App\Events\InvoiceGenerated::dispatch($invoice);
         });
     }
 

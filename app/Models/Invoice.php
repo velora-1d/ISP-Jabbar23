@@ -29,6 +29,8 @@ class Invoice extends Model
         'invoice_number',
         'customer_id',
         'amount',
+        'tax_amount',
+        'total_after_tax',
         'period_start',
         'period_end',
         'due_date',
@@ -39,11 +41,24 @@ class Invoice extends Model
 
     protected $casts = [
         'amount' => 'decimal:2',
+        'tax_amount' => 'decimal:2',
+        'total_after_tax' => 'decimal:2',
         'period_start' => 'date',
         'period_end' => 'date',
         'due_date' => 'date',
         'payment_date' => 'date',
     ];
+
+    protected static function boot()
+    {
+        parent::boot();
+
+        static::saving(function ($invoice) {
+            // Default PPN is 11%
+            $invoice->tax_amount = $invoice->amount * 0.11;
+            $invoice->total_after_tax = $invoice->amount + $invoice->tax_amount;
+        });
+    }
 
     /**
      * Relationship with Customer.
@@ -82,7 +97,7 @@ class Invoice extends Model
      */
     public function getFormattedAmountAttribute(): string
     {
-        return 'Rp ' . number_format((float) $this->amount, 0, ',', '.');
+        return 'Rp ' . number_format((float) ($this->total_after_tax ?: $this->amount), 0, ',', '.');
     }
 
     /**

@@ -22,5 +22,21 @@ class AppServiceProvider extends ServiceProvider
         if($this->app->environment('production')) {
             \Illuminate\Support\Facades\URL::forceScheme('https');
         }
+
+        // Register WhatsApp Notification Listeners
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Events\InvoiceGenerated::class,
+            \App\Listeners\SendInvoiceNotification::class,
+        );
+
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Events\InvoicePaid::class,
+            \App\Listeners\SendPaymentNotification::class,
+        );
+
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Events\TicketCreated::class,
+            \App\Listeners\SendTicketNotification::class,
+        );
     }
 }

@@ -39,6 +39,43 @@
                                     class="mt-1 block w-full bg-gray-900 border-gray-700 rounded-md text-gray-100">
                             </div>
 
+                            <!-- Server Profile -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300">Server Profile</label>
+                                <select name="server_profile" class="mt-1 block w-full bg-gray-900 border-gray-700 rounded-md text-gray-100">
+                                    <option value="zte" {{ $olt->server_profile == 'zte' ? 'selected' : '' }}>Real Device (ZTE)</option>
+                                    <option value="huawei" {{ $olt->server_profile == 'huawei' ? 'selected' : '' }}>Real Device (Huawei)</option>
+                                </select>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300">Port (Telnet)</label>
+                                    <input type="number" name="port" value="{{ old('port', $olt->port ?? 23) }}" 
+                                        class="mt-1 block w-full bg-gray-900 border-gray-700 rounded-md text-gray-100">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300">SNMP Community</label>
+                                    <input type="text" name="community" value="{{ old('community', $olt->community) }}" 
+                                        class="mt-1 block w-full bg-gray-900 border-gray-700 rounded-md text-gray-100">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300">Username (Telnet)</label>
+                                <input type="text" name="username" value="{{ old('username', $olt->username) }}" 
+                                    class="mt-1 block w-full bg-gray-900 border-gray-700 rounded-md text-gray-100">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300">Password (Telnet)</label>
+                                <input type="password" name="password" value="{{ old('password', $olt->password) }}" 
+                                    class="mt-1 block w-full bg-gray-900 border-gray-700 rounded-md text-gray-100">
+                            </div>
+
                             <div>
                                 <label class="block text-sm font-medium text-gray-300">Type</label>
                                 <select name="type" class="mt-1 block w-full bg-gray-900 border-gray-700 rounded-md text-gray-100">
@@ -47,10 +84,7 @@
                                     <option value="XGPON" {{ $olt->type == 'XGPON' ? 'selected' : '' }}>XGPON</option>
                                 </select>
                             </div>
-                        </div>
 
-                        <!-- Right Column -->
-                        <div class="space-y-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-300">Total PON Ports</label>
                                 <select name="total_pon_ports" class="mt-1 block w-full bg-gray-900 border-gray-700 rounded-md text-gray-100">
@@ -71,8 +105,9 @@
                             </div>
 
                             <div>
-                                <label class="block text-sm font-medium text-gray-300">Location / Datacenter</label>
-                                <textarea name="location" rows="3" class="mt-1 block w-full bg-gray-900 border-gray-700 rounded-md text-gray-100">{{ old('location', $olt->location) }}</textarea>
+                                <label class="block text-sm font-medium text-gray-300">Location</label>
+                                <input type="text" name="location" value="{{ old('location', $olt->location) }}" 
+                                    class="mt-1 block w-full bg-gray-900 border-gray-700 rounded-md text-gray-100">
                             </div>
                         </div>
                     </div>

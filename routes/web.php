@@ -25,8 +25,20 @@ use App\Http\Controllers\SchedulingController;
 use App\Http\Controllers\ContractController;
 use App\Http\Controllers\PartnerController;
 use App\Http\Controllers\RecurringBillingController;
-
+use App\Http\Controllers\HotspotController;
+use App\Http\Controllers\ExpenseController;
+use App\Http\Controllers\AuditLogController;
 use App\Http\Controllers\LandingController;
+use App\Http\Controllers\MessageController;
+use App\Http\Controllers\PromotionController;
+use App\Http\Controllers\KnowledgeBaseController;
+use App\Http\Controllers\SlaController;
+use App\Http\Controllers\CampaignController;
+use App\Http\Controllers\ReferralController;
+use App\Http\Controllers\TrackingController;
+use App\Http\Controllers\BackupController;
+use App\Http\Controllers\ApiManagementController;
+use App\Http\Controllers\InstallationReportController;
 
 // ============================================
 // DASHBOARD ONLY ROUTES
@@ -59,6 +71,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
         // Inventory Management
         Route::post('inventory/adjust', [InventoryController::class, 'adjustStock'])->name('inventory.adjust');
+        Route::post('inventory/store-serials', [InventoryController::class, 'storeSerials'])->name('inventory.store-serials');
+        Route::post('inventory/assign-serial', [InventoryController::class, 'assignSerial'])->name('inventory.assign-serial');
         Route::resource('inventory', InventoryController::class);
     
         // Work Order / Field Ops
@@ -103,8 +117,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Tickets / Helpdesk
         Route::resource('tickets', TicketController::class);
     
-        // Settings
-        Route::get('settings', [SettingController::class, 'index'])->name('settings.index');
+        // Hotspot Voucher System
+        Route::get('hotspot/vouchers', [HotspotController::class, 'index'])->name('hotspot.vouchers.index');
+        Route::post('hotspot/vouchers/generate', [HotspotController::class, 'generate'])->name('hotspot.vouchers.generate');
+        Route::get('hotspot/vouchers/print', [HotspotController::class, 'print'])->name('hotspot.vouchers.print');
+        Route::get('hotspot/profiles', [HotspotController::class, 'profiles'])->name('hotspot.profiles.index');
+        Route::post('hotspot/profiles', [HotspotController::class, 'storeProfile'])->name('hotspot.profiles.store');
+
+        // Accounting & Expenses
+        Route::resource('expenses', ExpenseController::class);
+
+        // Settings & Logs
+        Route::get('settings', [SettingController::class, 'index'])->name('settings.index'); // Kept existing settings index route
+        Route::get('logs', [AuditLogController::class, 'index'])->name('logs.index');
         Route::patch('settings', [SettingController::class, 'update'])->name('settings.update');
     
         // Payment Gateways
@@ -147,6 +172,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('monitoring', [\App\Http\Controllers\Network\NetworkMonitoringController::class, 'index'])->name('monitoring.index');
             Route::post('monitoring/ping', [\App\Http\Controllers\Network\NetworkMonitoringController::class, 'ping'])->name('monitoring.ping');
             Route::get('monitoring/{id}/stats', [\App\Http\Controllers\Network\NetworkMonitoringController::class, 'getRouterStats'])->name('monitoring.stats');
+            
+            // OLT Signal Check
+            Route::get('olts/{olt}/check-signal', [\App\Http\Controllers\Network\OltController::class, 'checkSignal'])->name('olts.check-signal');
     
             // Routers / Mikrotik
             Route::resource('routers', \App\Http\Controllers\Network\RouterController::class);
@@ -207,6 +235,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Reports Routes
         Route::middleware(['role:super-admin|admin|finance'])->prefix('reports')->name('reports.')->group(function () {
             Route::get('revenue', [ReportController::class, 'revenue'])->name('revenue');
+            Route::get('profit-loss', [ReportController::class, 'profitLoss'])->name('profit-loss');
             Route::get('customers', [ReportController::class, 'customers'])->name('customers');
             Route::get('network', [ReportController::class, 'network'])->name('network');
             Route::get('commissions', [ReportController::class, 'commissions'])->name('commissions');
@@ -214,71 +243,71 @@ Route::middleware(['auth', 'verified'])->group(function () {
     
         // Audit Logs (Super Admin Only)
         Route::middleware(['role:super-admin'])->group(function () {
-            Route::get('audit-logs', [\App\Http\Controllers\AuditLogController::class, 'index'])->name('audit-logs.index');
-            Route::get('audit-logs/{auditLog}', [\App\Http\Controllers\AuditLogController::class, 'show'])->name('audit-logs.show');
-            Route::delete('audit-logs', [\App\Http\Controllers\AuditLogController::class, 'destroy'])->name('audit-logs.clear');
+            Route::get('audit-logs', [AuditLogController::class, 'index'])->name('audit-logs.index');
+            Route::get('audit-logs/{auditLog}', [AuditLogController::class, 'show'])->name('audit-logs.show');
+            Route::delete('audit-logs', [AuditLogController::class, 'destroy'])->name('audit-logs.clear');
         });
     
         // Customer Messages
         Route::middleware(['role:super-admin|admin|sales-cs'])->group(function () {
-            Route::resource('messages', \App\Http\Controllers\MessageController::class)->except(['edit', 'update', 'destroy']);
-            Route::get('messages/conversation/{customer}', [\App\Http\Controllers\MessageController::class, 'show'])->name('messages.conversation');
-            Route::post('messages/quick', [\App\Http\Controllers\MessageController::class, 'sendQuick'])->name('messages.quick');
+            Route::resource('messages', MessageController::class)->except(['edit', 'update', 'destroy']);
+            Route::get('messages/conversation/{customer}', [MessageController::class, 'show'])->name('messages.conversation');
+            Route::post('messages/quick', [MessageController::class, 'sendQuick'])->name('messages.quick');
         });
     
         // Installation Reports
         Route::middleware(['role:super-admin|admin|noc|technician'])->group(function () {
-            Route::resource('installation-reports', \App\Http\Controllers\InstallationReportController::class);
+            Route::resource('installation-reports', InstallationReportController::class);
         });
     
         // Promotions
         Route::middleware(['role:super-admin|admin|sales-cs|finance'])->group(function () {
-            Route::patch('promotions/{promotion}/toggle-active', [\App\Http\Controllers\PromotionController::class, 'toggleActive'])->name('promotions.toggle-active');
-            Route::resource('promotions', \App\Http\Controllers\PromotionController::class);
+            Route::patch('promotions/{promotion}/toggle-active', [PromotionController::class, 'toggleActive'])->name('promotions.toggle-active');
+            Route::resource('promotions', PromotionController::class);
         });
     
         // Knowledge Base
         Route::middleware(['role:super-admin|admin|sales-cs|noc|technician'])->group(function () {
-            Route::resource('knowledge-base', \App\Http\Controllers\KnowledgeBaseController::class);
+            Route::resource('knowledge-base', KnowledgeBaseController::class);
         });
     
         // SLA Management
         Route::middleware(['role:super-admin|admin|noc'])->group(function () {
-            Route::resource('sla', \App\Http\Controllers\SlaController::class)->except(['show']);
+            Route::resource('sla', SlaController::class)->except(['show']);
         });
     
         // Campaigns
         Route::middleware(['role:super-admin|admin|sales-cs'])->group(function () {
-            Route::post('campaigns/{campaign}/launch', [\App\Http\Controllers\CampaignController::class, 'launch'])->name('campaigns.launch');
-            Route::post('campaigns/{campaign}/cancel', [\App\Http\Controllers\CampaignController::class, 'cancel'])->name('campaigns.cancel');
-            Route::resource('campaigns', \App\Http\Controllers\CampaignController::class);
+            Route::post('campaigns/{campaign}/launch', [CampaignController::class, 'launch'])->name('campaigns.launch');
+            Route::post('campaigns/{campaign}/cancel', [CampaignController::class, 'cancel'])->name('campaigns.cancel');
+            Route::resource('campaigns', CampaignController::class);
         });
     
         // Referrals
         Route::middleware(['role:super-admin|admin|sales-cs'])->group(function () {
-            Route::post('referrals/{referral}/qualify', [\App\Http\Controllers\ReferralController::class, 'markQualified'])->name('referrals.qualify');
-            Route::post('referrals/{referral}/pay', [\App\Http\Controllers\ReferralController::class, 'payReward'])->name('referrals.pay');
-            Route::resource('referrals', \App\Http\Controllers\ReferralController::class)->except(['edit', 'update', 'show']);
+            Route::post('referrals/{referral}/qualify', [ReferralController::class, 'markQualified'])->name('referrals.qualify');
+            Route::post('referrals/{referral}/pay', [ReferralController::class, 'payReward'])->name('referrals.pay');
+            Route::resource('referrals', ReferralController::class)->except(['edit', 'update', 'show']);
         });
     
         // GPS Tracking
         Route::middleware(['role:super-admin|admin|noc'])->group(function () {
-            Route::get('tracking', [\App\Http\Controllers\TrackingController::class, 'index'])->name('tracking.index');
+            Route::get('tracking', [TrackingController::class, 'index'])->name('tracking.index');
         });
     
         // Backup (Super Admin Only)
         Route::middleware(['role:super-admin'])->group(function () {
-            Route::get('backup', [\App\Http\Controllers\BackupController::class, 'index'])->name('backup.index');
-            Route::post('backup', [\App\Http\Controllers\BackupController::class, 'create'])->name('backup.create');
-            Route::get('backup/{filename}/download', [\App\Http\Controllers\BackupController::class, 'download'])->name('backup.download');
-            Route::delete('backup/{filename}', [\App\Http\Controllers\BackupController::class, 'destroy'])->name('backup.destroy');
+            Route::get('backup', [BackupController::class, 'index'])->name('backup.index');
+            Route::post('backup', [BackupController::class, 'create'])->name('backup.create');
+            Route::get('backup/{filename}/download', [BackupController::class, 'download'])->name('backup.download');
+            Route::delete('backup/{filename}', [BackupController::class, 'destroy'])->name('backup.destroy');
         });
     
         // API Management (Super Admin Only)
         Route::middleware(['role:super-admin'])->group(function () {
-            Route::patch('api-management/{apiKey}/toggle', [\App\Http\Controllers\ApiManagementController::class, 'toggleActive'])->name('api-management.toggle');
-            Route::post('api-management/{apiKey}/regenerate', [\App\Http\Controllers\ApiManagementController::class, 'regenerate'])->name('api-management.regenerate');
-            Route::resource('api-management', \App\Http\Controllers\ApiManagementController::class)->except(['edit', 'update', 'show']);
+            Route::patch('api-management/{apiKey}/toggle', [ApiManagementController::class, 'toggleActive'])->name('api-management.toggle');
+            Route::post('api-management/{apiKey}/regenerate', [ApiManagementController::class, 'regenerate'])->name('api-management.regenerate');
+            Route::resource('api-management', ApiManagementController::class)->except(['edit', 'update', 'show']);
         });
         
     // Profile Routes (Inside Dashboard)

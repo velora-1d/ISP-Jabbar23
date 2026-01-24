@@ -55,6 +55,8 @@ class TicketApiController extends Controller
             'status' => 'open', // Default status
         ]);
 
+        \App\Events\TicketCreated::dispatch($ticket);
+
         return response()->json([
             'message' => 'Laporan gangguan berhasil dikirim. Teknisi kami akan segera merespon.',
             'ticket' => $ticket,

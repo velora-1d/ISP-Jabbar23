@@ -239,6 +239,38 @@
                             </div>
                         </div>
 
+                        <!-- Section: Network Configuration -->
+                        <div class="pb-6 border-b border-gray-700">
+                            <h3 class="text-lg font-semibold text-white mb-4 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.384-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
+                                </svg>
+                                Konfigurasi Jaringan (OLT)
+                            </h3>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label for="olt_id" class="block text-sm font-semibold text-gray-300 mb-2">Pilih OLT</label>
+                                    <select id="olt_id" name="olt_id"
+                                        class="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                        <option value="">-- Tidak Terhubung ke OLT --</option>
+                                        @foreach($olts as $olt)
+                                            <option value="{{ $olt->id }}" {{ old('olt_id', $customer->olt_id) == $olt->id ? 'selected' : '' }}>
+                                                {{ $olt->name }} ({{ $olt->type }})
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                                <div>
+                                    <label for="onu_index" class="block text-sm font-semibold text-gray-300 mb-2">ONU Interface / Index</label>
+                                    <input type="text" id="onu_index" name="onu_index"
+                                        value="{{ old('onu_index', $customer->onu_index) }}"
+                                        placeholder="Contoh: gpon-onu_1/1/1:1"
+                                        class="w-full px-4 py-3 bg-gray-900/50 border border-gray-700 rounded-xl text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all">
+                                    <p class="text-xs text-gray-500 mt-1">Format Huawei: 0/1/0:1 | ZTE: gpon-onu_1/1/1:1</p>
+                                </div>
+                            </div>
+                        </div>
+
                         <!-- Notes -->
                         <div>
                             <label for="notes" class="block text-sm font-semibold text-gray-300 mb-2">Catatan</label>

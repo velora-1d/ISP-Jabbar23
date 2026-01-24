@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Services\FonnteService;
+use App\Services\WhatsAppService;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -29,17 +29,17 @@ class SendWhatsAppJob implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(FonnteService $fonnteService): void
+    public function handle(WhatsAppService $whatsAppService): void
     {
         Log::info("Job Processing: Sending WA to {$this->target}");
         
         try {
-            $result = $fonnteService->sendMessage($this->target, $this->message);
+            $success = $whatsAppService->send($this->target, $this->message);
             
-            if (isset($result['status']) && $result['status'] === false) {
-                // If Fonnte returns false status, you might want to fail the job
-                // based on the response structure
-                Log::warning("Fonnte API returned false status for {$this->target}");
+            if (!$success) {
+                Log::warning("WhatsAppService returned false status for {$this->target}");
+                // Optional: throw exception to force retry?
+                // throw new \Exception("Failed to send WhatsApp");
             }
         } catch (\Exception $e) {
             Log::error("Job Failed: Error sending WA to {$this->target}: " . $e->getMessage());
@@ -55,6 +55,6 @@ class SendWhatsAppJob implements ShouldQueue
      */
     public function backoff(): array
     {
-        return [1, 5, 10]; // Retry after 1s, 5s, 10s
+        return [10, 30, 60]; // Retry after 10s, 30s, 60s
     }
 }

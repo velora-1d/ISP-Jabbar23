@@ -122,6 +122,8 @@ class CustomerController extends Controller
             'pppoe_username' => 'nullable|string|max:100|unique:customers,pppoe_username',
             'pppoe_password' => 'nullable|string|max:100',
             'mikrotik_ip' => 'nullable|ipv4',
+            'olt_id' => 'nullable|exists:olts,id',
+            'onu_index' => 'nullable|string|max:100',
         ]);
 
         Customer::create($validated);
@@ -135,9 +137,13 @@ class CustomerController extends Controller
      */
     public function show(Customer $customer): View
     {
-        $customer->load(['package', 'technician', 'statusLogs.changedByUser']);
+        $customer->load(['package', 'technician', 'statusLogs.changedByUser', 'inventorySerials.item']);
         $statuses = Customer::STATUSES;
-        return view('customers.show', compact('customer', 'statuses'));
+        $availableSerials = \App\Models\InventorySerial::with('item')
+            ->where('status', 'available')
+            ->get();
+            
+        return view('customers.show', compact('customer', 'statuses', 'availableSerials'));
     }
 
     /**
@@ -148,7 +154,9 @@ class CustomerController extends Controller
         $packages = Package::active()->get();
         $statuses = Customer::STATUSES;
         $technicians = User::role('noc')->orderBy('name')->get();
-        return view('customers.edit', compact('customer', 'packages', 'statuses', 'technicians'));
+        $olts = \App\Models\Olt::where('status', 'active')->orderBy('name')->get();
+        
+        return view('customers.edit', compact('customer', 'packages', 'statuses', 'technicians', 'olts'));
     }
 
     /**
@@ -182,6 +190,8 @@ class CustomerController extends Controller
             'pppoe_username' => 'nullable|string|max:100|unique:customers,pppoe_username,' . $customer->id,
             'pppoe_password' => 'nullable|string|max:100',
             'mikrotik_ip' => 'nullable|ipv4',
+            'olt_id' => 'nullable|exists:olts,id',
+            'onu_index' => 'nullable|string|max:100',
         ]);
 
         $customer->update($validated);

@@ -12,6 +12,10 @@
                     class="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition border border-gray-600">
                     Atur Stok
                 </button>
+                <button onclick="document.getElementById('sn-modal').classList.remove('hidden')"
+                    class="px-4 py-2 bg-purple-600 text-white font-semibold rounded-lg hover:bg-purple-700 transition shadow-lg shadow-purple-500/25">
+                    Stock In (SN)
+                </button>
                 <button onclick="document.getElementById('create-modal').classList.remove('hidden')"
                     class="px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 text-white font-semibold rounded-lg hover:from-amber-600 hover:to-orange-600 transition shadow-lg shadow-amber-500/25">
                     + Item Baru
@@ -338,7 +342,61 @@
                             class="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600">Batal</button>
                         <button type="submit"
                             class="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">Proses</button>
+                    <!-- Modal Stock In (SN) -->
+    <div id="sn-modal" class="fixed inset-0 z-50 hidden overflow-y-auto">
+        <div class="flex items-center justify-center min-h-screen px-4 pt-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity bg-gray-900 bg-opacity-75"
+                onclick="document.getElementById('sn-modal').classList.add('hidden')"></div>
+            <div
+                class="inline-block w-full max-w-lg p-6 my-8 overflow-hidden text-left align-middle transition-all transform bg-gray-800 border border-gray-700 shadow-xl rounded-2xl">
+                <h3 class="text-lg font-medium leading-6 text-white mb-4">Stock In (Scan SN)</h3>
+                <form action="{{ route('inventory.store-serials') }}" method="POST">
+                    @csrf
+                    <div class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-1">Pilih Barang (Device)</label>
+                            <select name="inventory_item_id" required
+                                class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white">
+                                @foreach($items as $item)
+                                    @if($item->category->slug == 'onu' || $item->category->slug == 'router' || $item->category->name == 'ONU' || $item->category->name == 'Router')
+                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                    @endif
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-1">Lokasi Penerimaan</label>
+                            <select name="location_id" required
+                                class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white">
+                                @foreach($locations as $loc)
+                                    <option value="{{ $loc->id }}">{{ $loc->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-1">Scan Serial Numbers (Satu per baris)</label>
+                            <textarea name="serials" rows="6" required
+                                placeholder="Gunakan barcode scanner untuk scan SN di sini..."
+                                class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white font-mono text-sm focus:ring-purple-500 focus:border-purple-500"></textarea>
+                            <p class="text-[10px] text-gray-500 mt-1">Pisahkan dengan baris baru (Enter) atau koma.</p>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-300 mb-1">No. Referensi / PO (Optional)</label>
+                            <input type="text" name="reference_no"
+                                class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-2 text-white">
+                        </div>
                     </div>
+                    <div class="mt-6 flex justify-end gap-3">
+                        <button type="button" onclick="document.getElementById('sn-modal').classList.add('hidden')"
+                            class="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600">Batal</button>
+                        <button type="submit"
+                            class="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 font-bold transition">Input {{ count($items) > 0 ? 'Stock' : '' }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
                 </form>
             </div>
         </div>

@@ -282,6 +282,7 @@ class DashboardController extends Controller
             'customerGrowth' => $customerGrowth,
             'paymentByCategory' => $paymentByCategory,
             'paymentCountByCategory' => $paymentCountByCategory,
+            'lowStockItems' => \App\Models\InventoryItem::get()->filter(fn($i) => $i->total_stock <= $i->min_stock_alert)->count(),
         ];
     }
 
@@ -454,12 +455,17 @@ class DashboardController extends Controller
      */
     private function getWarehouseDashboardData(): array
     {
-        // Placeholder data - inventory module not yet implemented
+        $items = \App\Models\InventoryItem::get();
+        $lowStockCount = $items->filter(function ($item) {
+            return $item->total_stock <= $item->min_stock_alert;
+        })->count();
+
         return [
-            'totalItems' => 0,
-            'lowStockItems' => 0,
-            'pendingPO' => 0,
-            'totalAssets' => 0,
+            'totalItems' => $items->count(),
+            'lowStockItems' => $lowStockCount,
+            'pendingPO' => \App\Models\PurchaseOrder::where('status', 'pending')->count(),
+            'totalAssets' => \App\Models\InventorySerial::count(),
+            'lowStockList' => $items->filter(fn($i) => $i->total_stock <= $i->min_stock_alert)->take(5),
         ];
     }
 

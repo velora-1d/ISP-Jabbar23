@@ -38,7 +38,45 @@
                                 <label class="block text-sm font-medium text-gray-300">Brand / Vendor</label>
                                 <input type="text" name="brand" value="{{ old('brand') }}" 
                                     class="mt-1 block w-full bg-gray-900 border-gray-700 rounded-md text-gray-100"
-                                    placeholder="e.g. Huawei, ZTE, Hioso">
+                                    placeholder="e.g. Huawei, ZTE">
+                            </div>
+                            
+                            <!-- Server Profile -->
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300">Server Profile</label>
+                                <select name="server_profile" class="mt-1 block w-full bg-gray-900 border-gray-700 rounded-md text-gray-100">
+                                    <option value="zte">Real Device (ZTE)</option>
+                                    <option value="huawei">Real Device (Huawei)</option>
+                                </select>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300">Port (Telnet)</label>
+                                    <input type="number" name="port" value="{{ old('port', 23) }}" 
+                                        class="mt-1 block w-full bg-gray-900 border-gray-700 rounded-md text-gray-100">
+                                </div>
+                                <div>
+                                    <label class="block text-sm font-medium text-gray-300">SNMP Community</label>
+                                    <input type="text" name="community" value="{{ old('community') }}" 
+                                        class="mt-1 block w-full bg-gray-900 border-gray-700 rounded-md text-gray-100"
+                                        placeholder="public">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column -->
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300">Username (Telnet)</label>
+                                <input type="text" name="username" value="{{ old('username') }}" 
+                                    class="mt-1 block w-full bg-gray-900 border-gray-700 rounded-md text-gray-100">
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-300">Password (Telnet)</label>
+                                <input type="password" name="password" value="{{ old('password') }}" 
+                                    class="mt-1 block w-full bg-gray-900 border-gray-700 rounded-md text-gray-100">
                             </div>
 
                             <div>
@@ -49,10 +87,7 @@
                                     <option value="XGPON">XGPON</option>
                                 </select>
                             </div>
-                        </div>
 
-                        <!-- Right Column -->
-                        <div class="space-y-4">
                             <div>
                                 <label class="block text-sm font-medium text-gray-300">Total PON Ports</label>
                                 <select name="total_pon_ports" class="mt-1 block w-full bg-gray-900 border-gray-700 rounded-md text-gray-100">
@@ -71,11 +106,11 @@
                                     <option value="offline">Offline</option>
                                 </select>
                             </div>
-
+                            
                             <div>
-                                <label class="block text-sm font-medium text-gray-300">Location / Datacenter</label>
-                                <textarea name="location" rows="3" class="mt-1 block w-full bg-gray-900 border-gray-700 rounded-md text-gray-100"
-                                    placeholder="e.g. Rack A1, Server Room 1">{{ old('location') }}</textarea>
+                                <label class="block text-sm font-medium text-gray-300">Location</label>
+                                <input type="text" name="location" value="{{ old('location') }}" 
+                                    class="mt-1 block w-full bg-gray-900 border-gray-700 rounded-md text-gray-100">
                             </div>
                         </div>
                     </div>

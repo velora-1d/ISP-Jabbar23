@@ -104,4 +104,26 @@ class OltController extends Controller
         $olt->delete();
         return redirect()->route('network.olts.index')->with('success', 'OLT deleted successfully.');
     }
+
+    /**
+     * Check ONU Signal (Ajax).
+     */
+    public function checkSignal(Request $request, Olt $olt)
+    {
+        $request->validate([
+            'onu_index' => 'required|string',
+        ]);
+
+        try {
+            $service = \App\Services\Olt\OltServiceFactory::make($olt);
+            $signal = $service->getOnuSignal($request->onu_index);
+
+            return response()->json($signal);
+        } catch (\Exception $e) {
+            return response()->json([
+                'status' => 'error',
+                'message' => $e->getMessage()
+            ], 500);
+        }
+    }
 }

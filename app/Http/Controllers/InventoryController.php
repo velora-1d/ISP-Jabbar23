@@ -135,6 +135,114 @@ class InventoryController extends Controller
 
         return back()->with('success', 'Stok berhasil diupdate!');
     }
+
+    public function storeSerials(Request $request)
+    {
+        $validated = $request->validate([
+            'inventory_item_id' => 'required|exists:inventory_items,id',
+            'location_id' => 'required|exists:locations,id',
+            'serials' => 'required|string',
+            'reference_no' => 'nullable|string',
+            'notes' => 'nullable|string',
+        ]);
+
+        $item = InventoryItem::findOrFail($validated['inventory_item_id']);
+        $serials = preg_split('/[\n,]+/', $validated['serials']);
+        $serials = array_map('trim', $serials);
+        $serials = array_filter($serials); 
+
+        DB::transaction(function () use ($item, $serials, $validated) {
+            $count = 0;
+            foreach ($serials as $sn) {
+                if (\App\Models\InventorySerial::where('serial_number', $sn)->exists()) {
+                    continue; 
+                }
+
+                $serial = \App\Models\InventorySerial::create([
+                    'inventory_item_id' => $item->id,
+                    'serial_number' => $sn,
+                    'location_id' => $validated['location_id'],
+                    'status' => 'available'
+                ]);
+
+                \App\Models\InventoryTransaction::create([
+                    'inventory_item_id' => $item->id,
+                    'inventory_serial_id' => $serial->id,
+                    'type' => 'in',
+                    'quantity' => 1,
+                    'reference_no' => $validated['reference_no'],
+                    'user_id' => Auth::id(),
+                    'notes' => "Bulk Stock In: " . $validated['notes'],
+                ]);
+                
+                $stock = Stock::firstOrCreate(
+                    ['inventory_item_id' => $item->id, 'location_id' => $validated['location_id']],
+                    ['quantity' => 0]
+                );
+                $stock->increment('quantity');
+                $count++;
+            }
+
+            if ($count > 0) {
+                StockMovement::create([
+                    'inventory_item_id' => $item->id,
+                    'location_id' => $validated['location_id'],
+                    'user_id' => Auth::id(),
+                    'type' => 'in',
+                    'quantity' => $count,
+                    'previous_quantity' => $item->total_stock - $count,
+                    'new_quantity' => $item->total_stock,
+                    'reference_number' => $validated['reference_no'],
+                    'notes' => "Added {$count} items via SN Scan. " . $validated['notes'],
+                ]);
+            }
+        });
+
+        return back()->with('success', "Berhasil menambahkan item dengan Serial Number!");
+    }
+
+    public function assignSerial(Request $request)
+    {
+        $validated = $request->validate([
+            'inventory_serial_id' => 'required|exists:inventory_serials,id',
+            'customer_id' => 'required|exists:customers,id',
+            'notes' => 'nullable|string',
+        ]);
+
+        $serial = \App\Models\InventorySerial::findOrFail($validated['inventory_serial_id']);
+        
+        if ($serial->status !== 'available') {
+            return back()->withErrors(['error' => 'Perangkat ini sudah terpasang atau tidak tersedia.']);
+        }
+
+        DB::transaction(function () use ($serial, $validated) {
+            $serial->update([
+                'status' => 'assigned',
+                'customer_id' => $validated['customer_id']
+            ]);
+
+            \App\Models\InventoryTransaction::create([
+                'inventory_item_id' => $serial->inventory_item_id,
+                'inventory_serial_id' => $serial->id,
+                'type' => 'out',
+                'quantity' => 1,
+                'reference_no' => 'CUST-' . $validated['customer_id'],
+                'user_id' => Auth::id(),
+                'notes' => "Assigned to Customer: " . $validated['notes'],
+            ]);
+            
+            // Also deduct from stock table if we track it there
+            $stock = Stock::where('inventory_item_id', $serial->inventory_item_id)
+                ->where('location_id', $serial->location_id)
+                ->first();
+            
+            if ($stock) {
+                $stock->decrement('quantity');
+            }
+        });
+
+        return back()->with('success', 'Perangkat berhasil dipasang ke pelanggan!');
+    }
     public function update(Request $request, InventoryItem $inventoryItem)
     {
         // Use separate route model binding or just find by ID if route param name differs

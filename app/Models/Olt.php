@@ -17,5 +17,10 @@ class Olt extends Model
         'total_pon_ports',
         'location',
         'status',
+        'username',
+        'password',
+        'port',
+        'community',
+        'server_profile',
     ];
 }

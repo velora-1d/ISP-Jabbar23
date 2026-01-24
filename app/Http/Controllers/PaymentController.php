@@ -105,9 +105,9 @@ class PaymentController extends Controller
                     'payment_method' => $validated['payment_method'],
                 ]);
 
-                if ($invoice->customer && $invoice->customer->phone) {
-                    $message = "Halo {$invoice->customer->name},\n\nTerima kasih, pembayaran tagihan *{$invoice->invoice_number}* sebesar *Rp " . number_format($validated['amount'], 0, ',', '.') . "* telah kami terima.\n\nStatus: LUNAS ✅\nTerima kasih telah menggunakan layanan ISP Jabbar.";
-                    \App\Jobs\SendWhatsAppJob::dispatch($invoice->customer->phone, $message);
+                if ($invoice->customer) {
+                    // Dispatch Event for Notification (Send Receipt)
+                    \App\Events\InvoicePaid::dispatch($invoice);
 
                     // Auto-Restore Internet Access (Radius)
                     if ($invoice->customer->pppoe_username) {
@@ -174,9 +174,9 @@ class PaymentController extends Controller
                     ['amount' => $notif->gross_amount, 'status' => 'paid']
                 );
 
-                if ($invoice->customer && $invoice->customer->phone) {
-                    $message = "Halo {$invoice->customer->name},\n\nTerima kasih, pembayaran via {$notif->payment_type} untuk tagihan *{$invoice->invoice_number}* sebesar *Rp " . number_format($notif->gross_amount, 0, ',', '.') . "* telah BERHASIL diverifikasi.\n\nStatus: LUNAS ✅\nTerima kasih telah menggunakan layanan ISP Jabbar.";
-                    \App\Jobs\SendWhatsAppJob::dispatch($invoice->customer->phone, $message);
+                if ($invoice->customer) {
+                    // Dispatch Event for Notification (Send Receipt)
+                    \App\Events\InvoicePaid::dispatch($invoice);
 
                     // Auto-Restore Internet Access (Radius)
                     if ($invoice->customer->pppoe_username) {

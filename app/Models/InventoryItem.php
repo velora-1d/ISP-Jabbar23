@@ -35,6 +35,16 @@ class InventoryItem extends Model
         return $this->hasMany(StockMovement::class);
     }
 
+    public function serials()
+    {
+        return $this->hasMany(InventorySerial::class);
+    }
+
+    public function transactions()
+    {
+        return $this->hasMany(InventoryTransaction::class);
+    }
+
     public function getTotalStockAttribute()
     {
         return $this->stocks()->sum('quantity');

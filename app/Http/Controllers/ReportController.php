@@ -9,6 +9,7 @@ use App\Models\Package;
 use App\Models\Odp;
 use App\Models\Olt;
 use App\Models\Partner;
+use App\Models\Expense;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 use Carbon\Carbon;
@@ -256,6 +257,47 @@ class ReportController extends Controller
         return view('reports.commissions', compact(
             'commissionData', 'totalCommissions', 'paidCommissions', 'pendingCommissions',
             'topPerformers', 'startDate', 'endDate'
+        ));
+    }
+
+    /**
+     * Profit & Loss Reports
+     */
+    public function profitLoss(Request $request): View
+    {
+        $startDate = $request->get('start_date', Carbon::now()->startOfMonth()->format('Y-m-d'));
+        $endDate = $request->get('end_date', Carbon::now()->endOfMonth()->format('Y-m-d'));
+
+        // Income (Paid Invoices Subtotal, excluding Tax)
+        $totalIncome = Payment::query()
+            ->where('status', '=', 'confirmed')
+            ->whereBetween('paid_at', [$startDate, $endDate])
+            ->sum('amount');
+
+        // Total Tax (PPN 11%) Collected from Paid Invoices
+        $totalTax = Invoice::query()
+            ->where('status', '=', 'paid')
+            ->whereBetween('payment_date', [$startDate, $endDate])
+            ->sum('tax_amount');
+
+        // Total Expenses
+        $totalExpenses = Expense::query()
+            ->whereBetween('date', [$startDate, $endDate])
+            ->sum('amount');
+
+        $netProfit = $totalIncome - $totalExpenses;
+
+        $expensesByCategory = Expense::query()
+            ->whereBetween('date', [$startDate, $endDate])
+            ->select(['category', DB::raw('SUM(amount) as total')])
+            ->groupBy('category')
+            ->get();
+
+        $categories = Expense::CATEGORIES;
+
+        return view('reports.profit_loss', compact(
+            'totalIncome', 'totalTax', 'totalExpenses', 'netProfit',
+            'expensesByCategory', 'categories', 'startDate', 'endDate'
         ));
     }
 }

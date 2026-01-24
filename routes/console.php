@@ -15,3 +15,7 @@ Artisan::command('inspire', function () {
     ->dailyAt('02:00')
     ->description('Suspend unpaid customers past grace period');
 
+\Illuminate\Support\Facades\Schedule::job(new \App\Jobs\CheckDueSoonInvoicesJob)
+    ->dailyAt('09:00')
+    ->description('Send warning for invoices due soon');
+
